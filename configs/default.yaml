@@ -54,6 +54,8 @@ tracks:
   # A slot whose position jumps more than this between consecutive cycles is treated as a new track.
   # Learned value overrides this default once baseline.json exists (key: reassign_jump).
   reassign_jump_default: 1.0
+  # The sensor often drops a slot for one cycle and brings it back (250-900 times per file).
+  max_gap_cycles: 1
   min_track_cycles_for_stats: 20
 
 kinematic:

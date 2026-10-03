@@ -59,3 +59,34 @@ Newest entries are appended at the bottom of each day.
   `encode_object` is the exact inverse, checked byte for byte over every recorded row.
 - **PyTorch:** the CPU wheel index (download.pytorch.org) is blocked by the environment proxy (HTTP 403), so torch
   was installed from PyPI (the CUDA build, which runs on CPU). No code impact.
+
+### Phase 1 findings (baseline from the train split; full-file claim checks in docs/results/baseline_claims.md)
+- **CONTRADICTION: the ghosts do not move with their reported speed.** CLAUDE.md says the ghosts "move consistently
+  with that speed for about 11 cycles". Measured: ghost-like tracks report a median 4.2-4.6 m/s approach, but their
+  median net displacement is 0.04 per cycle, where the reported speed implies 0.14-0.15. Each appearance lasts a
+  median of 5-6 cycles, then the ghost respawns at the same spot with a new slot. Raw dump: at (18.6, 6.8) with
+  vx = -5.0 the position holds for 4-5 cycles. No impact on the detector, because the ghosts are outside the
+  default ROI. If the ROI is ever widened past ~19, they would fail the range-rate check.
+- **Values hold for several cycles.** On moving in-ROI tracks, 36-76% of consecutive cycles (p5-p95 across tracks,
+  median 57%) repeat x, y, vx and vy exactly. Position changes on a median 21% of steps, velocity on 39%. The
+  sensor's tracker does not refresh every object every cycle. A constant-velocity forgery (A3) will not show this
+  pattern; the learned layer sees it through per-window features.
+- **Track fragmentation:** a slot disappears for one cycle and returns at nearly the same position 250-900 times per
+  file. Decision: the tracker bridges gaps of up to `max_gap_cycles: 1`.
+- **Range-rate scale is 0.81, not 1.** Over 15-cycle windows of moving people, range-rate from positions is
+  0.81 × reported radial velocity (corr 0.93). The CAN frame spacing supports tick = 0.1 ms, so the most likely
+  cause is a distance unit about 1.24 m long (consistent with the tape-measure doubt), though a velocity scale error
+  cannot be excluded offline. Decision: learn `rr_scale` from train and use it in both the kinematic check and the
+  A3/A4 attacker. Assuming 1 would make real people look inconsistent and make the attacker unrealistic.
+- **RCS vs range: SUPPORTED at population and same-person level, untestable per track.** In-ROI Spearman rho is
+  -0.87. The same person walking toward/away gives rho -0.64 (p ≈ 1e-129, about -0.15 dB per unit range). The
+  per-track test has only 5 qualifying tracks (median rho 0.04): underpowered, reported anyway. RCS is tight within
+  a 1-unit range bin (3-7 dB band). Decision: add a range-conditional RCS band (`rcs_by_range`) to the
+  kinematic layer, besides per-track RCS stability. A3 samples RCS from the in-ROI marginal distribution
+  (CLAUDE.md: "sampled from the real distribution"). A4 samples conditionally on range. The matrix shows the difference.
+- **Thresholds: the rule, and the val exceedance it gives,** are recorded for every entry in configs/baseline.json.
+  Timing limits use train [min, max] ± 2 ticks (physical envelopes, near-zero val exceedance). Kinematic limits use the
+  train q0.999 (val exceedance 0.04-0.3% per window).
+- **Moving training data is thin:** only 53 of 575 in-ROI tracks in train are "moving" (>= 10 moving cycles).
+  Kinematic envelopes and the learned layer's view of motion rest on this small set. This limits how much the
+  learned layer can say about moving tracks.

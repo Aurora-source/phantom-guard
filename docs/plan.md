@@ -121,3 +121,8 @@ log panel. PNG and GIF (PillowWriter) go to `docs/results/`. The choice is logge
 - `python scripts/replay_demo.py --file onePersonMovingFrontAndBack.csv --attack T1 --level A2 --export` produces
   the PNG and GIF.
 - Final report: what works, what doesn't, the headline table, and the next 3 steps.
+
+## Post-approval updates
+Findings during implementation changed some details (gap bridging in the tracker, learned `rr_scale`, a
+range-conditional RCS band, burst-contiguity and range-order protocol checks). Each is logged with its evidence in
+`docs/decisions.md`.
