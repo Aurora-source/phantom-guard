@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "phantomguard"
+version = "0.1.0"
+description = "Detect fabricated CAN frames injected into an SR75 radar stream (offline prototype)"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy>=1.26",
+    "pandas>=2.1",
+    "scipy>=1.11",
+    "scikit-learn>=1.4",
+    "torch>=2.2",
+    "matplotlib>=3.8",
+    "pillow>=10",
+    "pyyaml>=6",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["data: needs the CSVs in data/raw", "slow: takes more than a few seconds"]
