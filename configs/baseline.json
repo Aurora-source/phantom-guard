@@ -47,15 +47,29 @@
     ]
   },
   "accel_hard": {
-    "rule": "q0.999 of |dv|/dt between consecutive cycles (all in-ROI tracks)",
+    "rule": "q0.9999 of |dv|/dt between consecutive cycles (all in-ROI tracks)",
     "split": "train",
-    "val_exceedance": 9.476427386875148e-05,
-    "value": 20.473759976136833
+    "val_exceedance": 0.0,
+    "value": 27.15023550813335
   },
   "accel_soft": {
     "rule": "q0.99 of |dv|/dt (all in-ROI tracks)",
     "split": "train",
-    "value": 10.649198511893205
+    "value": 7.552870090714466
+  },
+  "ae_threshold_moving": {
+    "n_windows": 1485,
+    "rule": "q0.9999 of VALIDATION clean AE reconstruction error (moving windows, window=10 cycles)",
+    "split": "val",
+    "train_exceedance": 0.01683191145953424,
+    "value": 11.490059147655902
+  },
+  "ae_threshold_static": {
+    "n_windows": 34803,
+    "rule": "q0.9999 of VALIDATION clean AE reconstruction error (static windows, window=10 cycles)",
+    "split": "val",
+    "train_exceedance": 0.0008030403481086532,
+    "value": 2.4288770529395736
   },
   "arrival_hi": {
     "rule": "max(train arrival offsets) + 2 ticks",
@@ -74,21 +88,21 @@
     "split": "train",
     "value": {
       "counts": [
-        9,
-        41,
-        13,
-        59,
-        1,
-        37,
-        50,
-        2,
-        33,
-        11,
+        14,
+        55,
+        31,
+        87,
+        3,
+        119,
+        166,
+        27,
+        73,
         26,
-        24,
-        62,
-        69,
-        128
+        43,
+        54,
+        138,
+        162,
+        249
       ],
       "edges": [
         0.0,
@@ -118,7 +132,7 @@
   "birth_speed_soft": {
     "rule": "q0.99 of speed at birth (in-ROI tracks)",
     "split": "train",
-    "value": 2.6315281290759365
+    "value": 2.462214450449026
   },
   "burst_gap_hi": {
     "rule": "max(train gap between consecutive object frames) + 2 ticks",
@@ -155,10 +169,10 @@
   },
   "colocation_min": {
     "frac_zero": 0.0,
-    "rule": "q0.001 of per-cycle minimum distance between in-ROI objects",
+    "rule": "q0.00010 of per-cycle minimum distance between in-ROI objects",
     "split": "train",
     "val_exceedance": 0.0,
-    "value": 0.39999999999999947
+    "value": 0.2828427124746186
   },
   "counter_step": {
     "observed": [
@@ -193,10 +207,20 @@
     "rule": "p5/p50/p95 over moving in-ROI tracks of the fraction of cycles where x, y, vx, vy are all unchanged",
     "split": "train",
     "value": [
-      0.361,
-      0.571,
-      0.763
+      0.362,
+      0.574,
+      0.812
     ]
+  },
+  "iforest_threshold_moving": {
+    "rule": "q0.999 of VALIDATION clean isolation-forest anomaly score (moving windows, window=10 cycles)",
+    "split": "val",
+    "value": 0.6559375143985815
+  },
+  "iforest_threshold_static": {
+    "rule": "q0.999 of VALIDATION clean isolation-forest anomaly score (static windows, window=10 cycles)",
+    "split": "val",
+    "value": 0.5360696218038854
   },
   "moving_speed_samples": {
     "rule": "101 quantiles of moving in-ROI reported speed (attacker sampling)",
@@ -217,7 +241,6 @@
       0.354,
       0.354,
       0.354,
-      0.354,
       0.5,
       0.5,
       0.5,
@@ -227,9 +250,6 @@
       0.5,
       0.5,
       0.5,
-      0.559,
-      0.559,
-      0.559,
       0.559,
       0.559,
       0.559,
@@ -258,7 +278,8 @@
       0.559,
       0.707,
       0.707,
-      0.738,
+      0.707,
+      0.707,
       0.75,
       0.75,
       0.75,
@@ -274,8 +295,9 @@
       0.901,
       0.901,
       0.901,
+      1.0,
       1.031,
-      1.031,
+      1.061,
       1.061,
       1.118,
       1.118,
@@ -290,17 +312,19 @@
       1.521,
       1.581,
       1.601,
+      1.677,
       1.768,
       1.803,
-      1.82,
-      2.0,
+      1.817,
+      1.904,
       2.016,
+      2.062,
       2.136,
-      2.264,
-      2.372,
-      2.5,
-      2.693,
-      3.202,
+      2.236,
+      2.305,
+      2.462,
+      2.61,
+      2.915,
       3.553,
       4.962
     ]
@@ -399,10 +423,10 @@
     ]
   },
   "pos_speed_hard": {
-    "rule": "q0.999 of window displacement / time (in-ROI)",
+    "rule": "q0.9999 of window displacement / time (in-ROI)",
     "split": "train",
-    "val_exceedance": 0.0001050696086157079,
-    "value": 3.040370951695784
+    "val_exceedance": 0.0,
+    "value": 4.104517619208985
   },
   "range_order_tol": {
     "rule": "max(train range-order violation, prev_range - range) + 0.1 (half a 0.2 position step)",
@@ -412,9 +436,9 @@
     "value": 0.357
   },
   "rcs_by_range": {
-    "rule": "per 1-unit range bin: [q0.001, q0.999] of train in-ROI RCS; bins with < 200 samples use the global [min, max]",
+    "rule": "per 1-unit range bin: [q0.00010, q0.9999] of train in-ROI RCS; bins with < 200 samples use the global [min, max]",
     "split": "train",
-    "val_exceedance": 0.0013330315148771348,
+    "val_exceedance": 0.0,
     "value": {
       "bands": [
         [
@@ -429,12 +453,12 @@
         ],
         [
           16.0,
-          22.668000000000006,
+          22.966799999999978,
           333
         ],
         [
-          17.0,
-          21.683999999999287,
+          16.0,
+          22.0,
           16317
         ],
         [
@@ -448,42 +472,42 @@
           12825
         ],
         [
-          17.0,
+          16.827999999999797,
           20.0,
           9141
         ],
         [
-          17.0,
+          16.0,
           18.0,
           11306
         ],
         [
-          16.0,
+          15.0,
           19.0,
           21600
         ],
         [
-          15.0,
-          18.0,
+          14.0,
+          19.0,
           11636
         ],
         [
-          15.0,
-          17.0,
+          14.966599999999893,
+          18.033400000000256,
           9667
         ],
         [
-          14.994000000000007,
+          14.0,
           18.0,
           6995
         ],
         [
-          15.0,
-          17.0,
+          14.0,
+          18.0,
           6382
         ],
         [
-          15.0,
+          14.313799999999965,
           17.0,
           3139
         ],
@@ -549,10 +573,10 @@
     "value": 12.0
   },
   "rcs_std_hard": {
-    "rule": "q0.999 of rolling RCS std over 15 cycles (in-ROI)",
+    "rule": "q0.9999 of rolling RCS std over 15 cycles (in-ROI)",
     "split": "train",
-    "val_exceedance": 0.0003677436301549777,
-    "value": 1.14697670227235
+    "val_exceedance": 0.0,
+    "value": 1.3678612565607287
   },
   "rcs_std_samples": {
     "rule": "101 quantiles of rolling RCS std (attacker sampling)",
@@ -601,10 +625,26 @@
       0.0,
       0.0,
       0.0,
-      0.249,
-      0.249,
-      0.249,
-      0.249,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
       0.249,
       0.249,
       0.249,
@@ -620,14 +660,6 @@
       0.34,
       0.34,
       0.34,
-      0.34,
-      0.34,
-      0.34,
-      0.34,
-      0.365,
-      0.4,
-      0.4,
-      0.4,
       0.4,
       0.4,
       0.4,
@@ -638,10 +670,6 @@
       0.442,
       0.442,
       0.442,
-      0.442,
-      0.471,
-      0.471,
-      0.471,
       0.471,
       0.471,
       0.471,
@@ -650,21 +678,17 @@
       0.49,
       0.49,
       0.49,
-      0.49,
       0.499,
       0.499,
       0.499,
-      0.499,
-      0.499,
-      0.499,
-      0.618,
-      1.535
+      0.573,
+      1.665
     ]
   },
   "rcs_std_soft": {
     "rule": "q0.99 of rolling RCS std",
     "split": "train",
-    "value": 0.6182412330330469
+    "value": 0.5728506353195029
   },
   "reassign_jump": {
     "frac_above": 8.110112151265177e-05,
@@ -674,23 +698,28 @@
     "step_q9999": 0.8944271909999159,
     "value": 1.0
   },
-  "rr_resid_hard": {
-    "rule": "q0.999 of |range-rate(LSQ over 15 cycles) - rr_scale * mean reported radial v| (in-ROI windows)",
+  "replay_library_size": {
+    "rule": "fingerprints of moving in-ROI train tracks",
     "split": "train",
-    "val_exceedance": 0.0006304176516942475,
-    "value": 0.7450271487619021
+    "value": 4034
+  },
+  "rr_resid_hard": {
+    "rule": "q0.9999 of |range-rate(LSQ over 15 cycles) - rr_scale * mean reported radial v| (in-ROI windows)",
+    "split": "train",
+    "val_exceedance": 0.0,
+    "value": 1.055060122276063
   },
   "rr_resid_soft": {
     "rule": "q0.99 of the same residual",
     "split": "train",
-    "value": 0.4937107656379868
+    "value": 0.45356359438128224
   },
   "rr_scale": {
-    "corr": 0.9289761990002716,
-    "n_windows": 226,
+    "corr": 0.9263789075969155,
+    "n_windows": 286,
     "rule": "least-squares k in range_rate = k * reported radial velocity, moving in-ROI windows with |v_r| >= 0.5",
     "split": "train",
-    "value": 0.8065
+    "value": 0.7885
   },
   "slot_birth_hist": {
     "rule": "counts of slot ids at track birth (train)",
@@ -818,6 +847,48 @@
       4
     ]
   },
+  "soft_quantile": {
+    "rule": "smallest candidate quantile with validation alerts/min < 1.0; candidates [0.999, 0.9995, 0.9999, 0.99995, 1.0]",
+    "split": "val",
+    "table": [
+      {
+        "quantile": 0.999,
+        "val_alert_events": 33,
+        "val_alerts_per_minute": 15.631,
+        "val_fp_flagged": 0.0028907935002314895,
+        "val_minutes": 2.111
+      },
+      {
+        "quantile": 0.9995,
+        "val_alert_events": 15,
+        "val_alerts_per_minute": 7.105,
+        "val_fp_flagged": 0.0010727554004765292,
+        "val_minutes": 2.111
+      },
+      {
+        "quantile": 0.9999,
+        "val_alert_events": 1,
+        "val_alerts_per_minute": 0.474,
+        "val_fp_flagged": 9.033729688223405e-05,
+        "val_minutes": 2.111
+      },
+      {
+        "quantile": 0.99995,
+        "val_alert_events": 1,
+        "val_alerts_per_minute": 0.474,
+        "val_fp_flagged": 6.775297266167552e-05,
+        "val_minutes": 2.111
+      },
+      {
+        "quantile": 1.0,
+        "val_alert_events": 1,
+        "val_alerts_per_minute": 0.474,
+        "val_fp_flagged": 3.387648633083776e-05,
+        "val_minutes": 2.111
+      }
+    ],
+    "value": 0.9999
+  },
   "speed_max": {
     "rule": "max(train reported speed, moving in-ROI tracks) + one 0.25 m/s step",
     "split": "train",
@@ -825,7 +896,7 @@
     "value": 5.212358310319802
   },
   "speed_soft": {
-    "rule": "q0.999 of train reported speed (moving in-ROI tracks)",
+    "rule": "q0.9999 of train reported speed (moving in-ROI tracks)",
     "split": "train",
     "value": 4.962358310319802
   }

@@ -42,7 +42,6 @@ class SegmentStats:
     reserved_values: set = field(default_factory=set)
     status_values: set = field(default_factory=set)
     tracks: dict = field(default_factory=dict)  # track_id -> np.ndarray of points
-    track_birth_by_jump: dict = field(default_factory=dict)
     births_in_roi_per_cycle: list = field(default_factory=list)
     slot_returns: int = 0  # slot absent one cycle then back within reassign_jump
     n_cycles: int = 0
@@ -57,9 +56,10 @@ class SegmentStats:
             elif isinstance(v, set):
                 v |= ov
             elif isinstance(v, dict):
+                # Re-key sequentially: track ids restart in every segment.
                 base = len(v)
-                for i, (kk, vv) in enumerate(ov.items()):
-                    v[(id(o), kk)] = vv
+                for i, vv in enumerate(ov.values()):
+                    v[base + i] = vv
             elif isinstance(v, int):
                 setattr(self, k, v + ov)
 
@@ -128,7 +128,6 @@ def collect_segment(cfg: dict, seg: Segment) -> SegmentStats:
             p = tr.last
             if tr.total_points == 1:
                 st.slots_birth.append(tr.slot)
-                st.track_birth_by_jump[tr.track_id] = tr.born_by_jump
                 births += p.rng <= roi
             pts[tr.track_id].append((p.cycle_index, p.t_s, p.x, p.y, p.vx, p.vy, p.rcs, p.rng, p.vr))
         st.births_in_roi_per_cycle.append(births)
@@ -269,9 +268,10 @@ def entry(value, rule, **extra):
     return d
 
 
-def derive_thresholds(st: SegmentStats, tf: TrackFeatures, cfg: dict) -> dict:
+def derive_thresholds(st: SegmentStats, tf: TrackFeatures, cfg: dict, kq: float | None = None) -> dict:
+    """kq overrides the quantile used for the soft kinematic thresholds (see scripts/calibrate.py)."""
     m = cfg["baseline"]["margin_ticks"]
-    hq = cfg["baseline"]["hard_quantile"]
+    hq = kq if kq is not None else cfg["baseline"]["hard_quantile"]
     sq = cfg["baseline"]["soft_quantile"]
     gaps = np.array(st.header_gaps)
     offs = np.array(st.offsets)
@@ -318,7 +318,7 @@ def derive_thresholds(st: SegmentStats, tf: TrackFeatures, cfg: dict) -> dict:
         else:
             bands.append([float(rcs.min()), float(rcs.max()), int(len(sel))])
     b["rcs_by_range"] = entry({"edges": edges.tolist(), "bands": bands},
-                              f"per 1-unit range bin: [q{1 - hq:.3f}, q{hq}] of train in-ROI RCS; bins with < 200 samples use the global [min, max]")
+                              f"per 1-unit range bin: [q{1 - hq:.5f}, q{hq}] of train in-ROI RCS; bins with < 200 samples use the global [min, max]")
     sj = np.array(st.step_jumps)
     b["reassign_jump"] = entry(cfg["tracks"]["reassign_jump_default"],
                                "CLAUDE.md default 1.0; kept because train same-slot step distribution has a clear gap (see q-values)",
@@ -341,7 +341,7 @@ def derive_thresholds(st: SegmentStats, tf: TrackFeatures, cfg: dict) -> dict:
     b["rcs_std_hard"] = entry(_q(tf.rcs_std, hq), f"q{hq} of rolling RCS std over {cfg['kinematic']['rcs_window_cycles']} cycles (in-ROI)")
     b["rcs_std_soft"] = entry(_q(tf.rcs_std, sq), f"q{sq} of rolling RCS std")
     mp = np.array(st.min_pair_dist)
-    b["colocation_min"] = entry(_q(mp, 1 - hq), f"q{1 - hq:.3f} of per-cycle minimum distance between in-ROI objects",
+    b["colocation_min"] = entry(_q(mp, 1 - hq), f"q{1 - hq:.5f} of per-cycle minimum distance between in-ROI objects",
                                 frac_zero=float((mp == 0).mean()))
     # Birth statistics (soft feature)
     edges = np.arange(0, cfg["roi"]["max_range"] + 1.0, 1.0)

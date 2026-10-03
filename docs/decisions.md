@@ -73,8 +73,8 @@ Newest entries are appended at the bottom of each day.
   pattern; the learned layer sees it through per-window features.
 - **Track fragmentation:** a slot disappears for one cycle and returns at nearly the same position 250-900 times per
   file. Decision: the tracker bridges gaps of up to `max_gap_cycles: 1`.
-- **Range-rate scale is 0.81, not 1.** Over 15-cycle windows of moving people, range-rate from positions is
-  0.81 × reported radial velocity (corr 0.93). The CAN frame spacing supports tick = 0.1 ms, so the most likely
+- **Range-rate scale is 0.79, not 1.** Over 15-cycle windows of moving people, range-rate from positions is
+  0.79 × reported radial velocity (corr 0.93; first reported as 0.81 before the merge bug below was fixed). The CAN frame spacing supports tick = 0.1 ms, so the most likely
   cause is a distance unit about 1.24 m long (consistent with the tape-measure doubt), though a velocity scale error
   cannot be excluded offline. Decision: learn `rr_scale` from train and use it in both the kinematic check and the
   A3/A4 attacker. Assuming 1 would make real people look inconsistent and make the attacker unrealistic.
@@ -87,6 +87,52 @@ Newest entries are appended at the bottom of each day.
 - **Thresholds: the rule, and the val exceedance it gives,** are recorded for every entry in configs/baseline.json.
   Timing limits use train [min, max] ± 2 ticks (physical envelopes, near-zero val exceedance). Kinematic limits use the
   train q0.999 (val exceedance 0.04-0.3% per window).
-- **Moving training data is thin:** only 53 of 575 in-ROI tracks in train are "moving" (>= 10 moving cycles).
+- **Moving training data is thin:** only 95 of 1,259 in-ROI tracks in train are "moving" (>= 10 moving cycles;
+  first reported as 53 of 575 before the merge bug below was fixed).
   Kinematic envelopes and the learned layer's view of motion rest on this small set. This limits how much the
   learned layer can say about moving tracks.
+
+### Clean-data detector work (Phases 3, 4, 6 without an attacker)
+- **Bug found and fixed: `SegmentStats.merge` lost tracks.** It keyed merged tracks by `id()` of a temporary
+  object. CPython reuses those ids, so tracks from different segments overwrote each other (time-block train
+  windows came out as 58,907 in one run and 32,789 in another). It is now re-keyed sequentially, with a
+  regression test (merged track count == sum over segments). Every baseline, model and result was regenerated
+  afterwards. Corrected Phase 1 numbers: `rr_scale` 0.789 (was 0.806); moving train tracks 95/1,259 (was 53/575).
+  The RCS-vs-range verdict is unchanged.
+- **Attacker not built.** Phase 2 scenario/injection code was not written, so there is no attacked data.
+  Detection rate by type x level, time-to-detect, AUROC and the type x level x layer matrix are **not reported**.
+  Everything in `docs/results/clean_eval.md` is false-positive behaviour on clean data only.
+- **Operating point calibrated on validation, after one look at test.** The first full run used 99.9th-percentile
+  soft thresholds. Clean alert rates were 15.6/min (val), 22.7/min (test) and 21.0/min (LOSO); the target is < 1/min.
+  On validation, 27 of 33 alert episodes were on objects with zero *reported* velocity, mostly `RR_RESID`:
+  real people move in position while reporting zero velocity. Decision: choose the soft quantile (kinematic and
+  AE) as the smallest candidate in {0.999, 0.9995, 0.9999, 0.99995, 1.0} with validation alerts/min < 1
+  (`scripts/calibrate.py`; the table is recorded in the baseline JSON). This is calibration on the validation split,
+  which CLAUDE.md prescribes. It was prompted by validation numbers, but test had already been evaluated once
+  under the old setting, and that is recorded here. Time-block chose q0.9999 (val 0.47/min = 1 event in 2.1 min).
+  Three of the four LOSO folds do not reach < 1/min even at q = 1.0 (the train maximum), so the loosest value was kept.
+- **Result after calibration: target NOT met on held-out data.** Time-block test 4.7 alerts/min (10 events in
+  2.1 min); LOSO 5.9/min (62 in 10.6 min). The learned layer contributes most on test (1.4/min without it). Two
+  minutes of validation is too little to calibrate a rate this low (each rate rests on 0-5 events), and the
+  front/back test block alone has 7 events. No further tuning was done against test.
+- **Protocol layer:** 0 false positives on time-block val and test. Under LOSO it raises 14 events (1.3/min):
+  `ARRIVAL` (offsets up to 77 when the fold never saw > 74), `SLOT_RANGE` (slot 0x35 unseen in the fold), `CADENCE`.
+  These [min, max] ± margin limits do not fully generalise to an unseen scenario. Widening them is a follow-up
+  decision for the owner, not something tuned here.
+- **Thresholds loosened by calibration cost sensitivity that cannot be measured yet.** For example `rr_resid_hard`
+  went from 0.61 to 1.06 and `accel_hard` from 16.8 to 27.2. Without attacked data, how much detection this costs
+  is unknown.
+- **Learned layer:** the AE is used online with a numpy forward pass (torch is only used for training). The
+  isolation forest is scored offline in batch, because one sklearn call per cycle would break the latency budget.
+  The two cannot be ranked without attacked data; both are reported at the same validation-calibrated rule.
+  Thresholds are calibrated separately for static and moving windows, because moving windows reconstruct far
+  worse (median error 0.89 vs 0.012).
+- **Replay fingerprint:** two families, translation-invariant (dx, dy, vx, vy) per CLAUDE.md and rotation-invariant
+  (d_range, |d|, v_r, speed). Windows need >= 4 distinct symbols, because real tracks hold values about 57% of the
+  time. On clean data it fires on 2-13 object-cycles per evaluation. Its value against replays is unmeasured.
+- **Latency:** p99 2.6 ms on the chaotic test segment (pytest) and 3.2 ms pooled in parallel workers. The budget is 10 ms.
+- **Viewer technology:** matplotlib only (an interactive window with `plt.pause` pacing at about real time, or
+  headless Agg export to PNG, plus GIF via PillowWriter). It adds no new dependency; a web UI is out of scope.
+- **Script order:** `learn_baseline.py [--loso]` -> `train.py [--loso]` -> `calibrate.py [--loso]` ->
+  `run_clean_eval.py`. Re-running `learn_baseline.py` rewrites `configs/baseline.json` and drops the AE and calibration
+  entries, so the later steps must be re-run after it.

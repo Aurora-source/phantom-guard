@@ -126,3 +126,12 @@ log panel. PNG and GIF (PillowWriter) go to `docs/results/`. The choice is logge
 Findings during implementation changed some details (gap bridging in the tracker, learned `rr_scale`, a
 range-conditional RCS band, burst-contiguity and range-order protocol checks). Each is logged with its evidence in
 `docs/decisions.md`.
+
+## Status (2026-10-03, second round)
+- Done: Phases 0-1; detector layers 1-5 (protocol, kinematic, replay fingerprint, autoencoder plus offline isolation
+  forest, M-of-N fusion); validation calibration; clean-data evaluation (`scripts/run_clean_eval.py` ->
+  `docs/results/clean_eval.md`); latency test; matplotlib viewer with PNG/GIF export.
+- Not done: the Phase 2 attacker (only level flags and data pools exist), so there are no attacked-data results,
+  no type x level x layer matrix, and no `run_attack_eval.py` / `summary.md`.
+- Commands: `python scripts/learn_baseline.py --loso && python scripts/train.py --loso && python scripts/calibrate.py --loso
+  && python scripts/run_clean_eval.py && python scripts/replay_demo.py --file onePersonMovingFrontAndBack.csv --export --around-first-alert`
