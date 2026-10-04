@@ -1,13 +1,14 @@
 """Replay viewer: top-down scene with detector verdicts (matplotlib).
 
-Green = authentic, orange = flagged but not (yet) alerting, red = alerting (with reason codes),
-grey = outside the ROI (protocol-checked only). Arrows are reported velocity vectors. A running
+Green = not flagged, orange = flagged but not (yet) alerting, red = alerting (with reason codes),
+grey = unflagged outside the ROI (protocol-checked only). Arrows are reported velocity vectors. A running
 alert log sits on the right. Coordinates: lateral y to the right, longitudinal x up (sensor at 0, 0).
 """
 
 from __future__ import annotations
 
 from collections import deque
+from textwrap import wrap
 
 import matplotlib.pyplot as plt
 from matplotlib.patches import Circle
@@ -27,11 +28,16 @@ class ConsoleView:
         self.ax = self.fig.add_axes([0.05, 0.1, 0.6, 0.82])
         self.axlog = self.fig.add_axes([0.67, 0.1, 0.32, 0.82])
         self.t0 = None
+        self._logged: set[tuple[int, int | None]] = set()
 
     def _status(self, v) -> str:
+        if v.alert:
+            return "alert"
+        if v.flagged:
+            return "flag"
         if not v.in_roi:
             return "out"
-        return "alert" if v.alert else ("flag" if v.flagged else "ok")
+        return "ok"
 
     def render(self, res: CycleResult, title: str = "") -> None:
         ax = self.ax
@@ -46,26 +52,35 @@ class ConsoleView:
         if self.t0 is None and res.header_t is not None:
             self.t0 = res.header_t
         t = (res.header_t - self.t0) * self.tick if res.header_t is not None and self.t0 is not None else 0.0
-        n_alert = 0
+        key = (res.index, res.header_t)
+        append_log = key not in self._logged
+        n_alert = sum(v.alert for v in res.objects)
         for v in res.objects:
-            if v.x is None:
+            if v.alert and append_log:
+                slot = f"0x{v.slot:02x}" if v.slot is not None else "unknown"
+                self.log.append(f"{t:7.2f}s cyc {res.index:5d} frame {v.frame_index} slot {slot}: "
+                                f"{','.join(v.reasons) or 'persistent alert'}")
+            if v.x is None or v.y is None:
                 continue
             st = self._status(v)
             c = COLORS[st]
             ax.scatter([v.y], [v.x], s=40 if st != "out" else 12, color=c, zorder=3)
             if (v.vx or v.vy) and st != "out":
-                ax.arrow(v.y, v.x, 0.35 * v.vy, 0.35 * v.vx, color=c, width=0.03, head_width=0.18,
+                ax.arrow(v.y, v.x, 0.35 * (v.vy or 0), 0.35 * (v.vx or 0), color=c, width=0.03, head_width=0.18,
                          length_includes_head=True, zorder=2)
             if st in ("alert", "flag") and v.reasons:
                 ax.annotate(",".join(v.reasons[:3]), (v.y, v.x), xytext=(5, 5), textcoords="offset points",
                             fontsize=7, color=c)
-            if st == "alert":
-                n_alert += 1
-                self.log.append(f"{t:7.2f}s cyc {res.index:5d} slot 0x{v.slot:02x}: {','.join(v.reasons)}")
-        for r in res.cycle_reasons:
-            self.log.append(f"{t:7.2f}s cyc {res.index:5d} CYCLE: {r}")
-        ax.set_title(f"{title}  t={t:6.2f}s  cycle {res.index}  objects {len(res.objects)}  alerting {n_alert}",
-                     fontsize=9)
+        if append_log:
+            for r in res.cycle_reasons:
+                self.log.append(f"{t:7.2f}s cyc {res.index:5d} CYCLE: {r}")
+            self._logged.add(key)
+        title_lines = wrap(title, width=88)
+        title_lines.append(f"t={t:6.2f}s  cycle {res.index}  objects {len(res.objects)}  alerting {n_alert}")
+        ax.set_title("\n".join(title_lines), fontsize=9)
+        if res.cycle_alert:
+            ax.text(0.02, 0.98, "CYCLE ALERT: " + ",".join(res.cycle_reasons), va="top",
+                    color=COLORS["alert"], fontsize=8, transform=ax.transAxes)
         al = self.axlog
         al.clear()
         al.axis("off")
@@ -73,5 +88,6 @@ class ConsoleView:
         al.text(0, 1, "\n".join(self.log) or "(none)", va="top", family="monospace", fontsize=7.5,
                 transform=al.transAxes)
         handles = [plt.Line2D([], [], marker="o", ls="", color=COLORS[k], label=lab) for k, lab in
-                   (("ok", "authentic"), ("flag", "flagged"), ("alert", "alert"), ("out", "outside ROI"))]
+                   (("ok", "not flagged"), ("flag", "flagged"), ("alert", "alert"),
+                    ("out", "outside ROI, not flagged"))]
         ax.legend(handles=handles, loc="upper right", fontsize=7)
