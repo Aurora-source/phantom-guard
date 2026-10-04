@@ -4,7 +4,8 @@
 
 - Fork: https://github.com/Aurora-source/phantom-guard
 - Branch: https://github.com/Aurora-source/phantom-guard/tree/codex/portable-hosted-prototype
-- Upstream PR: Pending cross-fork PR verification; replaced before final delivery.
+- Verified upstream PR: https://github.com/Krishna-Gunjan/phantom-guard/pull/6
+  (open, targeting `main`; not merged).
 - Tested implementation SHA: **c2cc251c6f4cbaf64dc36ad73a0b4d515dbeff79**.
 - Final delivery HEAD is a later documentation/evidence-only child. Its SHA is
   verified in the PR and final delivery response; its implementation matches the
