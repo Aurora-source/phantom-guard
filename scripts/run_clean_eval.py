@@ -18,8 +18,12 @@ import json
 import argparse
 import pickle
 import sys
+import os
 from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
+
+for _thread_setting in ("OPENBLAS_NUM_THREADS", "OMP_NUM_THREADS", "MKL_NUM_THREADS"):
+    os.environ.setdefault(_thread_setting, "1")
 
 import numpy as np
 import pandas as pd

@@ -102,7 +102,7 @@ def test_t4_a1_duplicates_original_slot_and_a2_overwrites_it(recorded):
 
 def test_generic_source_preserves_malformed_header_unknown_id_and_complete_indices(tmp_path):
     cfg = load_config()
-    ctx = SimpleNamespace(cfg=cfg, level=SimpleNamespace(fix_header=False, order_aware=False),
+    ctx = SimpleNamespace(cfg=cfg, baseline={"burst_gap_lo": 2}, level=SimpleNamespace(fix_header=False, order_aware=False),
                           slot_max=3, slot_p=np.ones(4)/4)
     original = [Frame(CAN_ID_HEADER, b"\x01", 0), Frame(0x123, b"\x01", 1),
                 Frame(CAN_ID_OBJECT, b"\x02", 3), Frame(CAN_ID_HEADER, build_header(1, 1), 332),
@@ -124,3 +124,28 @@ def test_exhausted_stable_slots_fail_explicitly():
     instance = Instance(0, "T2", "A2", 0, 0, [ObjPlan(0, False, {0:(3,0,0,0,20)})])
     with pytest.raises(UnsupportedAttack, match="stable free slot"):
         MixedSource(base, ctx, [instance])
+
+
+def test_timing_naive_insertion_serialises_the_bus_and_delays_following_frames():
+    ctx = SimpleNamespace(baseline={"burst_gap_lo": {"value": 2}},
+                          level=SimpleNamespace(order_aware=False), sample_offset_window=lambda: 3)
+    mixed = object.__new__(MixedSource)
+    mixed.ctx = ctx
+    ctx.level.timing_in_window = True
+    raw = encode_object(1, 3, 0, 0, 0, 20)
+    reals = [[3,raw,1,False,None], [5,raw,1,False,None]]
+    fabs = [[None,raw,2,True,(0,"T1","A1"),None,None]]
+    output = mixed._assemble(None, 0, True, reals, fabs)
+    assert [row[0] for row in output] == [3,5,7]
+    assert output[1][3] and not output[2][3]  # inserted frame delays the following genuine frame
+
+
+@needs_data
+def test_naive_attacker_preserves_final_arrival_order_across_headers(recorded, tmp_path):
+    cfg, baseline, split, victim = recorded
+    cfg["attack"]["T1"]["count"] = [3,3]
+    source = attack_source(ReplaySource(raw_path(cfg, victim.file), (victim.lo, victim.hi)), cfg, baseline,
+                           attack_type="T1", level="A0", seed=22, train_segments=split["train"],
+                           labels_path=tmp_path / "labels.csv")
+    frames = list(source)
+    assert all(b.timestamp_ticks >= a.timestamp_ticks for a,b in zip(frames, frames[1:]))

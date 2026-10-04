@@ -13,10 +13,16 @@ import csv
 import json
 import hashlib
 import time
+import os
 from collections import Counter
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import asdict
 from pathlib import Path
+
+# Each worker handles tiny online matrices plus offline batches. Unbounded BLAS
+# threads multiply workspace allocations across spawned Windows processes.
+for _thread_setting in ("OPENBLAS_NUM_THREADS", "OMP_NUM_THREADS", "MKL_NUM_THREADS"):
+    os.environ.setdefault(_thread_setting, "1")
 
 import numpy as np
 

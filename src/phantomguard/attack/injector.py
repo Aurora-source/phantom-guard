@@ -23,6 +23,7 @@ from typing import Iterator
 import numpy as np
 
 from phantomguard.attack.scenarios import GenContext, Instance
+from phantomguard.config import bval
 from phantomguard.frames import CAN_ID_HEADER, CAN_ID_OBJECT, Frame, build_header, decode_object, encode_object
 from phantomguard.io.replay import RecordedCycle, ReplaySource
 
@@ -131,16 +132,21 @@ class MixedSource:
         base_cycles = self.base.cycles
         lo, hi = self.base.cycle_range
         ctx = self.ctx
+        last_emitted_t = None
         for cidx in range(lo, hi):
             rc: RecordedCycle = base_cycles[cidx]
             header_t = rc.sync_timestamp
+            shift = 0
+            if self.instances and header_t is not None and last_emitted_t is not None:
+                shift = max(0, last_emitted_t + int(bval(ctx.baseline, "burst_gap_lo")) - header_t)
+                header_t += shift
             have_header = rc.obj_count_header is not None and rc.meas_counter is not None and header_t is not None
             # real object frames as (ts, raw, slot)
             reals = []
             real_slots = set()
             for ts, raw in rc.objects:
                 slot = raw[0] if raw else 0
-                reals.append([ts, raw, slot, False, None])
+                reals.append([ts + shift, raw, slot, False, None])
                 real_slots.add(slot)
             # build fabricated objects for this cycle
             fabs = []  # [ts|None, raw, slot, True, meta]
@@ -181,15 +187,20 @@ class MixedSource:
                     self.labels.append(Label(fi, int(inst is not None), inst.attack_id if inst else "",
                                              inst.atype if inst else "", inst.level if inst else ""))
                 data = build_header(count, rc.meas_counter, status)
-                yield original_header if original_header and not changed else Frame(CAN_ID_HEADER, data, header_t)
+                if original_header and not changed:
+                    data = original_header.data
+                yield Frame(CAN_ID_HEADER, data, header_t)
+                last_emitted_t = header_t
                 fi += 1
             elif original_header is not None:
                 if self.complete_labels:
                     self.labels.append(Label(fi, 0, "", "", ""))
-                yield original_header
+                yield Frame(original_header.can_id, original_header.data, original_header.timestamp_ticks + shift)
+                last_emitted_t = original_header.timestamp_ticks + shift
                 fi += 1
             outgoing = [(Frame(CAN_ID_OBJECT, raw, ts), is_fab, meta) for ts, raw, slot, is_fab, meta in emit]
-            outgoing += [(frame, False, None) for frame in getattr(self.base, "others", {}).get(cidx, [])]
+            outgoing += [(Frame(frame.can_id, frame.data, frame.timestamp_ticks + shift), False, None)
+                         for frame in getattr(self.base, "others", {}).get(cidx, [])]
             outgoing.sort(key=lambda item: item[0].timestamp_ticks)
             for frame, is_fab, meta in outgoing:
                 if is_fab and meta is not None:
@@ -198,11 +209,13 @@ class MixedSource:
                 elif self.complete_labels:
                     self.labels.append(Label(fi, 0, "", "", ""))
                 yield frame
+                last_emitted_t = frame.timestamp_ticks
                 fi += 1
 
     def _assemble(self, rc, header_t, have_header, reals, fabs):
         """Order the cycle's object frames and assign fabricated timestamps per the level."""
         ctx = self.ctx
+        spacing = int(bval(ctx.baseline, "burst_gap_lo"))
         out = []
         if ctx.level.order_aware and have_header:
             # re-space the whole burst back-to-back in ascending range (observed sensor order)
@@ -215,9 +228,9 @@ class MixedSource:
                     return 1e9
             items.sort(key=lambda it: rng_of(it[0]))
             first = min((r[0] - header_t for r in reals), default=3)
-            first = max(2, int(first))
+            first = max(spacing, int(first))
             for i, (raw, slot, is_fab, meta) in enumerate(items):
-                out.append((header_t + first + 2 * i, raw, slot, is_fab, meta))
+                out.append((header_t + first + spacing * i, raw, slot, is_fab, meta))
             return out
         # keep real timestamps; give each fab its own arrival offset
         for r in reals:
@@ -229,7 +242,16 @@ class MixedSource:
                 ts = (header_t if header_t is not None else 0) + off
             out.append((ts, f[1], f[2], True, f[4]))
         out.sort(key=lambda it: it[0])
-        return out
+        # Even a timing-naive sender serialises on classic CAN. Inserting a frame
+        # delays frames behind it; coincident/one-tick arrivals are simulation
+        # artefacts, not attacker capability levels. Preserve wider A0/A1/A2 gaps.
+        serialised = []
+        previous = header_t if have_header else None
+        for ts, raw, slot, is_fab, meta in out:
+            ts = max(ts, previous + spacing) if previous is not None else ts
+            serialised.append((ts, raw, slot, is_fab, meta))
+            previous = ts
+        return serialised
 
     def write_labels(self, path: str | Path) -> None:
         with open(path, "w", newline="") as fh:

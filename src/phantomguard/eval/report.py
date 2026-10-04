@@ -44,6 +44,8 @@ def provenance(cfg: dict, artifacts: list[Path]) -> dict:
             "configuration": cfg, "configuration_sha256": hashlib.sha256(json.dumps(cfg, sort_keys=True).encode()).hexdigest(),
             "python": platform.python_version(), "platform": platform.platform(), "packages": packages,
             "logical_cpu_count": os.cpu_count(),
+            "blas_environment": {k: os.environ.get(k) for k in
+                                 ("OPENBLAS_NUM_THREADS", "OMP_NUM_THREADS", "MKL_NUM_THREADS")},
             "processing_timer": "perf_counter elapsed time for grouping/decoding and detector CPU work; source I/O excluded",
             "recordings": [{"file": f, "path": str(raw_path(cfg, f)), "sha256": sha256(raw_path(cfg, f))}
                            for f in cfg["data"]["files"]],
