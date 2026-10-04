@@ -60,6 +60,8 @@ def build(cfg: dict, archive=None) -> dict:
     contents = {}
     for name, path in sorted(payload.items()):
         data = config_bytes if name == 'configs/default.yaml' else path.read_bytes()
+        if name.startswith('configs/') or name.startswith('data/processed/') or (name.startswith('docs/results/') and path.suffix in {'.md','.json','.csv'}):
+            data=data.replace(b'\r\n',b'\n')
         contents[name] = data
         manifest['payload'].append({'path': name, 'bytes': len(data), 'sha256': hashlib.sha256(data).hexdigest()})
     manifest['payload_bytes'] = sum(r['bytes'] for r in manifest['payload'])

@@ -43,6 +43,16 @@ def test_fixed_splits_cannot_be_reconfigured_into_training_data(tmp_path):
         load_config(root=tmp_path)
 
 
+def test_absolute_baseline_does_not_require_an_implicit_workspace(tmp_path,monkeypatch):
+    import phantomguard.paths as p
+    def no_default(*args,**kw):
+        raise AssertionError('Absolute paths must not resolve an unrelated workspace')
+    monkeypatch.setattr(p,'load_config',no_default)
+    path=tmp_path/'baseline.json'
+    p.save_baseline({'fixture':True},path)
+    assert p.load_baseline(path)=={'fixture':True}
+
+
 def test_import_preserves_source_bytes_and_refuses_collisions(tmp_path):
     cfg=load_config(root=tmp_path/'target')
     source=tmp_path/'external source';source.mkdir()

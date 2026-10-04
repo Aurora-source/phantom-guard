@@ -107,16 +107,22 @@ def config_from_args(args) -> dict:
 
 
 def load_baseline(path=None, *, cfg=None) -> dict:
-    resolved = paths(cfg or load_config())
-    p = anchored(path,resolved.root) if path else resolved.baseline
+    if path is not None and Path(path).is_absolute():
+        p=Path(path)
+    else:
+        resolved = paths(cfg or load_config())
+        p = anchored(path,resolved.root) if path else resolved.baseline
     if not p.is_file():
         raise FileNotFoundError(f"Baseline missing: {p}; restore a bundle or run phantomguard baseline --loso, train --loso, calibrate --loso")
     return json.loads(p.read_text(encoding="utf-8"))
 
 
 def save_baseline(data, path=None, *, cfg=None) -> None:
-    resolved = paths(cfg or load_config())
-    p = anchored(path,resolved.root) if path else resolved.baseline
+    if path is not None and Path(path).is_absolute():
+        p=Path(path)
+    else:
+        resolved = paths(cfg or load_config())
+        p = anchored(path,resolved.root) if path else resolved.baseline
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
