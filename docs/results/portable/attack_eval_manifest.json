@@ -1,0 +1,4179 @@
+{
+  "artifacts": [
+    {
+      "details": {
+        "status": "configuration"
+      },
+      "path": "configs/baseline.json",
+      "sha256": "f664ec33375b8115fd32420a87c1d05f9f30bc8b7905d4964a48b8b62d8f8718"
+    },
+    {
+      "details": {
+        "epochs_completed": 30,
+        "feature_width": 70,
+        "layer_widths": [
+          [
+            70,
+            32
+          ],
+          [
+            32,
+            6
+          ],
+          [
+            6,
+            32
+          ],
+          [
+            32,
+            70
+          ]
+        ],
+        "metadata": {
+          "artifact_id": "f264e65b56ced6cf60e30a9292f04809d0258e8ac11d9a69c442a0a6d47b76a6",
+          "baseline_signature": "40ffb109eb8d969a532ec57e7daf272b009392fde825978a13121fbbb61d40be",
+          "contract": {
+            "features": [
+              "dx",
+              "dy",
+              "vx",
+              "vy",
+              "radial_velocity",
+              "rcs",
+              "range"
+            ],
+            "max_gap_cycles": 1,
+            "moving_threshold": 0.3,
+            "reassign_jump_default": 1.0,
+            "roi_max_range": 15.0,
+            "tick_seconds": 0.0001,
+            "window_cycles": 10,
+            "window_policy": "consecutive_cycles_all_points_in_roi"
+          },
+          "kind": "ae",
+          "normalization_split": "train",
+          "schema_version": 1,
+          "seed": 11,
+          "segments": {
+            "train": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 2626,
+                "lo": 0
+              },
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 2476,
+                "lo": 0
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 2995,
+                "lo": 0
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 3358,
+                "lo": 0
+              }
+            ],
+            "val": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 3502,
+                "lo": 2626
+              },
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 3301,
+                "lo": 2476
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 3994,
+                "lo": 2995
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 4477,
+                "lo": 3358
+              }
+            ]
+          },
+          "selection_rule": "AE fixed for NumPy CPU inference; IF is an offline comparison; no test selection",
+          "source_sha256": {
+            "emptyRoom.csv": "13fb666d6525e90f42bf823c7a938ee96d5819f5b541a834edda631bf6be2ebc",
+            "multiplePeopleChaotic.csv": "2e08ed3c26c9cb64a5039878b1ef371fc2138ad0aa717efddc2eca1bea952f52",
+            "onePersonMovingFrontAndBack.csv": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e",
+            "onePersonMovingSideToSide.csv": "04f105a1e412abfe4ce0153d8f2787a9b1ee79aba04a0a362b1d44ad4c2a6340"
+          },
+          "tag": "timeblock",
+          "threshold_split": "val",
+          "train_moving_windows": 4170,
+          "train_windows": 107838,
+          "training": {
+            "batch_size": 512,
+            "epochs_completed": 30,
+            "epochs_configured": 30,
+            "hidden": 32,
+            "latent": 6,
+            "learning_rate": 0.001,
+            "max_train_seconds": 300,
+            "stopping_reason": "configured_epochs_complete",
+            "train_seconds": 7.909224271774292
+          },
+          "val_moving_windows": 1479,
+          "val_windows": 35178
+        },
+        "status": "ok",
+        "stopping_reason": "configured_epochs_complete",
+        "train_seconds": 7.909224271774292
+      },
+      "path": "models/ae_timeblock.npz",
+      "sha256": "75b1de14c7a02211f8dfcdab01d44a3a4ddb26abe7b091be0702fe29bd8795da"
+    },
+    {
+      "details": {
+        "bootstrap": false,
+        "contamination": "auto",
+        "feature_width": 70,
+        "max_features": 1.0,
+        "max_samples": 256,
+        "metadata": {
+          "artifact_id": "c804cd658e4119cbb28d1466bc2dc82bcf3808fe1242431eaddfbf3bb532f13c",
+          "baseline_signature": "40ffb109eb8d969a532ec57e7daf272b009392fde825978a13121fbbb61d40be",
+          "bootstrap": false,
+          "contamination": "auto",
+          "contract": {
+            "features": [
+              "dx",
+              "dy",
+              "vx",
+              "vy",
+              "radial_velocity",
+              "rcs",
+              "range"
+            ],
+            "max_gap_cycles": 1,
+            "moving_threshold": 0.3,
+            "reassign_jump_default": 1.0,
+            "roi_max_range": 15.0,
+            "tick_seconds": 0.0001,
+            "window_cycles": 10,
+            "window_policy": "consecutive_cycles_all_points_in_roi"
+          },
+          "fit_windows": 50000,
+          "kind": "iforest",
+          "max_features": 1.0,
+          "max_samples": 256,
+          "normalization_split": "train",
+          "schema_version": 1,
+          "seed": 11,
+          "segments": {
+            "train": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 2626,
+                "lo": 0
+              },
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 2476,
+                "lo": 0
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 2995,
+                "lo": 0
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 3358,
+                "lo": 0
+              }
+            ],
+            "val": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 3502,
+                "lo": 2626
+              },
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 3301,
+                "lo": 2476
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 3994,
+                "lo": 2995
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 4477,
+                "lo": 3358
+              }
+            ]
+          },
+          "selection_rule": "AE fixed for NumPy CPU inference; IF is an offline comparison; no test selection",
+          "source_sha256": {
+            "emptyRoom.csv": "13fb666d6525e90f42bf823c7a938ee96d5819f5b541a834edda631bf6be2ebc",
+            "multiplePeopleChaotic.csv": "2e08ed3c26c9cb64a5039878b1ef371fc2138ad0aa717efddc2eca1bea952f52",
+            "onePersonMovingFrontAndBack.csv": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e",
+            "onePersonMovingSideToSide.csv": "04f105a1e412abfe4ce0153d8f2787a9b1ee79aba04a0a362b1d44ad4c2a6340"
+          },
+          "tag": "timeblock",
+          "threshold_split": "val",
+          "train_moving_windows": 4170,
+          "train_windows": 107838,
+          "trees": 200,
+          "val_moving_windows": 1479,
+          "val_windows": 35178
+        },
+        "random_state": 11,
+        "status": "ok",
+        "trees": 200
+      },
+      "path": "models/iforest_timeblock.pkl",
+      "sha256": "4656cc8907159fa455c7330b5385679d9009cf6af1ea9a33de5eda5c3f51b450"
+    },
+    {
+      "details": {
+        "fingerprints": 3806,
+        "metadata": {
+          "artifact_id": "04a0b4acc672704d327a78dfade7b70ada2bf64d5d62b2777f39e8e79dc3ca02",
+          "baseline_signature": "40ffb109eb8d969a532ec57e7daf272b009392fde825978a13121fbbb61d40be",
+          "contract": {
+            "max_gap_cycles": 1,
+            "moving_threshold": 0.3,
+            "reassign_jump_default": 1.0,
+            "replay": {
+              "disp_quant": 0.2,
+              "history_cycles": 20000,
+              "k_gram": 12,
+              "min_complexity": 4,
+              "vel_quant": 0.25
+            },
+            "roi_max_range": 15.0,
+            "tick_seconds": 0.0001,
+            "window_policy": "consecutive_cycles_all_points_in_roi"
+          },
+          "kind": "replay",
+          "normalization_split": "train",
+          "schema_version": 1,
+          "seed": 11,
+          "segments": {
+            "train": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 2626,
+                "lo": 0
+              },
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 2476,
+                "lo": 0
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 2995,
+                "lo": 0
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 3358,
+                "lo": 0
+              }
+            ],
+            "val": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 3502,
+                "lo": 2626
+              },
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 3301,
+                "lo": 2476
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 3994,
+                "lo": 2995
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 4477,
+                "lo": 3358
+              }
+            ]
+          },
+          "selection_rule": "AE fixed for NumPy CPU inference; IF is an offline comparison; no test selection",
+          "source_sha256": {
+            "emptyRoom.csv": "13fb666d6525e90f42bf823c7a938ee96d5819f5b541a834edda631bf6be2ebc",
+            "multiplePeopleChaotic.csv": "2e08ed3c26c9cb64a5039878b1ef371fc2138ad0aa717efddc2eca1bea952f52",
+            "onePersonMovingFrontAndBack.csv": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e",
+            "onePersonMovingSideToSide.csv": "04f105a1e412abfe4ce0153d8f2787a9b1ee79aba04a0a362b1d44ad4c2a6340"
+          },
+          "tag": "timeblock",
+          "threshold_split": "val",
+          "train_moving_windows": 4170,
+          "train_windows": 107838,
+          "val_moving_windows": 1479,
+          "val_windows": 35178
+        },
+        "status": "ok"
+      },
+      "path": "models/replay_library_timeblock.pkl",
+      "sha256": "6d28df9fb5f64fa09244a81de331a80ffbbce8defa082843f4b7598bdca9d983"
+    },
+    {
+      "details": {
+        "status": "configuration"
+      },
+      "path": "data/processed/baseline_loso_emptyRoom.json",
+      "sha256": "6752ab2df1855d560fda4b1720840acd62f39a2ed23e75648c8d5b20360d4c2b"
+    },
+    {
+      "details": {
+        "epochs_completed": 30,
+        "feature_width": 70,
+        "layer_widths": [
+          [
+            70,
+            32
+          ],
+          [
+            32,
+            6
+          ],
+          [
+            6,
+            32
+          ],
+          [
+            32,
+            70
+          ]
+        ],
+        "metadata": {
+          "artifact_id": "5c6645138520215720a0c29e368faef36f371e748ef583a0591ff5e961af658c",
+          "baseline_signature": "5217b80a93929011d88beabc6a636aad8fd22ee6c65da1b4e87c36d392f471f2",
+          "contract": {
+            "features": [
+              "dx",
+              "dy",
+              "vx",
+              "vy",
+              "radial_velocity",
+              "rcs",
+              "range"
+            ],
+            "max_gap_cycles": 1,
+            "moving_threshold": 0.3,
+            "reassign_jump_default": 1.0,
+            "roi_max_range": 15.0,
+            "tick_seconds": 0.0001,
+            "window_cycles": 10,
+            "window_policy": "consecutive_cycles_all_points_in_roi"
+          },
+          "kind": "ae",
+          "normalization_split": "train",
+          "schema_version": 1,
+          "seed": 11,
+          "segments": {
+            "train": [
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 3301,
+                "lo": 0
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 3994,
+                "lo": 0
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 4477,
+                "lo": 0
+              }
+            ],
+            "val": [
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 4127,
+                "lo": 3301
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 4993,
+                "lo": 3994
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 5597,
+                "lo": 4477
+              }
+            ]
+          },
+          "selection_rule": "AE fixed for NumPy CPU inference; IF is an offline comparison; no test selection",
+          "source_sha256": {
+            "multiplePeopleChaotic.csv": "2e08ed3c26c9cb64a5039878b1ef371fc2138ad0aa717efddc2eca1bea952f52",
+            "onePersonMovingFrontAndBack.csv": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e",
+            "onePersonMovingSideToSide.csv": "04f105a1e412abfe4ce0153d8f2787a9b1ee79aba04a0a362b1d44ad4c2a6340"
+          },
+          "tag": "loso_emptyRoom",
+          "threshold_split": "val",
+          "train_moving_windows": 5663,
+          "train_windows": 108602,
+          "training": {
+            "batch_size": 512,
+            "epochs_completed": 30,
+            "epochs_configured": 30,
+            "hidden": 32,
+            "latent": 6,
+            "learning_rate": 0.001,
+            "max_train_seconds": 300,
+            "stopping_reason": "configured_epochs_complete",
+            "train_seconds": 7.547359228134155
+          },
+          "val_moving_windows": 2693,
+          "val_windows": 28228
+        },
+        "status": "ok",
+        "stopping_reason": "configured_epochs_complete",
+        "train_seconds": 7.547359228134155
+      },
+      "path": "models/ae_loso_emptyRoom.npz",
+      "sha256": "59bd9ab2960bf4d8c8dfc1069ece53ce3024f85c5c04433b19afc4266ee240b3"
+    },
+    {
+      "details": {
+        "bootstrap": false,
+        "contamination": "auto",
+        "feature_width": 70,
+        "max_features": 1.0,
+        "max_samples": 256,
+        "metadata": {
+          "artifact_id": "61727391c4bcbbfcbfa9a90a995b5b0cc6b9bf887370eb22dface4265e03e368",
+          "baseline_signature": "5217b80a93929011d88beabc6a636aad8fd22ee6c65da1b4e87c36d392f471f2",
+          "bootstrap": false,
+          "contamination": "auto",
+          "contract": {
+            "features": [
+              "dx",
+              "dy",
+              "vx",
+              "vy",
+              "radial_velocity",
+              "rcs",
+              "range"
+            ],
+            "max_gap_cycles": 1,
+            "moving_threshold": 0.3,
+            "reassign_jump_default": 1.0,
+            "roi_max_range": 15.0,
+            "tick_seconds": 0.0001,
+            "window_cycles": 10,
+            "window_policy": "consecutive_cycles_all_points_in_roi"
+          },
+          "fit_windows": 50000,
+          "kind": "iforest",
+          "max_features": 1.0,
+          "max_samples": 256,
+          "normalization_split": "train",
+          "schema_version": 1,
+          "seed": 11,
+          "segments": {
+            "train": [
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 3301,
+                "lo": 0
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 3994,
+                "lo": 0
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 4477,
+                "lo": 0
+              }
+            ],
+            "val": [
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 4127,
+                "lo": 3301
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 4993,
+                "lo": 3994
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 5597,
+                "lo": 4477
+              }
+            ]
+          },
+          "selection_rule": "AE fixed for NumPy CPU inference; IF is an offline comparison; no test selection",
+          "source_sha256": {
+            "multiplePeopleChaotic.csv": "2e08ed3c26c9cb64a5039878b1ef371fc2138ad0aa717efddc2eca1bea952f52",
+            "onePersonMovingFrontAndBack.csv": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e",
+            "onePersonMovingSideToSide.csv": "04f105a1e412abfe4ce0153d8f2787a9b1ee79aba04a0a362b1d44ad4c2a6340"
+          },
+          "tag": "loso_emptyRoom",
+          "threshold_split": "val",
+          "train_moving_windows": 5663,
+          "train_windows": 108602,
+          "trees": 200,
+          "val_moving_windows": 2693,
+          "val_windows": 28228
+        },
+        "random_state": 11,
+        "status": "ok",
+        "trees": 200
+      },
+      "path": "models/iforest_loso_emptyRoom.pkl",
+      "sha256": "a7ee56adb9d83f5f43ad0033377e83d36ebb9ab2eac3c84cf54a9b3f3eaef95d"
+    },
+    {
+      "details": {
+        "fingerprints": 4698,
+        "metadata": {
+          "artifact_id": "b40cbf63d92f92c86216d038552bc0fc5dd1302368d76be214587becd1dc25bc",
+          "baseline_signature": "5217b80a93929011d88beabc6a636aad8fd22ee6c65da1b4e87c36d392f471f2",
+          "contract": {
+            "max_gap_cycles": 1,
+            "moving_threshold": 0.3,
+            "reassign_jump_default": 1.0,
+            "replay": {
+              "disp_quant": 0.2,
+              "history_cycles": 20000,
+              "k_gram": 12,
+              "min_complexity": 4,
+              "vel_quant": 0.25
+            },
+            "roi_max_range": 15.0,
+            "tick_seconds": 0.0001,
+            "window_policy": "consecutive_cycles_all_points_in_roi"
+          },
+          "kind": "replay",
+          "normalization_split": "train",
+          "schema_version": 1,
+          "seed": 11,
+          "segments": {
+            "train": [
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 3301,
+                "lo": 0
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 3994,
+                "lo": 0
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 4477,
+                "lo": 0
+              }
+            ],
+            "val": [
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 4127,
+                "lo": 3301
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 4993,
+                "lo": 3994
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 5597,
+                "lo": 4477
+              }
+            ]
+          },
+          "selection_rule": "AE fixed for NumPy CPU inference; IF is an offline comparison; no test selection",
+          "source_sha256": {
+            "multiplePeopleChaotic.csv": "2e08ed3c26c9cb64a5039878b1ef371fc2138ad0aa717efddc2eca1bea952f52",
+            "onePersonMovingFrontAndBack.csv": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e",
+            "onePersonMovingSideToSide.csv": "04f105a1e412abfe4ce0153d8f2787a9b1ee79aba04a0a362b1d44ad4c2a6340"
+          },
+          "tag": "loso_emptyRoom",
+          "threshold_split": "val",
+          "train_moving_windows": 5663,
+          "train_windows": 108602,
+          "val_moving_windows": 2693,
+          "val_windows": 28228
+        },
+        "status": "ok"
+      },
+      "path": "models/replay_library_loso_emptyRoom.pkl",
+      "sha256": "36e9452e25ad4b809118bd80d29c14049408bea97d4676020e4463cc0c7b7304"
+    },
+    {
+      "details": {
+        "status": "configuration"
+      },
+      "path": "data/processed/baseline_loso_onePersonMovingFrontAndBack.json",
+      "sha256": "40354fa1061c19b02f4a31f5dbaa97b7229ef344bec3c7ffdc9847e6a50abc4e"
+    },
+    {
+      "details": {
+        "epochs_completed": 30,
+        "feature_width": 70,
+        "layer_widths": [
+          [
+            70,
+            32
+          ],
+          [
+            32,
+            6
+          ],
+          [
+            6,
+            32
+          ],
+          [
+            32,
+            70
+          ]
+        ],
+        "metadata": {
+          "artifact_id": "018142692834b3b5cfd4426b5d8e7170935e14dac0041a43146c208d249f5ff0",
+          "baseline_signature": "8c3b803030b39a986262df0842d1ae7e580dfeedbf1bfc5bd4bef19a196d6dcc",
+          "contract": {
+            "features": [
+              "dx",
+              "dy",
+              "vx",
+              "vy",
+              "radial_velocity",
+              "rcs",
+              "range"
+            ],
+            "max_gap_cycles": 1,
+            "moving_threshold": 0.3,
+            "reassign_jump_default": 1.0,
+            "roi_max_range": 15.0,
+            "tick_seconds": 0.0001,
+            "window_cycles": 10,
+            "window_policy": "consecutive_cycles_all_points_in_roi"
+          },
+          "kind": "ae",
+          "normalization_split": "train",
+          "schema_version": 1,
+          "seed": 11,
+          "segments": {
+            "train": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 3502,
+                "lo": 0
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 3994,
+                "lo": 0
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 4477,
+                "lo": 0
+              }
+            ],
+            "val": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 4378,
+                "lo": 3502
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 4993,
+                "lo": 3994
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 5597,
+                "lo": 4477
+              }
+            ]
+          },
+          "selection_rule": "AE fixed for NumPy CPU inference; IF is an offline comparison; no test selection",
+          "source_sha256": {
+            "emptyRoom.csv": "13fb666d6525e90f42bf823c7a938ee96d5819f5b541a834edda631bf6be2ebc",
+            "multiplePeopleChaotic.csv": "2e08ed3c26c9cb64a5039878b1ef371fc2138ad0aa717efddc2eca1bea952f52",
+            "onePersonMovingSideToSide.csv": "04f105a1e412abfe4ce0153d8f2787a9b1ee79aba04a0a362b1d44ad4c2a6340"
+          },
+          "tag": "loso_onePersonMovingFrontAndBack",
+          "threshold_split": "val",
+          "train_moving_windows": 5367,
+          "train_windows": 114540,
+          "training": {
+            "batch_size": 512,
+            "epochs_completed": 30,
+            "epochs_configured": 30,
+            "hidden": 32,
+            "latent": 6,
+            "learning_rate": 0.001,
+            "max_train_seconds": 300,
+            "stopping_reason": "configured_epochs_complete",
+            "train_seconds": 7.853057146072388
+          },
+          "val_moving_windows": 2275,
+          "val_windows": 29093
+        },
+        "status": "ok",
+        "stopping_reason": "configured_epochs_complete",
+        "train_seconds": 7.853057146072388
+      },
+      "path": "models/ae_loso_onePersonMovingFrontAndBack.npz",
+      "sha256": "e000d9b2003264983476f8ec58e4afd0582e38c265dee144fcef2450f0ca91ef"
+    },
+    {
+      "details": {
+        "bootstrap": false,
+        "contamination": "auto",
+        "feature_width": 70,
+        "max_features": 1.0,
+        "max_samples": 256,
+        "metadata": {
+          "artifact_id": "a2338ee0066d0dc32a9e79c7e136aca5e10038a033448be68fb69c27333f214c",
+          "baseline_signature": "8c3b803030b39a986262df0842d1ae7e580dfeedbf1bfc5bd4bef19a196d6dcc",
+          "bootstrap": false,
+          "contamination": "auto",
+          "contract": {
+            "features": [
+              "dx",
+              "dy",
+              "vx",
+              "vy",
+              "radial_velocity",
+              "rcs",
+              "range"
+            ],
+            "max_gap_cycles": 1,
+            "moving_threshold": 0.3,
+            "reassign_jump_default": 1.0,
+            "roi_max_range": 15.0,
+            "tick_seconds": 0.0001,
+            "window_cycles": 10,
+            "window_policy": "consecutive_cycles_all_points_in_roi"
+          },
+          "fit_windows": 50000,
+          "kind": "iforest",
+          "max_features": 1.0,
+          "max_samples": 256,
+          "normalization_split": "train",
+          "schema_version": 1,
+          "seed": 11,
+          "segments": {
+            "train": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 3502,
+                "lo": 0
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 3994,
+                "lo": 0
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 4477,
+                "lo": 0
+              }
+            ],
+            "val": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 4378,
+                "lo": 3502
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 4993,
+                "lo": 3994
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 5597,
+                "lo": 4477
+              }
+            ]
+          },
+          "selection_rule": "AE fixed for NumPy CPU inference; IF is an offline comparison; no test selection",
+          "source_sha256": {
+            "emptyRoom.csv": "13fb666d6525e90f42bf823c7a938ee96d5819f5b541a834edda631bf6be2ebc",
+            "multiplePeopleChaotic.csv": "2e08ed3c26c9cb64a5039878b1ef371fc2138ad0aa717efddc2eca1bea952f52",
+            "onePersonMovingSideToSide.csv": "04f105a1e412abfe4ce0153d8f2787a9b1ee79aba04a0a362b1d44ad4c2a6340"
+          },
+          "tag": "loso_onePersonMovingFrontAndBack",
+          "threshold_split": "val",
+          "train_moving_windows": 5367,
+          "train_windows": 114540,
+          "trees": 200,
+          "val_moving_windows": 2275,
+          "val_windows": 29093
+        },
+        "random_state": 11,
+        "status": "ok",
+        "trees": 200
+      },
+      "path": "models/iforest_loso_onePersonMovingFrontAndBack.pkl",
+      "sha256": "3ab5de782f567bc071ae04bf8707463c623cbecd0e33a48f4f85f336e502cf00"
+    },
+    {
+      "details": {
+        "fingerprints": 4348,
+        "metadata": {
+          "artifact_id": "fc2492554ab09720055d07e6b2a38896a877a668ae0cd31b48b7cf76a92da0a8",
+          "baseline_signature": "8c3b803030b39a986262df0842d1ae7e580dfeedbf1bfc5bd4bef19a196d6dcc",
+          "contract": {
+            "max_gap_cycles": 1,
+            "moving_threshold": 0.3,
+            "reassign_jump_default": 1.0,
+            "replay": {
+              "disp_quant": 0.2,
+              "history_cycles": 20000,
+              "k_gram": 12,
+              "min_complexity": 4,
+              "vel_quant": 0.25
+            },
+            "roi_max_range": 15.0,
+            "tick_seconds": 0.0001,
+            "window_policy": "consecutive_cycles_all_points_in_roi"
+          },
+          "kind": "replay",
+          "normalization_split": "train",
+          "schema_version": 1,
+          "seed": 11,
+          "segments": {
+            "train": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 3502,
+                "lo": 0
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 3994,
+                "lo": 0
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 4477,
+                "lo": 0
+              }
+            ],
+            "val": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 4378,
+                "lo": 3502
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 4993,
+                "lo": 3994
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 5597,
+                "lo": 4477
+              }
+            ]
+          },
+          "selection_rule": "AE fixed for NumPy CPU inference; IF is an offline comparison; no test selection",
+          "source_sha256": {
+            "emptyRoom.csv": "13fb666d6525e90f42bf823c7a938ee96d5819f5b541a834edda631bf6be2ebc",
+            "multiplePeopleChaotic.csv": "2e08ed3c26c9cb64a5039878b1ef371fc2138ad0aa717efddc2eca1bea952f52",
+            "onePersonMovingSideToSide.csv": "04f105a1e412abfe4ce0153d8f2787a9b1ee79aba04a0a362b1d44ad4c2a6340"
+          },
+          "tag": "loso_onePersonMovingFrontAndBack",
+          "threshold_split": "val",
+          "train_moving_windows": 5367,
+          "train_windows": 114540,
+          "val_moving_windows": 2275,
+          "val_windows": 29093
+        },
+        "status": "ok"
+      },
+      "path": "models/replay_library_loso_onePersonMovingFrontAndBack.pkl",
+      "sha256": "5c8d0555558bc0c840ff18db1b4ba62915c01a085a6bf61a78e904d9775a5b9d"
+    },
+    {
+      "details": {
+        "status": "configuration"
+      },
+      "path": "data/processed/baseline_loso_onePersonMovingSideToSide.json",
+      "sha256": "1ed3867c8e89e1f11c1279e3c8e3d568fdca41edfc45c7e98d07b298a3269824"
+    },
+    {
+      "details": {
+        "epochs_completed": 30,
+        "feature_width": 70,
+        "layer_widths": [
+          [
+            70,
+            32
+          ],
+          [
+            32,
+            6
+          ],
+          [
+            6,
+            32
+          ],
+          [
+            32,
+            70
+          ]
+        ],
+        "metadata": {
+          "artifact_id": "d438b234162900e41a76fc4a22df91d4fb9cc22ea1c0e3c5a43daef590ee632b",
+          "baseline_signature": "62b8eefd37895ddb174343c522604ff3d7c4bc1abcb4f2cd73928ab372054139",
+          "contract": {
+            "features": [
+              "dx",
+              "dy",
+              "vx",
+              "vy",
+              "radial_velocity",
+              "rcs",
+              "range"
+            ],
+            "max_gap_cycles": 1,
+            "moving_threshold": 0.3,
+            "reassign_jump_default": 1.0,
+            "roi_max_range": 15.0,
+            "tick_seconds": 0.0001,
+            "window_cycles": 10,
+            "window_policy": "consecutive_cycles_all_points_in_roi"
+          },
+          "kind": "ae",
+          "normalization_split": "train",
+          "schema_version": 1,
+          "seed": 11,
+          "segments": {
+            "train": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 3502,
+                "lo": 0
+              },
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 3301,
+                "lo": 0
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 4477,
+                "lo": 0
+              }
+            ],
+            "val": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 4378,
+                "lo": 3502
+              },
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 4127,
+                "lo": 3301
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 5597,
+                "lo": 4477
+              }
+            ]
+          },
+          "selection_rule": "AE fixed for NumPy CPU inference; IF is an offline comparison; no test selection",
+          "source_sha256": {
+            "emptyRoom.csv": "13fb666d6525e90f42bf823c7a938ee96d5819f5b541a834edda631bf6be2ebc",
+            "multiplePeopleChaotic.csv": "2e08ed3c26c9cb64a5039878b1ef371fc2138ad0aa717efddc2eca1bea952f52",
+            "onePersonMovingFrontAndBack.csv": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e"
+          },
+          "tag": "loso_onePersonMovingSideToSide",
+          "threshold_split": "val",
+          "train_moving_windows": 4403,
+          "train_windows": 105368,
+          "training": {
+            "batch_size": 512,
+            "epochs_completed": 30,
+            "epochs_configured": 30,
+            "hidden": 32,
+            "latent": 6,
+            "learning_rate": 0.001,
+            "max_train_seconds": 300,
+            "stopping_reason": "configured_epochs_complete",
+            "train_seconds": 7.205024719238281
+          },
+          "val_moving_windows": 1991,
+          "val_windows": 26801
+        },
+        "status": "ok",
+        "stopping_reason": "configured_epochs_complete",
+        "train_seconds": 7.205024719238281
+      },
+      "path": "models/ae_loso_onePersonMovingSideToSide.npz",
+      "sha256": "7ba22ce6901ff384b9783bb0077cb9568cd851fbd9a86e6bd5ae93e33b53faae"
+    },
+    {
+      "details": {
+        "bootstrap": false,
+        "contamination": "auto",
+        "feature_width": 70,
+        "max_features": 1.0,
+        "max_samples": 256,
+        "metadata": {
+          "artifact_id": "b095954d93668ddeef8fba5f1eeb4978147a540862838acd23efe0e54bc0b59f",
+          "baseline_signature": "62b8eefd37895ddb174343c522604ff3d7c4bc1abcb4f2cd73928ab372054139",
+          "bootstrap": false,
+          "contamination": "auto",
+          "contract": {
+            "features": [
+              "dx",
+              "dy",
+              "vx",
+              "vy",
+              "radial_velocity",
+              "rcs",
+              "range"
+            ],
+            "max_gap_cycles": 1,
+            "moving_threshold": 0.3,
+            "reassign_jump_default": 1.0,
+            "roi_max_range": 15.0,
+            "tick_seconds": 0.0001,
+            "window_cycles": 10,
+            "window_policy": "consecutive_cycles_all_points_in_roi"
+          },
+          "fit_windows": 50000,
+          "kind": "iforest",
+          "max_features": 1.0,
+          "max_samples": 256,
+          "normalization_split": "train",
+          "schema_version": 1,
+          "seed": 11,
+          "segments": {
+            "train": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 3502,
+                "lo": 0
+              },
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 3301,
+                "lo": 0
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 4477,
+                "lo": 0
+              }
+            ],
+            "val": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 4378,
+                "lo": 3502
+              },
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 4127,
+                "lo": 3301
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 5597,
+                "lo": 4477
+              }
+            ]
+          },
+          "selection_rule": "AE fixed for NumPy CPU inference; IF is an offline comparison; no test selection",
+          "source_sha256": {
+            "emptyRoom.csv": "13fb666d6525e90f42bf823c7a938ee96d5819f5b541a834edda631bf6be2ebc",
+            "multiplePeopleChaotic.csv": "2e08ed3c26c9cb64a5039878b1ef371fc2138ad0aa717efddc2eca1bea952f52",
+            "onePersonMovingFrontAndBack.csv": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e"
+          },
+          "tag": "loso_onePersonMovingSideToSide",
+          "threshold_split": "val",
+          "train_moving_windows": 4403,
+          "train_windows": 105368,
+          "trees": 200,
+          "val_moving_windows": 1991,
+          "val_windows": 26801
+        },
+        "random_state": 11,
+        "status": "ok",
+        "trees": 200
+      },
+      "path": "models/iforest_loso_onePersonMovingSideToSide.pkl",
+      "sha256": "1e79372afc4ec938aaeda47a00e01e3f128c450df5253adedbac3759caf970c5"
+    },
+    {
+      "details": {
+        "fingerprints": 3847,
+        "metadata": {
+          "artifact_id": "032465bedb54c1e0d16a98aeb13019ece917a51e873b06bca442831ddd3922ba",
+          "baseline_signature": "62b8eefd37895ddb174343c522604ff3d7c4bc1abcb4f2cd73928ab372054139",
+          "contract": {
+            "max_gap_cycles": 1,
+            "moving_threshold": 0.3,
+            "reassign_jump_default": 1.0,
+            "replay": {
+              "disp_quant": 0.2,
+              "history_cycles": 20000,
+              "k_gram": 12,
+              "min_complexity": 4,
+              "vel_quant": 0.25
+            },
+            "roi_max_range": 15.0,
+            "tick_seconds": 0.0001,
+            "window_policy": "consecutive_cycles_all_points_in_roi"
+          },
+          "kind": "replay",
+          "normalization_split": "train",
+          "schema_version": 1,
+          "seed": 11,
+          "segments": {
+            "train": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 3502,
+                "lo": 0
+              },
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 3301,
+                "lo": 0
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 4477,
+                "lo": 0
+              }
+            ],
+            "val": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 4378,
+                "lo": 3502
+              },
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 4127,
+                "lo": 3301
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 5597,
+                "lo": 4477
+              }
+            ]
+          },
+          "selection_rule": "AE fixed for NumPy CPU inference; IF is an offline comparison; no test selection",
+          "source_sha256": {
+            "emptyRoom.csv": "13fb666d6525e90f42bf823c7a938ee96d5819f5b541a834edda631bf6be2ebc",
+            "multiplePeopleChaotic.csv": "2e08ed3c26c9cb64a5039878b1ef371fc2138ad0aa717efddc2eca1bea952f52",
+            "onePersonMovingFrontAndBack.csv": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e"
+          },
+          "tag": "loso_onePersonMovingSideToSide",
+          "threshold_split": "val",
+          "train_moving_windows": 4403,
+          "train_windows": 105368,
+          "val_moving_windows": 1991,
+          "val_windows": 26801
+        },
+        "status": "ok"
+      },
+      "path": "models/replay_library_loso_onePersonMovingSideToSide.pkl",
+      "sha256": "912363feeeef00ab44d46e1817df97d67a10288b278b32f7a563450c79dfb60e"
+    },
+    {
+      "details": {
+        "status": "configuration"
+      },
+      "path": "data/processed/baseline_loso_multiplePeopleChaotic.json",
+      "sha256": "e89d547d14650a5935c064ac26ef7cc0fc370a5bdd9e92e378c176b5f3d005a2"
+    },
+    {
+      "details": {
+        "epochs_completed": 30,
+        "feature_width": 70,
+        "layer_widths": [
+          [
+            70,
+            32
+          ],
+          [
+            32,
+            6
+          ],
+          [
+            6,
+            32
+          ],
+          [
+            32,
+            70
+          ]
+        ],
+        "metadata": {
+          "artifact_id": "3848287c3be5fd33cdf6f304fbc178bdbd355c4f961a79fa20d9ab9013c9e664",
+          "baseline_signature": "445a85afa2b34b03b72c8c7b9022fb79bc58dca4bb2a67255ea05611a9c135df",
+          "contract": {
+            "features": [
+              "dx",
+              "dy",
+              "vx",
+              "vy",
+              "radial_velocity",
+              "rcs",
+              "range"
+            ],
+            "max_gap_cycles": 1,
+            "moving_threshold": 0.3,
+            "reassign_jump_default": 1.0,
+            "roi_max_range": 15.0,
+            "tick_seconds": 0.0001,
+            "window_cycles": 10,
+            "window_policy": "consecutive_cycles_all_points_in_roi"
+          },
+          "kind": "ae",
+          "normalization_split": "train",
+          "schema_version": 1,
+          "seed": 11,
+          "segments": {
+            "train": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 3502,
+                "lo": 0
+              },
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 3301,
+                "lo": 0
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 3994,
+                "lo": 0
+              }
+            ],
+            "val": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 4378,
+                "lo": 3502
+              },
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 4127,
+                "lo": 3301
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 4993,
+                "lo": 3994
+              }
+            ]
+          },
+          "selection_rule": "AE fixed for NumPy CPU inference; IF is an offline comparison; no test selection",
+          "source_sha256": {
+            "emptyRoom.csv": "13fb666d6525e90f42bf823c7a938ee96d5819f5b541a834edda631bf6be2ebc",
+            "onePersonMovingFrontAndBack.csv": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e",
+            "onePersonMovingSideToSide.csv": "04f105a1e412abfe4ce0153d8f2787a9b1ee79aba04a0a362b1d44ad4c2a6340"
+          },
+          "tag": "loso_multiplePeopleChaotic",
+          "threshold_split": "val",
+          "train_moving_windows": 1556,
+          "train_windows": 101633,
+          "training": {
+            "batch_size": 512,
+            "epochs_completed": 30,
+            "epochs_configured": 30,
+            "hidden": 32,
+            "latent": 6,
+            "learning_rate": 0.001,
+            "max_train_seconds": 300,
+            "stopping_reason": "configured_epochs_complete",
+            "train_seconds": 7.033258438110352
+          },
+          "val_moving_windows": 1120,
+          "val_windows": 25183
+        },
+        "status": "ok",
+        "stopping_reason": "configured_epochs_complete",
+        "train_seconds": 7.033258438110352
+      },
+      "path": "models/ae_loso_multiplePeopleChaotic.npz",
+      "sha256": "1adb7d2c264c12362506dfb5683d9d079ddaab4170b6ee623f256766f01718c6"
+    },
+    {
+      "details": {
+        "bootstrap": false,
+        "contamination": "auto",
+        "feature_width": 70,
+        "max_features": 1.0,
+        "max_samples": 256,
+        "metadata": {
+          "artifact_id": "91a13cc7088b7f24b5ac36f4e9d8010c1b3a67379559a62923e75e553caadeba",
+          "baseline_signature": "445a85afa2b34b03b72c8c7b9022fb79bc58dca4bb2a67255ea05611a9c135df",
+          "bootstrap": false,
+          "contamination": "auto",
+          "contract": {
+            "features": [
+              "dx",
+              "dy",
+              "vx",
+              "vy",
+              "radial_velocity",
+              "rcs",
+              "range"
+            ],
+            "max_gap_cycles": 1,
+            "moving_threshold": 0.3,
+            "reassign_jump_default": 1.0,
+            "roi_max_range": 15.0,
+            "tick_seconds": 0.0001,
+            "window_cycles": 10,
+            "window_policy": "consecutive_cycles_all_points_in_roi"
+          },
+          "fit_windows": 50000,
+          "kind": "iforest",
+          "max_features": 1.0,
+          "max_samples": 256,
+          "normalization_split": "train",
+          "schema_version": 1,
+          "seed": 11,
+          "segments": {
+            "train": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 3502,
+                "lo": 0
+              },
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 3301,
+                "lo": 0
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 3994,
+                "lo": 0
+              }
+            ],
+            "val": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 4378,
+                "lo": 3502
+              },
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 4127,
+                "lo": 3301
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 4993,
+                "lo": 3994
+              }
+            ]
+          },
+          "selection_rule": "AE fixed for NumPy CPU inference; IF is an offline comparison; no test selection",
+          "source_sha256": {
+            "emptyRoom.csv": "13fb666d6525e90f42bf823c7a938ee96d5819f5b541a834edda631bf6be2ebc",
+            "onePersonMovingFrontAndBack.csv": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e",
+            "onePersonMovingSideToSide.csv": "04f105a1e412abfe4ce0153d8f2787a9b1ee79aba04a0a362b1d44ad4c2a6340"
+          },
+          "tag": "loso_multiplePeopleChaotic",
+          "threshold_split": "val",
+          "train_moving_windows": 1556,
+          "train_windows": 101633,
+          "trees": 200,
+          "val_moving_windows": 1120,
+          "val_windows": 25183
+        },
+        "random_state": 11,
+        "status": "ok",
+        "trees": 200
+      },
+      "path": "models/iforest_loso_multiplePeopleChaotic.pkl",
+      "sha256": "3b6cdb3c19e31d5ca414f9c95c9422d02f83c9a9a05852edd8450e140736c6ac"
+    },
+    {
+      "details": {
+        "fingerprints": 1208,
+        "metadata": {
+          "artifact_id": "479fd33d5f153a16237daa6fc91fdaaa0ad90744f68a0554f38e01996380cf96",
+          "baseline_signature": "445a85afa2b34b03b72c8c7b9022fb79bc58dca4bb2a67255ea05611a9c135df",
+          "contract": {
+            "max_gap_cycles": 1,
+            "moving_threshold": 0.3,
+            "reassign_jump_default": 1.0,
+            "replay": {
+              "disp_quant": 0.2,
+              "history_cycles": 20000,
+              "k_gram": 12,
+              "min_complexity": 4,
+              "vel_quant": 0.25
+            },
+            "roi_max_range": 15.0,
+            "tick_seconds": 0.0001,
+            "window_policy": "consecutive_cycles_all_points_in_roi"
+          },
+          "kind": "replay",
+          "normalization_split": "train",
+          "schema_version": 1,
+          "seed": 11,
+          "segments": {
+            "train": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 3502,
+                "lo": 0
+              },
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 3301,
+                "lo": 0
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 3994,
+                "lo": 0
+              }
+            ],
+            "val": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 4378,
+                "lo": 3502
+              },
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 4127,
+                "lo": 3301
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 4993,
+                "lo": 3994
+              }
+            ]
+          },
+          "selection_rule": "AE fixed for NumPy CPU inference; IF is an offline comparison; no test selection",
+          "source_sha256": {
+            "emptyRoom.csv": "13fb666d6525e90f42bf823c7a938ee96d5819f5b541a834edda631bf6be2ebc",
+            "onePersonMovingFrontAndBack.csv": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e",
+            "onePersonMovingSideToSide.csv": "04f105a1e412abfe4ce0153d8f2787a9b1ee79aba04a0a362b1d44ad4c2a6340"
+          },
+          "tag": "loso_multiplePeopleChaotic",
+          "threshold_split": "val",
+          "train_moving_windows": 1556,
+          "train_windows": 101633,
+          "val_moving_windows": 1120,
+          "val_windows": 25183
+        },
+        "status": "ok"
+      },
+      "path": "models/replay_library_loso_multiplePeopleChaotic.pkl",
+      "sha256": "4ddda2f10cb58e1451fe6a9ae2de840989f352f0d74ddb9ab526fd72dfbadefc"
+    }
+  ],
+  "blas_environment": {
+    "MKL_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1"
+  },
+  "blockers": [],
+  "calibration": {
+    "loso_emptyRoom": {
+      "_meta": {
+        "note": "val_exceedance = fraction of held-out clean items (gaps, frames, windows) beyond the threshold; detector-level false-positive rates are reported by scripts/run_attack_eval.py",
+        "train_segments": [
+          {
+            "file": "onePersonMovingFrontAndBack.csv",
+            "hi": 3301,
+            "lo": 0
+          },
+          {
+            "file": "onePersonMovingSideToSide.csv",
+            "hi": 3994,
+            "lo": 0
+          },
+          {
+            "file": "multiplePeopleChaotic.csv",
+            "hi": 4477,
+            "lo": 0
+          }
+        ],
+        "val_segments": [
+          {
+            "file": "onePersonMovingFrontAndBack.csv",
+            "hi": 4127,
+            "lo": 3301
+          },
+          {
+            "file": "onePersonMovingSideToSide.csv",
+            "hi": 4993,
+            "lo": 3994
+          },
+          {
+            "file": "multiplePeopleChaotic.csv",
+            "hi": 5597,
+            "lo": 4477
+          }
+        ]
+      },
+      "ae_threshold_moving": {
+        "n_windows": 2693,
+        "quantile": 1.0,
+        "rule": "q1.0 of VALIDATION clean AE reconstruction error score (moving windows, window=10 cycles)",
+        "split": "val",
+        "train_exceedance": 0.004238036376478898,
+        "train_windows": 5663,
+        "value": 18.015030932674325
+      },
+      "ae_threshold_static": {
+        "n_windows": 25535,
+        "quantile": 1.0,
+        "rule": "q1.0 of VALIDATION clean AE reconstruction error score (static windows, window=10 cycles)",
+        "split": "val",
+        "train_exceedance": 0.0007383013240851378,
+        "train_windows": 102939,
+        "value": 3.08842510380694
+      },
+      "fusion_mn": {
+        "rule": "fewest CLEAN validation alert events over mn_candidates; ties -> smallest N (fastest detection); no attack labels used",
+        "split": "val",
+        "table": [
+          {
+            "m": 3,
+            "n": 5,
+            "val_alert_events": 4,
+            "val_alerts_per_minute": 2.457,
+            "val_minutes": 1.628
+          },
+          {
+            "m": 4,
+            "n": 6,
+            "val_alert_events": 2,
+            "val_alerts_per_minute": 1.228,
+            "val_minutes": 1.628
+          },
+          {
+            "m": 5,
+            "n": 8,
+            "val_alert_events": 1,
+            "val_alerts_per_minute": 0.614,
+            "val_minutes": 1.628
+          }
+        ],
+        "value": [
+          5,
+          8
+        ]
+      },
+      "iforest_threshold_moving": {
+        "n_windows": 2693,
+        "quantile": 1.0,
+        "rule": "q1.0 of VALIDATION clean isolation-forest anomaly score (moving windows, window=10 cycles)",
+        "split": "val",
+        "value": 0.749077233208675
+      },
+      "iforest_threshold_static": {
+        "n_windows": 25535,
+        "quantile": 1.0,
+        "rule": "q1.0 of VALIDATION clean isolation-forest anomaly score (static windows, window=10 cycles)",
+        "split": "val",
+        "value": 0.556160897054574
+      },
+      "learned_artifacts": {
+        "ae": {
+          "artifact_id": "5c6645138520215720a0c29e368faef36f371e748ef583a0591ff5e961af658c",
+          "baseline_signature": "5217b80a93929011d88beabc6a636aad8fd22ee6c65da1b4e87c36d392f471f2",
+          "contract": {
+            "features": [
+              "dx",
+              "dy",
+              "vx",
+              "vy",
+              "radial_velocity",
+              "rcs",
+              "range"
+            ],
+            "max_gap_cycles": 1,
+            "moving_threshold": 0.3,
+            "reassign_jump_default": 1.0,
+            "roi_max_range": 15.0,
+            "tick_seconds": 0.0001,
+            "window_cycles": 10,
+            "window_policy": "consecutive_cycles_all_points_in_roi"
+          },
+          "kind": "ae",
+          "normalization_split": "train",
+          "schema_version": 1,
+          "seed": 11,
+          "segments": {
+            "train": [
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 3301,
+                "lo": 0
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 3994,
+                "lo": 0
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 4477,
+                "lo": 0
+              }
+            ],
+            "val": [
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 4127,
+                "lo": 3301
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 4993,
+                "lo": 3994
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 5597,
+                "lo": 4477
+              }
+            ]
+          },
+          "selection_rule": "AE fixed for NumPy CPU inference; IF is an offline comparison; no test selection",
+          "source_sha256": {
+            "multiplePeopleChaotic.csv": "2e08ed3c26c9cb64a5039878b1ef371fc2138ad0aa717efddc2eca1bea952f52",
+            "onePersonMovingFrontAndBack.csv": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e",
+            "onePersonMovingSideToSide.csv": "04f105a1e412abfe4ce0153d8f2787a9b1ee79aba04a0a362b1d44ad4c2a6340"
+          },
+          "tag": "loso_emptyRoom",
+          "threshold_split": "val",
+          "train_moving_windows": 5663,
+          "train_windows": 108602,
+          "training": {
+            "batch_size": 512,
+            "epochs_completed": 30,
+            "epochs_configured": 30,
+            "hidden": 32,
+            "latent": 6,
+            "learning_rate": 0.001,
+            "max_train_seconds": 300,
+            "stopping_reason": "configured_epochs_complete",
+            "train_seconds": 7.547359228134155
+          },
+          "val_moving_windows": 2693,
+          "val_windows": 28228
+        },
+        "iforest": {
+          "artifact_id": "61727391c4bcbbfcbfa9a90a995b5b0cc6b9bf887370eb22dface4265e03e368",
+          "baseline_signature": "5217b80a93929011d88beabc6a636aad8fd22ee6c65da1b4e87c36d392f471f2",
+          "bootstrap": false,
+          "contamination": "auto",
+          "contract": {
+            "features": [
+              "dx",
+              "dy",
+              "vx",
+              "vy",
+              "radial_velocity",
+              "rcs",
+              "range"
+            ],
+            "max_gap_cycles": 1,
+            "moving_threshold": 0.3,
+            "reassign_jump_default": 1.0,
+            "roi_max_range": 15.0,
+            "tick_seconds": 0.0001,
+            "window_cycles": 10,
+            "window_policy": "consecutive_cycles_all_points_in_roi"
+          },
+          "fit_windows": 50000,
+          "kind": "iforest",
+          "max_features": 1.0,
+          "max_samples": 256,
+          "normalization_split": "train",
+          "schema_version": 1,
+          "seed": 11,
+          "segments": {
+            "train": [
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 3301,
+                "lo": 0
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 3994,
+                "lo": 0
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 4477,
+                "lo": 0
+              }
+            ],
+            "val": [
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 4127,
+                "lo": 3301
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 4993,
+                "lo": 3994
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 5597,
+                "lo": 4477
+              }
+            ]
+          },
+          "selection_rule": "AE fixed for NumPy CPU inference; IF is an offline comparison; no test selection",
+          "source_sha256": {
+            "multiplePeopleChaotic.csv": "2e08ed3c26c9cb64a5039878b1ef371fc2138ad0aa717efddc2eca1bea952f52",
+            "onePersonMovingFrontAndBack.csv": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e",
+            "onePersonMovingSideToSide.csv": "04f105a1e412abfe4ce0153d8f2787a9b1ee79aba04a0a362b1d44ad4c2a6340"
+          },
+          "tag": "loso_emptyRoom",
+          "threshold_split": "val",
+          "train_moving_windows": 5663,
+          "train_windows": 108602,
+          "trees": 200,
+          "val_moving_windows": 2693,
+          "val_windows": 28228
+        },
+        "replay": {
+          "artifact_id": "b40cbf63d92f92c86216d038552bc0fc5dd1302368d76be214587becd1dc25bc",
+          "baseline_signature": "5217b80a93929011d88beabc6a636aad8fd22ee6c65da1b4e87c36d392f471f2",
+          "contract": {
+            "max_gap_cycles": 1,
+            "moving_threshold": 0.3,
+            "reassign_jump_default": 1.0,
+            "replay": {
+              "disp_quant": 0.2,
+              "history_cycles": 20000,
+              "k_gram": 12,
+              "min_complexity": 4,
+              "vel_quant": 0.25
+            },
+            "roi_max_range": 15.0,
+            "tick_seconds": 0.0001,
+            "window_policy": "consecutive_cycles_all_points_in_roi"
+          },
+          "kind": "replay",
+          "normalization_split": "train",
+          "schema_version": 1,
+          "seed": 11,
+          "segments": {
+            "train": [
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 3301,
+                "lo": 0
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 3994,
+                "lo": 0
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 4477,
+                "lo": 0
+              }
+            ],
+            "val": [
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 4127,
+                "lo": 3301
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 4993,
+                "lo": 3994
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 5597,
+                "lo": 4477
+              }
+            ]
+          },
+          "selection_rule": "AE fixed for NumPy CPU inference; IF is an offline comparison; no test selection",
+          "source_sha256": {
+            "multiplePeopleChaotic.csv": "2e08ed3c26c9cb64a5039878b1ef371fc2138ad0aa717efddc2eca1bea952f52",
+            "onePersonMovingFrontAndBack.csv": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e",
+            "onePersonMovingSideToSide.csv": "04f105a1e412abfe4ce0153d8f2787a9b1ee79aba04a0a362b1d44ad4c2a6340"
+          },
+          "tag": "loso_emptyRoom",
+          "threshold_split": "val",
+          "train_moving_windows": 5663,
+          "train_windows": 108602,
+          "val_moving_windows": 2693,
+          "val_windows": 28228
+        }
+      },
+      "learned_selection": {
+        "comparison_windows": "identical eligible windows and train-only normalization",
+        "model": "ae",
+        "rule": "AE fixed for NumPy CPU inference; IF is an offline comparison; no test selection"
+      },
+      "rr_scale": {
+        "corr": 0.9263789075969155,
+        "n_windows": 286,
+        "rule": "least-squares k in range_rate = k * reported radial velocity, moving in-ROI windows with |v_r| >= 0.5",
+        "split": "train",
+        "value": 0.7885
+      },
+      "soft_quantile": {
+        "iforest_rule": "same selected validation quantile as AE; not used to select operating point",
+        "rule": "no candidate met < 1.0 alerts/min on validation; loosest candidate kept; candidates [0.999, 0.9995, 0.9999, 0.99995, 1.0]",
+        "selection_model": "ae",
+        "split": "val",
+        "table": [
+          {
+            "ae_threshold_moving": 17.156010009314446,
+            "ae_threshold_static": 1.819508221844605,
+            "iforest_threshold_moving": 0.7421116500235729,
+            "iforest_threshold_static": 0.5392048479674515,
+            "quantile": 0.999,
+            "val_alert_events": 25,
+            "val_alerts_per_minute": 15.355,
+            "val_fp_flagged": 0.003101994775587746,
+            "val_minutes": 1.628
+          },
+          {
+            "ae_threshold_moving": 17.793853736536196,
+            "ae_threshold_static": 1.9266244897661333,
+            "iforest_threshold_moving": 0.7444097945624165,
+            "iforest_threshold_static": 0.541755992026749,
+            "quantile": 0.9995,
+            "val_alert_events": 11,
+            "val_alerts_per_minute": 6.756,
+            "val_fp_flagged": 0.0015881025884587985,
+            "val_minutes": 1.628
+          },
+          {
+            "ae_threshold_moving": 17.964618645178984,
+            "ae_threshold_static": 2.504110280437965,
+            "iforest_threshold_moving": 0.7480150536698926,
+            "iforest_threshold_static": 0.5500397408820884,
+            "quantile": 0.9999,
+            "val_alert_events": 3,
+            "val_alerts_per_minute": 1.843,
+            "val_fp_flagged": 0.0005343148895749229,
+            "val_minutes": 1.628
+          },
+          {
+            "ae_threshold_moving": 17.989824788926697,
+            "ae_threshold_static": 2.564885300361237,
+            "iforest_threshold_moving": 0.7485461434392847,
+            "iforest_threshold_static": 0.5538121529210978,
+            "quantile": 0.99995,
+            "val_alert_events": 3,
+            "val_alerts_per_minute": 1.843,
+            "val_fp_flagged": 0.0004749465685110425,
+            "val_minutes": 1.628
+          },
+          {
+            "ae_threshold_moving": 18.015030932674325,
+            "ae_threshold_static": 3.08842510380694,
+            "iforest_threshold_moving": 0.749077233208675,
+            "iforest_threshold_static": 0.556160897054574,
+            "quantile": 1.0,
+            "val_alert_events": 4,
+            "val_alerts_per_minute": 2.457,
+            "val_fp_flagged": 0.00031168368558537167,
+            "val_minutes": 1.628
+          }
+        ],
+        "value": 1.0
+      }
+    },
+    "loso_multiplePeopleChaotic": {
+      "_meta": {
+        "note": "val_exceedance = fraction of held-out clean items (gaps, frames, windows) beyond the threshold; detector-level false-positive rates are reported by scripts/run_attack_eval.py",
+        "train_segments": [
+          {
+            "file": "emptyRoom.csv",
+            "hi": 3502,
+            "lo": 0
+          },
+          {
+            "file": "onePersonMovingFrontAndBack.csv",
+            "hi": 3301,
+            "lo": 0
+          },
+          {
+            "file": "onePersonMovingSideToSide.csv",
+            "hi": 3994,
+            "lo": 0
+          }
+        ],
+        "val_segments": [
+          {
+            "file": "emptyRoom.csv",
+            "hi": 4378,
+            "lo": 3502
+          },
+          {
+            "file": "onePersonMovingFrontAndBack.csv",
+            "hi": 4127,
+            "lo": 3301
+          },
+          {
+            "file": "onePersonMovingSideToSide.csv",
+            "hi": 4993,
+            "lo": 3994
+          }
+        ]
+      },
+      "ae_threshold_moving": {
+        "n_windows": 1120,
+        "quantile": 1.0,
+        "rule": "q1.0 of VALIDATION clean AE reconstruction error score (moving windows, window=10 cycles)",
+        "split": "val",
+        "train_exceedance": 0.0019280205655526992,
+        "train_windows": 1556,
+        "value": 68.93410534300735
+      },
+      "ae_threshold_static": {
+        "n_windows": 24063,
+        "quantile": 1.0,
+        "rule": "q1.0 of VALIDATION clean AE reconstruction error score (static windows, window=10 cycles)",
+        "split": "val",
+        "train_exceedance": 0.0005595691317685382,
+        "train_windows": 100077,
+        "value": 4.4840337902329415
+      },
+      "fusion_mn": {
+        "rule": "fewest CLEAN validation alert events over mn_candidates; ties -> smallest N (fastest detection); no attack labels used",
+        "split": "val",
+        "table": [
+          {
+            "m": 3,
+            "n": 5,
+            "val_alert_events": 2,
+            "val_alerts_per_minute": 1.34,
+            "val_minutes": 1.493
+          },
+          {
+            "m": 4,
+            "n": 6,
+            "val_alert_events": 1,
+            "val_alerts_per_minute": 0.67,
+            "val_minutes": 1.493
+          },
+          {
+            "m": 5,
+            "n": 8,
+            "val_alert_events": 1,
+            "val_alerts_per_minute": 0.67,
+            "val_minutes": 1.493
+          }
+        ],
+        "value": [
+          4,
+          6
+        ]
+      },
+      "iforest_threshold_moving": {
+        "n_windows": 1120,
+        "quantile": 1.0,
+        "rule": "q1.0 of VALIDATION clean isolation-forest anomaly score (moving windows, window=10 cycles)",
+        "split": "val",
+        "value": 0.761198917113057
+      },
+      "iforest_threshold_static": {
+        "n_windows": 24063,
+        "quantile": 1.0,
+        "rule": "q1.0 of VALIDATION clean isolation-forest anomaly score (static windows, window=10 cycles)",
+        "split": "val",
+        "value": 0.6431712177484037
+      },
+      "learned_artifacts": {
+        "ae": {
+          "artifact_id": "3848287c3be5fd33cdf6f304fbc178bdbd355c4f961a79fa20d9ab9013c9e664",
+          "baseline_signature": "445a85afa2b34b03b72c8c7b9022fb79bc58dca4bb2a67255ea05611a9c135df",
+          "contract": {
+            "features": [
+              "dx",
+              "dy",
+              "vx",
+              "vy",
+              "radial_velocity",
+              "rcs",
+              "range"
+            ],
+            "max_gap_cycles": 1,
+            "moving_threshold": 0.3,
+            "reassign_jump_default": 1.0,
+            "roi_max_range": 15.0,
+            "tick_seconds": 0.0001,
+            "window_cycles": 10,
+            "window_policy": "consecutive_cycles_all_points_in_roi"
+          },
+          "kind": "ae",
+          "normalization_split": "train",
+          "schema_version": 1,
+          "seed": 11,
+          "segments": {
+            "train": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 3502,
+                "lo": 0
+              },
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 3301,
+                "lo": 0
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 3994,
+                "lo": 0
+              }
+            ],
+            "val": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 4378,
+                "lo": 3502
+              },
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 4127,
+                "lo": 3301
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 4993,
+                "lo": 3994
+              }
+            ]
+          },
+          "selection_rule": "AE fixed for NumPy CPU inference; IF is an offline comparison; no test selection",
+          "source_sha256": {
+            "emptyRoom.csv": "13fb666d6525e90f42bf823c7a938ee96d5819f5b541a834edda631bf6be2ebc",
+            "onePersonMovingFrontAndBack.csv": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e",
+            "onePersonMovingSideToSide.csv": "04f105a1e412abfe4ce0153d8f2787a9b1ee79aba04a0a362b1d44ad4c2a6340"
+          },
+          "tag": "loso_multiplePeopleChaotic",
+          "threshold_split": "val",
+          "train_moving_windows": 1556,
+          "train_windows": 101633,
+          "training": {
+            "batch_size": 512,
+            "epochs_completed": 30,
+            "epochs_configured": 30,
+            "hidden": 32,
+            "latent": 6,
+            "learning_rate": 0.001,
+            "max_train_seconds": 300,
+            "stopping_reason": "configured_epochs_complete",
+            "train_seconds": 7.033258438110352
+          },
+          "val_moving_windows": 1120,
+          "val_windows": 25183
+        },
+        "iforest": {
+          "artifact_id": "91a13cc7088b7f24b5ac36f4e9d8010c1b3a67379559a62923e75e553caadeba",
+          "baseline_signature": "445a85afa2b34b03b72c8c7b9022fb79bc58dca4bb2a67255ea05611a9c135df",
+          "bootstrap": false,
+          "contamination": "auto",
+          "contract": {
+            "features": [
+              "dx",
+              "dy",
+              "vx",
+              "vy",
+              "radial_velocity",
+              "rcs",
+              "range"
+            ],
+            "max_gap_cycles": 1,
+            "moving_threshold": 0.3,
+            "reassign_jump_default": 1.0,
+            "roi_max_range": 15.0,
+            "tick_seconds": 0.0001,
+            "window_cycles": 10,
+            "window_policy": "consecutive_cycles_all_points_in_roi"
+          },
+          "fit_windows": 50000,
+          "kind": "iforest",
+          "max_features": 1.0,
+          "max_samples": 256,
+          "normalization_split": "train",
+          "schema_version": 1,
+          "seed": 11,
+          "segments": {
+            "train": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 3502,
+                "lo": 0
+              },
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 3301,
+                "lo": 0
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 3994,
+                "lo": 0
+              }
+            ],
+            "val": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 4378,
+                "lo": 3502
+              },
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 4127,
+                "lo": 3301
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 4993,
+                "lo": 3994
+              }
+            ]
+          },
+          "selection_rule": "AE fixed for NumPy CPU inference; IF is an offline comparison; no test selection",
+          "source_sha256": {
+            "emptyRoom.csv": "13fb666d6525e90f42bf823c7a938ee96d5819f5b541a834edda631bf6be2ebc",
+            "onePersonMovingFrontAndBack.csv": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e",
+            "onePersonMovingSideToSide.csv": "04f105a1e412abfe4ce0153d8f2787a9b1ee79aba04a0a362b1d44ad4c2a6340"
+          },
+          "tag": "loso_multiplePeopleChaotic",
+          "threshold_split": "val",
+          "train_moving_windows": 1556,
+          "train_windows": 101633,
+          "trees": 200,
+          "val_moving_windows": 1120,
+          "val_windows": 25183
+        },
+        "replay": {
+          "artifact_id": "479fd33d5f153a16237daa6fc91fdaaa0ad90744f68a0554f38e01996380cf96",
+          "baseline_signature": "445a85afa2b34b03b72c8c7b9022fb79bc58dca4bb2a67255ea05611a9c135df",
+          "contract": {
+            "max_gap_cycles": 1,
+            "moving_threshold": 0.3,
+            "reassign_jump_default": 1.0,
+            "replay": {
+              "disp_quant": 0.2,
+              "history_cycles": 20000,
+              "k_gram": 12,
+              "min_complexity": 4,
+              "vel_quant": 0.25
+            },
+            "roi_max_range": 15.0,
+            "tick_seconds": 0.0001,
+            "window_policy": "consecutive_cycles_all_points_in_roi"
+          },
+          "kind": "replay",
+          "normalization_split": "train",
+          "schema_version": 1,
+          "seed": 11,
+          "segments": {
+            "train": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 3502,
+                "lo": 0
+              },
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 3301,
+                "lo": 0
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 3994,
+                "lo": 0
+              }
+            ],
+            "val": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 4378,
+                "lo": 3502
+              },
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 4127,
+                "lo": 3301
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 4993,
+                "lo": 3994
+              }
+            ]
+          },
+          "selection_rule": "AE fixed for NumPy CPU inference; IF is an offline comparison; no test selection",
+          "source_sha256": {
+            "emptyRoom.csv": "13fb666d6525e90f42bf823c7a938ee96d5819f5b541a834edda631bf6be2ebc",
+            "onePersonMovingFrontAndBack.csv": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e",
+            "onePersonMovingSideToSide.csv": "04f105a1e412abfe4ce0153d8f2787a9b1ee79aba04a0a362b1d44ad4c2a6340"
+          },
+          "tag": "loso_multiplePeopleChaotic",
+          "threshold_split": "val",
+          "train_moving_windows": 1556,
+          "train_windows": 101633,
+          "val_moving_windows": 1120,
+          "val_windows": 25183
+        }
+      },
+      "learned_selection": {
+        "comparison_windows": "identical eligible windows and train-only normalization",
+        "model": "ae",
+        "rule": "AE fixed for NumPy CPU inference; IF is an offline comparison; no test selection"
+      },
+      "rr_scale": {
+        "corr": 0.9202576146850026,
+        "n_windows": 60,
+        "rule": "least-squares k in range_rate = k * reported radial velocity, moving in-ROI windows with |v_r| >= 0.5",
+        "split": "train",
+        "value": 0.7021
+      },
+      "soft_quantile": {
+        "iforest_rule": "same selected validation quantile as AE; not used to select operating point",
+        "rule": "no candidate met < 1.0 alerts/min on validation; loosest candidate kept; candidates [0.999, 0.9995, 0.9999, 0.99995, 1.0]",
+        "selection_model": "ae",
+        "split": "val",
+        "table": [
+          {
+            "ae_threshold_moving": 64.46188549579932,
+            "ae_threshold_static": 2.7185876930419757,
+            "iforest_threshold_moving": 0.7544424269064506,
+            "iforest_threshold_static": 0.6268636487983098,
+            "quantile": 0.999,
+            "val_alert_events": 28,
+            "val_alerts_per_minute": 18.754,
+            "val_fp_flagged": 0.0037015805421341413,
+            "val_minutes": 1.493
+          },
+          {
+            "ae_threshold_moving": 66.72767373593375,
+            "ae_threshold_static": 3.068434483761587,
+            "iforest_threshold_moving": 0.7574586480314731,
+            "iforest_threshold_static": 0.6311425393299441,
+            "quantile": 0.9995,
+            "val_alert_events": 15,
+            "val_alerts_per_minute": 10.047,
+            "val_fp_flagged": 0.002391286544918516,
+            "val_minutes": 1.493
+          },
+          {
+            "ae_threshold_moving": 68.49281902159298,
+            "ae_threshold_static": 3.7188968518804413,
+            "iforest_threshold_moving": 0.7604508632967408,
+            "iforest_threshold_static": 0.6379213974206926,
+            "quantile": 0.9999,
+            "val_alert_events": 5,
+            "val_alerts_per_minute": 3.349,
+            "val_fp_flagged": 0.0008025550732945704,
+            "val_minutes": 1.493
+          },
+          {
+            "ae_threshold_moving": 68.71346218230016,
+            "ae_threshold_static": 3.797375626373337,
+            "iforest_threshold_moving": 0.7608248902048989,
+            "iforest_threshold_static": 0.6404168655675859,
+            "quantile": 0.99995,
+            "val_alert_events": 3,
+            "val_alerts_per_minute": 2.009,
+            "val_fp_flagged": 0.0005896322987470313,
+            "val_minutes": 1.493
+          },
+          {
+            "ae_threshold_moving": 68.93410534300735,
+            "ae_threshold_static": 4.4840337902329415,
+            "iforest_threshold_moving": 0.761198917113057,
+            "iforest_threshold_static": 0.6431712177484037,
+            "quantile": 1.0,
+            "val_alert_events": 2,
+            "val_alerts_per_minute": 1.34,
+            "val_fp_flagged": 0.00018016542461714847,
+            "val_minutes": 1.493
+          }
+        ],
+        "value": 1.0
+      }
+    },
+    "loso_onePersonMovingFrontAndBack": {
+      "_meta": {
+        "note": "val_exceedance = fraction of held-out clean items (gaps, frames, windows) beyond the threshold; detector-level false-positive rates are reported by scripts/run_attack_eval.py",
+        "train_segments": [
+          {
+            "file": "emptyRoom.csv",
+            "hi": 3502,
+            "lo": 0
+          },
+          {
+            "file": "onePersonMovingSideToSide.csv",
+            "hi": 3994,
+            "lo": 0
+          },
+          {
+            "file": "multiplePeopleChaotic.csv",
+            "hi": 4477,
+            "lo": 0
+          }
+        ],
+        "val_segments": [
+          {
+            "file": "emptyRoom.csv",
+            "hi": 4378,
+            "lo": 3502
+          },
+          {
+            "file": "onePersonMovingSideToSide.csv",
+            "hi": 4993,
+            "lo": 3994
+          },
+          {
+            "file": "multiplePeopleChaotic.csv",
+            "hi": 5597,
+            "lo": 4477
+          }
+        ]
+      },
+      "ae_threshold_moving": {
+        "n_windows": 2275,
+        "quantile": 1.0,
+        "rule": "q1.0 of VALIDATION clean AE reconstruction error score (moving windows, window=10 cycles)",
+        "split": "val",
+        "train_exceedance": 0.011924725172349543,
+        "train_windows": 5367,
+        "value": 13.2566966237237
+      },
+      "ae_threshold_static": {
+        "n_windows": 26818,
+        "quantile": 1.0,
+        "rule": "q1.0 of VALIDATION clean AE reconstruction error score (static windows, window=10 cycles)",
+        "split": "val",
+        "train_exceedance": 0.0009434567154882617,
+        "train_windows": 109173,
+        "value": 2.8827119732419755
+      },
+      "fusion_mn": {
+        "rule": "fewest CLEAN validation alert events over mn_candidates; ties -> smallest N (fastest detection); no attack labels used",
+        "split": "val",
+        "table": [
+          {
+            "m": 3,
+            "n": 5,
+            "val_alert_events": 1,
+            "val_alerts_per_minute": 0.604,
+            "val_minutes": 1.656
+          },
+          {
+            "m": 4,
+            "n": 6,
+            "val_alert_events": 0,
+            "val_alerts_per_minute": 0.0,
+            "val_minutes": 1.656
+          },
+          {
+            "m": 5,
+            "n": 8,
+            "val_alert_events": 0,
+            "val_alerts_per_minute": 0.0,
+            "val_minutes": 1.656
+          }
+        ],
+        "value": [
+          4,
+          6
+        ]
+      },
+      "iforest_threshold_moving": {
+        "n_windows": 2275,
+        "quantile": 1.0,
+        "rule": "q1.0 of VALIDATION clean isolation-forest anomaly score (moving windows, window=10 cycles)",
+        "split": "val",
+        "value": 0.7455322403060954
+      },
+      "iforest_threshold_static": {
+        "n_windows": 26818,
+        "quantile": 1.0,
+        "rule": "q1.0 of VALIDATION clean isolation-forest anomaly score (static windows, window=10 cycles)",
+        "split": "val",
+        "value": 0.5553712580673497
+      },
+      "learned_artifacts": {
+        "ae": {
+          "artifact_id": "018142692834b3b5cfd4426b5d8e7170935e14dac0041a43146c208d249f5ff0",
+          "baseline_signature": "8c3b803030b39a986262df0842d1ae7e580dfeedbf1bfc5bd4bef19a196d6dcc",
+          "contract": {
+            "features": [
+              "dx",
+              "dy",
+              "vx",
+              "vy",
+              "radial_velocity",
+              "rcs",
+              "range"
+            ],
+            "max_gap_cycles": 1,
+            "moving_threshold": 0.3,
+            "reassign_jump_default": 1.0,
+            "roi_max_range": 15.0,
+            "tick_seconds": 0.0001,
+            "window_cycles": 10,
+            "window_policy": "consecutive_cycles_all_points_in_roi"
+          },
+          "kind": "ae",
+          "normalization_split": "train",
+          "schema_version": 1,
+          "seed": 11,
+          "segments": {
+            "train": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 3502,
+                "lo": 0
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 3994,
+                "lo": 0
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 4477,
+                "lo": 0
+              }
+            ],
+            "val": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 4378,
+                "lo": 3502
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 4993,
+                "lo": 3994
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 5597,
+                "lo": 4477
+              }
+            ]
+          },
+          "selection_rule": "AE fixed for NumPy CPU inference; IF is an offline comparison; no test selection",
+          "source_sha256": {
+            "emptyRoom.csv": "13fb666d6525e90f42bf823c7a938ee96d5819f5b541a834edda631bf6be2ebc",
+            "multiplePeopleChaotic.csv": "2e08ed3c26c9cb64a5039878b1ef371fc2138ad0aa717efddc2eca1bea952f52",
+            "onePersonMovingSideToSide.csv": "04f105a1e412abfe4ce0153d8f2787a9b1ee79aba04a0a362b1d44ad4c2a6340"
+          },
+          "tag": "loso_onePersonMovingFrontAndBack",
+          "threshold_split": "val",
+          "train_moving_windows": 5367,
+          "train_windows": 114540,
+          "training": {
+            "batch_size": 512,
+            "epochs_completed": 30,
+            "epochs_configured": 30,
+            "hidden": 32,
+            "latent": 6,
+            "learning_rate": 0.001,
+            "max_train_seconds": 300,
+            "stopping_reason": "configured_epochs_complete",
+            "train_seconds": 7.853057146072388
+          },
+          "val_moving_windows": 2275,
+          "val_windows": 29093
+        },
+        "iforest": {
+          "artifact_id": "a2338ee0066d0dc32a9e79c7e136aca5e10038a033448be68fb69c27333f214c",
+          "baseline_signature": "8c3b803030b39a986262df0842d1ae7e580dfeedbf1bfc5bd4bef19a196d6dcc",
+          "bootstrap": false,
+          "contamination": "auto",
+          "contract": {
+            "features": [
+              "dx",
+              "dy",
+              "vx",
+              "vy",
+              "radial_velocity",
+              "rcs",
+              "range"
+            ],
+            "max_gap_cycles": 1,
+            "moving_threshold": 0.3,
+            "reassign_jump_default": 1.0,
+            "roi_max_range": 15.0,
+            "tick_seconds": 0.0001,
+            "window_cycles": 10,
+            "window_policy": "consecutive_cycles_all_points_in_roi"
+          },
+          "fit_windows": 50000,
+          "kind": "iforest",
+          "max_features": 1.0,
+          "max_samples": 256,
+          "normalization_split": "train",
+          "schema_version": 1,
+          "seed": 11,
+          "segments": {
+            "train": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 3502,
+                "lo": 0
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 3994,
+                "lo": 0
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 4477,
+                "lo": 0
+              }
+            ],
+            "val": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 4378,
+                "lo": 3502
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 4993,
+                "lo": 3994
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 5597,
+                "lo": 4477
+              }
+            ]
+          },
+          "selection_rule": "AE fixed for NumPy CPU inference; IF is an offline comparison; no test selection",
+          "source_sha256": {
+            "emptyRoom.csv": "13fb666d6525e90f42bf823c7a938ee96d5819f5b541a834edda631bf6be2ebc",
+            "multiplePeopleChaotic.csv": "2e08ed3c26c9cb64a5039878b1ef371fc2138ad0aa717efddc2eca1bea952f52",
+            "onePersonMovingSideToSide.csv": "04f105a1e412abfe4ce0153d8f2787a9b1ee79aba04a0a362b1d44ad4c2a6340"
+          },
+          "tag": "loso_onePersonMovingFrontAndBack",
+          "threshold_split": "val",
+          "train_moving_windows": 5367,
+          "train_windows": 114540,
+          "trees": 200,
+          "val_moving_windows": 2275,
+          "val_windows": 29093
+        },
+        "replay": {
+          "artifact_id": "fc2492554ab09720055d07e6b2a38896a877a668ae0cd31b48b7cf76a92da0a8",
+          "baseline_signature": "8c3b803030b39a986262df0842d1ae7e580dfeedbf1bfc5bd4bef19a196d6dcc",
+          "contract": {
+            "max_gap_cycles": 1,
+            "moving_threshold": 0.3,
+            "reassign_jump_default": 1.0,
+            "replay": {
+              "disp_quant": 0.2,
+              "history_cycles": 20000,
+              "k_gram": 12,
+              "min_complexity": 4,
+              "vel_quant": 0.25
+            },
+            "roi_max_range": 15.0,
+            "tick_seconds": 0.0001,
+            "window_policy": "consecutive_cycles_all_points_in_roi"
+          },
+          "kind": "replay",
+          "normalization_split": "train",
+          "schema_version": 1,
+          "seed": 11,
+          "segments": {
+            "train": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 3502,
+                "lo": 0
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 3994,
+                "lo": 0
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 4477,
+                "lo": 0
+              }
+            ],
+            "val": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 4378,
+                "lo": 3502
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 4993,
+                "lo": 3994
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 5597,
+                "lo": 4477
+              }
+            ]
+          },
+          "selection_rule": "AE fixed for NumPy CPU inference; IF is an offline comparison; no test selection",
+          "source_sha256": {
+            "emptyRoom.csv": "13fb666d6525e90f42bf823c7a938ee96d5819f5b541a834edda631bf6be2ebc",
+            "multiplePeopleChaotic.csv": "2e08ed3c26c9cb64a5039878b1ef371fc2138ad0aa717efddc2eca1bea952f52",
+            "onePersonMovingSideToSide.csv": "04f105a1e412abfe4ce0153d8f2787a9b1ee79aba04a0a362b1d44ad4c2a6340"
+          },
+          "tag": "loso_onePersonMovingFrontAndBack",
+          "threshold_split": "val",
+          "train_moving_windows": 5367,
+          "train_windows": 114540,
+          "val_moving_windows": 2275,
+          "val_windows": 29093
+        }
+      },
+      "learned_selection": {
+        "comparison_windows": "identical eligible windows and train-only normalization",
+        "model": "ae",
+        "rule": "AE fixed for NumPy CPU inference; IF is an offline comparison; no test selection"
+      },
+      "rr_scale": {
+        "corr": 0.9365279672632698,
+        "n_windows": 255,
+        "rule": "least-squares k in range_rate = k * reported radial velocity, moving in-ROI windows with |v_r| >= 0.5",
+        "split": "train",
+        "value": 0.8118
+      },
+      "soft_quantile": {
+        "iforest_rule": "same selected validation quantile as AE; not used to select operating point",
+        "rule": "smallest candidate quantile with validation alerts/min < 1.0; candidates [0.999, 0.9995, 0.9999, 0.99995, 1.0]",
+        "selection_model": "ae",
+        "split": "val",
+        "table": [
+          {
+            "ae_threshold_moving": 11.905223503778783,
+            "ae_threshold_static": 2.099857172047382,
+            "iforest_threshold_moving": 0.7400725051483669,
+            "iforest_threshold_static": 0.535178490474367,
+            "quantile": 0.999,
+            "val_alert_events": 21,
+            "val_alerts_per_minute": 12.683,
+            "val_fp_flagged": 0.002104238537625789,
+            "val_minutes": 1.656
+          },
+          {
+            "ae_threshold_moving": 12.334862708582051,
+            "ae_threshold_static": 2.2398300883487723,
+            "iforest_threshold_moving": 0.7426926335469277,
+            "iforest_threshold_static": 0.5390377751536806,
+            "quantile": 0.9995,
+            "val_alert_events": 15,
+            "val_alerts_per_minute": 9.059,
+            "val_fp_flagged": 0.0012167365693754562,
+            "val_minutes": 1.656
+          },
+          {
+            "ae_threshold_moving": 13.060952700682202,
+            "ae_threshold_static": 2.373995873766932,
+            "iforest_threshold_moving": 0.7449597109331164,
+            "iforest_threshold_static": 0.5468936175316828,
+            "quantile": 0.9999,
+            "val_alert_events": 5,
+            "val_alerts_per_minute": 3.02,
+            "val_fp_flagged": 0.00042943643625016105,
+            "val_minutes": 1.656
+          },
+          {
+            "ae_threshold_moving": 13.158824662202951,
+            "ae_threshold_static": 2.4071406140751743,
+            "iforest_threshold_moving": 0.7452459756196059,
+            "iforest_threshold_static": 0.5532568058823361,
+            "quantile": 0.99995,
+            "val_alert_events": 5,
+            "val_alerts_per_minute": 3.02,
+            "val_fp_flagged": 0.0004008073405001503,
+            "val_minutes": 1.656
+          },
+          {
+            "ae_threshold_moving": 13.2566966237237,
+            "ae_threshold_static": 2.8827119732419755,
+            "iforest_threshold_moving": 0.7455322403060954,
+            "iforest_threshold_static": 0.5553712580673497,
+            "quantile": 1.0,
+            "val_alert_events": 1,
+            "val_alerts_per_minute": 0.604,
+            "val_fp_flagged": 0.00010020183512503758,
+            "val_minutes": 1.656
+          }
+        ],
+        "value": 1.0
+      }
+    },
+    "loso_onePersonMovingSideToSide": {
+      "_meta": {
+        "note": "val_exceedance = fraction of held-out clean items (gaps, frames, windows) beyond the threshold; detector-level false-positive rates are reported by scripts/run_attack_eval.py",
+        "train_segments": [
+          {
+            "file": "emptyRoom.csv",
+            "hi": 3502,
+            "lo": 0
+          },
+          {
+            "file": "onePersonMovingFrontAndBack.csv",
+            "hi": 3301,
+            "lo": 0
+          },
+          {
+            "file": "multiplePeopleChaotic.csv",
+            "hi": 4477,
+            "lo": 0
+          }
+        ],
+        "val_segments": [
+          {
+            "file": "emptyRoom.csv",
+            "hi": 4378,
+            "lo": 3502
+          },
+          {
+            "file": "onePersonMovingFrontAndBack.csv",
+            "hi": 4127,
+            "lo": 3301
+          },
+          {
+            "file": "multiplePeopleChaotic.csv",
+            "hi": 5597,
+            "lo": 4477
+          }
+        ]
+      },
+      "ae_threshold_moving": {
+        "n_windows": 1991,
+        "quantile": 1.0,
+        "rule": "q1.0 of VALIDATION clean AE reconstruction error score (moving windows, window=10 cycles)",
+        "split": "val",
+        "train_exceedance": 0.0034067681126504655,
+        "train_windows": 4403,
+        "value": 22.161756867780245
+      },
+      "ae_threshold_static": {
+        "n_windows": 24810,
+        "quantile": 1.0,
+        "rule": "q1.0 of VALIDATION clean AE reconstruction error score (static windows, window=10 cycles)",
+        "split": "val",
+        "train_exceedance": 0.000604169761798643,
+        "train_windows": 100965,
+        "value": 3.574024058580431
+      },
+      "fusion_mn": {
+        "rule": "fewest CLEAN validation alert events over mn_candidates; ties -> smallest N (fastest detection); no attack labels used",
+        "split": "val",
+        "table": [
+          {
+            "m": 3,
+            "n": 5,
+            "val_alert_events": 5,
+            "val_alerts_per_minute": 3.205,
+            "val_minutes": 1.56
+          },
+          {
+            "m": 4,
+            "n": 6,
+            "val_alert_events": 4,
+            "val_alerts_per_minute": 2.564,
+            "val_minutes": 1.56
+          },
+          {
+            "m": 5,
+            "n": 8,
+            "val_alert_events": 3,
+            "val_alerts_per_minute": 1.923,
+            "val_minutes": 1.56
+          }
+        ],
+        "value": [
+          5,
+          8
+        ]
+      },
+      "iforest_threshold_moving": {
+        "n_windows": 1991,
+        "quantile": 1.0,
+        "rule": "q1.0 of VALIDATION clean isolation-forest anomaly score (moving windows, window=10 cycles)",
+        "split": "val",
+        "value": 0.7322273671793202
+      },
+      "iforest_threshold_static": {
+        "n_windows": 24810,
+        "quantile": 1.0,
+        "rule": "q1.0 of VALIDATION clean isolation-forest anomaly score (static windows, window=10 cycles)",
+        "split": "val",
+        "value": 0.5724876100044348
+      },
+      "learned_artifacts": {
+        "ae": {
+          "artifact_id": "d438b234162900e41a76fc4a22df91d4fb9cc22ea1c0e3c5a43daef590ee632b",
+          "baseline_signature": "62b8eefd37895ddb174343c522604ff3d7c4bc1abcb4f2cd73928ab372054139",
+          "contract": {
+            "features": [
+              "dx",
+              "dy",
+              "vx",
+              "vy",
+              "radial_velocity",
+              "rcs",
+              "range"
+            ],
+            "max_gap_cycles": 1,
+            "moving_threshold": 0.3,
+            "reassign_jump_default": 1.0,
+            "roi_max_range": 15.0,
+            "tick_seconds": 0.0001,
+            "window_cycles": 10,
+            "window_policy": "consecutive_cycles_all_points_in_roi"
+          },
+          "kind": "ae",
+          "normalization_split": "train",
+          "schema_version": 1,
+          "seed": 11,
+          "segments": {
+            "train": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 3502,
+                "lo": 0
+              },
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 3301,
+                "lo": 0
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 4477,
+                "lo": 0
+              }
+            ],
+            "val": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 4378,
+                "lo": 3502
+              },
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 4127,
+                "lo": 3301
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 5597,
+                "lo": 4477
+              }
+            ]
+          },
+          "selection_rule": "AE fixed for NumPy CPU inference; IF is an offline comparison; no test selection",
+          "source_sha256": {
+            "emptyRoom.csv": "13fb666d6525e90f42bf823c7a938ee96d5819f5b541a834edda631bf6be2ebc",
+            "multiplePeopleChaotic.csv": "2e08ed3c26c9cb64a5039878b1ef371fc2138ad0aa717efddc2eca1bea952f52",
+            "onePersonMovingFrontAndBack.csv": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e"
+          },
+          "tag": "loso_onePersonMovingSideToSide",
+          "threshold_split": "val",
+          "train_moving_windows": 4403,
+          "train_windows": 105368,
+          "training": {
+            "batch_size": 512,
+            "epochs_completed": 30,
+            "epochs_configured": 30,
+            "hidden": 32,
+            "latent": 6,
+            "learning_rate": 0.001,
+            "max_train_seconds": 300,
+            "stopping_reason": "configured_epochs_complete",
+            "train_seconds": 7.205024719238281
+          },
+          "val_moving_windows": 1991,
+          "val_windows": 26801
+        },
+        "iforest": {
+          "artifact_id": "b095954d93668ddeef8fba5f1eeb4978147a540862838acd23efe0e54bc0b59f",
+          "baseline_signature": "62b8eefd37895ddb174343c522604ff3d7c4bc1abcb4f2cd73928ab372054139",
+          "bootstrap": false,
+          "contamination": "auto",
+          "contract": {
+            "features": [
+              "dx",
+              "dy",
+              "vx",
+              "vy",
+              "radial_velocity",
+              "rcs",
+              "range"
+            ],
+            "max_gap_cycles": 1,
+            "moving_threshold": 0.3,
+            "reassign_jump_default": 1.0,
+            "roi_max_range": 15.0,
+            "tick_seconds": 0.0001,
+            "window_cycles": 10,
+            "window_policy": "consecutive_cycles_all_points_in_roi"
+          },
+          "fit_windows": 50000,
+          "kind": "iforest",
+          "max_features": 1.0,
+          "max_samples": 256,
+          "normalization_split": "train",
+          "schema_version": 1,
+          "seed": 11,
+          "segments": {
+            "train": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 3502,
+                "lo": 0
+              },
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 3301,
+                "lo": 0
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 4477,
+                "lo": 0
+              }
+            ],
+            "val": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 4378,
+                "lo": 3502
+              },
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 4127,
+                "lo": 3301
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 5597,
+                "lo": 4477
+              }
+            ]
+          },
+          "selection_rule": "AE fixed for NumPy CPU inference; IF is an offline comparison; no test selection",
+          "source_sha256": {
+            "emptyRoom.csv": "13fb666d6525e90f42bf823c7a938ee96d5819f5b541a834edda631bf6be2ebc",
+            "multiplePeopleChaotic.csv": "2e08ed3c26c9cb64a5039878b1ef371fc2138ad0aa717efddc2eca1bea952f52",
+            "onePersonMovingFrontAndBack.csv": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e"
+          },
+          "tag": "loso_onePersonMovingSideToSide",
+          "threshold_split": "val",
+          "train_moving_windows": 4403,
+          "train_windows": 105368,
+          "trees": 200,
+          "val_moving_windows": 1991,
+          "val_windows": 26801
+        },
+        "replay": {
+          "artifact_id": "032465bedb54c1e0d16a98aeb13019ece917a51e873b06bca442831ddd3922ba",
+          "baseline_signature": "62b8eefd37895ddb174343c522604ff3d7c4bc1abcb4f2cd73928ab372054139",
+          "contract": {
+            "max_gap_cycles": 1,
+            "moving_threshold": 0.3,
+            "reassign_jump_default": 1.0,
+            "replay": {
+              "disp_quant": 0.2,
+              "history_cycles": 20000,
+              "k_gram": 12,
+              "min_complexity": 4,
+              "vel_quant": 0.25
+            },
+            "roi_max_range": 15.0,
+            "tick_seconds": 0.0001,
+            "window_policy": "consecutive_cycles_all_points_in_roi"
+          },
+          "kind": "replay",
+          "normalization_split": "train",
+          "schema_version": 1,
+          "seed": 11,
+          "segments": {
+            "train": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 3502,
+                "lo": 0
+              },
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 3301,
+                "lo": 0
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 4477,
+                "lo": 0
+              }
+            ],
+            "val": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 4378,
+                "lo": 3502
+              },
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 4127,
+                "lo": 3301
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 5597,
+                "lo": 4477
+              }
+            ]
+          },
+          "selection_rule": "AE fixed for NumPy CPU inference; IF is an offline comparison; no test selection",
+          "source_sha256": {
+            "emptyRoom.csv": "13fb666d6525e90f42bf823c7a938ee96d5819f5b541a834edda631bf6be2ebc",
+            "multiplePeopleChaotic.csv": "2e08ed3c26c9cb64a5039878b1ef371fc2138ad0aa717efddc2eca1bea952f52",
+            "onePersonMovingFrontAndBack.csv": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e"
+          },
+          "tag": "loso_onePersonMovingSideToSide",
+          "threshold_split": "val",
+          "train_moving_windows": 4403,
+          "train_windows": 105368,
+          "val_moving_windows": 1991,
+          "val_windows": 26801
+        }
+      },
+      "learned_selection": {
+        "comparison_windows": "identical eligible windows and train-only normalization",
+        "model": "ae",
+        "rule": "AE fixed for NumPy CPU inference; IF is an offline comparison; no test selection"
+      },
+      "rr_scale": {
+        "corr": 0.9182496531300698,
+        "n_windows": 257,
+        "rule": "least-squares k in range_rate = k * reported radial velocity, moving in-ROI windows with |v_r| >= 0.5",
+        "split": "train",
+        "value": 0.7832
+      },
+      "soft_quantile": {
+        "iforest_rule": "same selected validation quantile as AE; not used to select operating point",
+        "rule": "no candidate met < 1.0 alerts/min on validation; loosest candidate kept; candidates [0.999, 0.9995, 0.9999, 0.99995, 1.0]",
+        "selection_model": "ae",
+        "split": "val",
+        "table": [
+          {
+            "ae_threshold_moving": 20.965357005113425,
+            "ae_threshold_static": 2.1174677327490348,
+            "iforest_threshold_moving": 0.7272596107406513,
+            "iforest_threshold_static": 0.5492532377230147,
+            "quantile": 0.999,
+            "val_alert_events": 22,
+            "val_alerts_per_minute": 14.103,
+            "val_fp_flagged": 0.0029690137448758138,
+            "val_minutes": 1.56
+          },
+          {
+            "ae_threshold_moving": 22.056530806380398,
+            "ae_threshold_static": 2.2423141194867746,
+            "iforest_threshold_moving": 0.7280440928494809,
+            "iforest_threshold_static": 0.5571226326944877,
+            "quantile": 0.9995,
+            "val_alert_events": 9,
+            "val_alerts_per_minute": 5.769,
+            "val_fp_flagged": 0.0015523269833614662,
+            "val_minutes": 1.56
+          },
+          {
+            "ae_threshold_moving": 22.140711655500265,
+            "ae_threshold_static": 2.8482124076591697,
+            "iforest_threshold_moving": 0.731390712313352,
+            "iforest_threshold_static": 0.5628380956355571,
+            "quantile": 0.9999,
+            "val_alert_events": 4,
+            "val_alerts_per_minute": 2.564,
+            "val_fp_flagged": 0.0006329877019532192,
+            "val_minutes": 1.56
+          },
+          {
+            "ae_threshold_moving": 22.151234261640255,
+            "ae_threshold_static": 3.0735294136391333,
+            "iforest_threshold_moving": 0.7318090397463362,
+            "iforest_threshold_static": 0.5638571559869958,
+            "quantile": 0.99995,
+            "val_alert_events": 4,
+            "val_alerts_per_minute": 2.564,
+            "val_fp_flagged": 0.0005576320231492645,
+            "val_minutes": 1.56
+          },
+          {
+            "ae_threshold_moving": 22.161756867780245,
+            "ae_threshold_static": 3.574024058580431,
+            "iforest_threshold_moving": 0.7322273671793202,
+            "iforest_threshold_static": 0.5724876100044348,
+            "quantile": 1.0,
+            "val_alert_events": 5,
+            "val_alerts_per_minute": 3.205,
+            "val_fp_flagged": 0.00042199180130214614,
+            "val_minutes": 1.56
+          }
+        ],
+        "value": 1.0
+      }
+    },
+    "timeblock": {
+      "_meta": {
+        "note": "val_exceedance = fraction of held-out clean items (gaps, frames, windows) beyond the threshold; detector-level false-positive rates are reported by scripts/run_attack_eval.py",
+        "train_segments": [
+          {
+            "file": "emptyRoom.csv",
+            "hi": 2626,
+            "lo": 0
+          },
+          {
+            "file": "onePersonMovingFrontAndBack.csv",
+            "hi": 2476,
+            "lo": 0
+          },
+          {
+            "file": "onePersonMovingSideToSide.csv",
+            "hi": 2995,
+            "lo": 0
+          },
+          {
+            "file": "multiplePeopleChaotic.csv",
+            "hi": 3358,
+            "lo": 0
+          }
+        ],
+        "val_segments": [
+          {
+            "file": "emptyRoom.csv",
+            "hi": 3502,
+            "lo": 2626
+          },
+          {
+            "file": "onePersonMovingFrontAndBack.csv",
+            "hi": 3301,
+            "lo": 2476
+          },
+          {
+            "file": "onePersonMovingSideToSide.csv",
+            "hi": 3994,
+            "lo": 2995
+          },
+          {
+            "file": "multiplePeopleChaotic.csv",
+            "hi": 4477,
+            "lo": 3358
+          }
+        ]
+      },
+      "ae_threshold_moving": {
+        "n_windows": 1479,
+        "quantile": 0.9999,
+        "rule": "q0.9999 of VALIDATION clean AE reconstruction error score (moving windows, window=10 cycles)",
+        "split": "val",
+        "train_exceedance": 0.014148681055155876,
+        "train_windows": 4170,
+        "value": 12.391257845763064
+      },
+      "ae_threshold_static": {
+        "n_windows": 33699,
+        "quantile": 0.9999,
+        "rule": "q0.9999 of VALIDATION clean AE reconstruction error score (static windows, window=10 cycles)",
+        "split": "val",
+        "train_exceedance": 0.0007524018983678666,
+        "train_windows": 103668,
+        "value": 2.5394326878376674
+      },
+      "fusion_mn": {
+        "rule": "fewest CLEAN validation alert events over mn_candidates; ties -> smallest N (fastest detection); no attack labels used",
+        "split": "val",
+        "table": [
+          {
+            "m": 3,
+            "n": 5,
+            "val_alert_events": 1,
+            "val_alerts_per_minute": 0.474,
+            "val_minutes": 2.111
+          },
+          {
+            "m": 4,
+            "n": 6,
+            "val_alert_events": 0,
+            "val_alerts_per_minute": 0.0,
+            "val_minutes": 2.111
+          },
+          {
+            "m": 5,
+            "n": 8,
+            "val_alert_events": 0,
+            "val_alerts_per_minute": 0.0,
+            "val_minutes": 2.111
+          }
+        ],
+        "value": [
+          4,
+          6
+        ]
+      },
+      "iforest_threshold_moving": {
+        "n_windows": 1479,
+        "quantile": 0.9999,
+        "rule": "q0.9999 of VALIDATION clean isolation-forest anomaly score (moving windows, window=10 cycles)",
+        "split": "val",
+        "value": 0.689135215808091
+      },
+      "iforest_threshold_static": {
+        "n_windows": 33699,
+        "quantile": 0.9999,
+        "rule": "q0.9999 of VALIDATION clean isolation-forest anomaly score (static windows, window=10 cycles)",
+        "split": "val",
+        "value": 0.5670340557153015
+      },
+      "learned_artifacts": {
+        "ae": {
+          "artifact_id": "f264e65b56ced6cf60e30a9292f04809d0258e8ac11d9a69c442a0a6d47b76a6",
+          "baseline_signature": "40ffb109eb8d969a532ec57e7daf272b009392fde825978a13121fbbb61d40be",
+          "contract": {
+            "features": [
+              "dx",
+              "dy",
+              "vx",
+              "vy",
+              "radial_velocity",
+              "rcs",
+              "range"
+            ],
+            "max_gap_cycles": 1,
+            "moving_threshold": 0.3,
+            "reassign_jump_default": 1.0,
+            "roi_max_range": 15.0,
+            "tick_seconds": 0.0001,
+            "window_cycles": 10,
+            "window_policy": "consecutive_cycles_all_points_in_roi"
+          },
+          "kind": "ae",
+          "normalization_split": "train",
+          "schema_version": 1,
+          "seed": 11,
+          "segments": {
+            "train": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 2626,
+                "lo": 0
+              },
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 2476,
+                "lo": 0
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 2995,
+                "lo": 0
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 3358,
+                "lo": 0
+              }
+            ],
+            "val": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 3502,
+                "lo": 2626
+              },
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 3301,
+                "lo": 2476
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 3994,
+                "lo": 2995
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 4477,
+                "lo": 3358
+              }
+            ]
+          },
+          "selection_rule": "AE fixed for NumPy CPU inference; IF is an offline comparison; no test selection",
+          "source_sha256": {
+            "emptyRoom.csv": "13fb666d6525e90f42bf823c7a938ee96d5819f5b541a834edda631bf6be2ebc",
+            "multiplePeopleChaotic.csv": "2e08ed3c26c9cb64a5039878b1ef371fc2138ad0aa717efddc2eca1bea952f52",
+            "onePersonMovingFrontAndBack.csv": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e",
+            "onePersonMovingSideToSide.csv": "04f105a1e412abfe4ce0153d8f2787a9b1ee79aba04a0a362b1d44ad4c2a6340"
+          },
+          "tag": "timeblock",
+          "threshold_split": "val",
+          "train_moving_windows": 4170,
+          "train_windows": 107838,
+          "training": {
+            "batch_size": 512,
+            "epochs_completed": 30,
+            "epochs_configured": 30,
+            "hidden": 32,
+            "latent": 6,
+            "learning_rate": 0.001,
+            "max_train_seconds": 300,
+            "stopping_reason": "configured_epochs_complete",
+            "train_seconds": 7.909224271774292
+          },
+          "val_moving_windows": 1479,
+          "val_windows": 35178
+        },
+        "iforest": {
+          "artifact_id": "c804cd658e4119cbb28d1466bc2dc82bcf3808fe1242431eaddfbf3bb532f13c",
+          "baseline_signature": "40ffb109eb8d969a532ec57e7daf272b009392fde825978a13121fbbb61d40be",
+          "bootstrap": false,
+          "contamination": "auto",
+          "contract": {
+            "features": [
+              "dx",
+              "dy",
+              "vx",
+              "vy",
+              "radial_velocity",
+              "rcs",
+              "range"
+            ],
+            "max_gap_cycles": 1,
+            "moving_threshold": 0.3,
+            "reassign_jump_default": 1.0,
+            "roi_max_range": 15.0,
+            "tick_seconds": 0.0001,
+            "window_cycles": 10,
+            "window_policy": "consecutive_cycles_all_points_in_roi"
+          },
+          "fit_windows": 50000,
+          "kind": "iforest",
+          "max_features": 1.0,
+          "max_samples": 256,
+          "normalization_split": "train",
+          "schema_version": 1,
+          "seed": 11,
+          "segments": {
+            "train": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 2626,
+                "lo": 0
+              },
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 2476,
+                "lo": 0
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 2995,
+                "lo": 0
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 3358,
+                "lo": 0
+              }
+            ],
+            "val": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 3502,
+                "lo": 2626
+              },
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 3301,
+                "lo": 2476
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 3994,
+                "lo": 2995
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 4477,
+                "lo": 3358
+              }
+            ]
+          },
+          "selection_rule": "AE fixed for NumPy CPU inference; IF is an offline comparison; no test selection",
+          "source_sha256": {
+            "emptyRoom.csv": "13fb666d6525e90f42bf823c7a938ee96d5819f5b541a834edda631bf6be2ebc",
+            "multiplePeopleChaotic.csv": "2e08ed3c26c9cb64a5039878b1ef371fc2138ad0aa717efddc2eca1bea952f52",
+            "onePersonMovingFrontAndBack.csv": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e",
+            "onePersonMovingSideToSide.csv": "04f105a1e412abfe4ce0153d8f2787a9b1ee79aba04a0a362b1d44ad4c2a6340"
+          },
+          "tag": "timeblock",
+          "threshold_split": "val",
+          "train_moving_windows": 4170,
+          "train_windows": 107838,
+          "trees": 200,
+          "val_moving_windows": 1479,
+          "val_windows": 35178
+        },
+        "replay": {
+          "artifact_id": "04a0b4acc672704d327a78dfade7b70ada2bf64d5d62b2777f39e8e79dc3ca02",
+          "baseline_signature": "40ffb109eb8d969a532ec57e7daf272b009392fde825978a13121fbbb61d40be",
+          "contract": {
+            "max_gap_cycles": 1,
+            "moving_threshold": 0.3,
+            "reassign_jump_default": 1.0,
+            "replay": {
+              "disp_quant": 0.2,
+              "history_cycles": 20000,
+              "k_gram": 12,
+              "min_complexity": 4,
+              "vel_quant": 0.25
+            },
+            "roi_max_range": 15.0,
+            "tick_seconds": 0.0001,
+            "window_policy": "consecutive_cycles_all_points_in_roi"
+          },
+          "kind": "replay",
+          "normalization_split": "train",
+          "schema_version": 1,
+          "seed": 11,
+          "segments": {
+            "train": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 2626,
+                "lo": 0
+              },
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 2476,
+                "lo": 0
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 2995,
+                "lo": 0
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 3358,
+                "lo": 0
+              }
+            ],
+            "val": [
+              {
+                "file": "emptyRoom.csv",
+                "hi": 3502,
+                "lo": 2626
+              },
+              {
+                "file": "onePersonMovingFrontAndBack.csv",
+                "hi": 3301,
+                "lo": 2476
+              },
+              {
+                "file": "onePersonMovingSideToSide.csv",
+                "hi": 3994,
+                "lo": 2995
+              },
+              {
+                "file": "multiplePeopleChaotic.csv",
+                "hi": 4477,
+                "lo": 3358
+              }
+            ]
+          },
+          "selection_rule": "AE fixed for NumPy CPU inference; IF is an offline comparison; no test selection",
+          "source_sha256": {
+            "emptyRoom.csv": "13fb666d6525e90f42bf823c7a938ee96d5819f5b541a834edda631bf6be2ebc",
+            "multiplePeopleChaotic.csv": "2e08ed3c26c9cb64a5039878b1ef371fc2138ad0aa717efddc2eca1bea952f52",
+            "onePersonMovingFrontAndBack.csv": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e",
+            "onePersonMovingSideToSide.csv": "04f105a1e412abfe4ce0153d8f2787a9b1ee79aba04a0a362b1d44ad4c2a6340"
+          },
+          "tag": "timeblock",
+          "threshold_split": "val",
+          "train_moving_windows": 4170,
+          "train_windows": 107838,
+          "val_moving_windows": 1479,
+          "val_windows": 35178
+        }
+      },
+      "learned_selection": {
+        "comparison_windows": "identical eligible windows and train-only normalization",
+        "model": "ae",
+        "rule": "AE fixed for NumPy CPU inference; IF is an offline comparison; no test selection"
+      },
+      "rr_scale": {
+        "corr": 0.9263789075969155,
+        "n_windows": 286,
+        "rule": "least-squares k in range_rate = k * reported radial velocity, moving in-ROI windows with |v_r| >= 0.5",
+        "split": "train",
+        "value": 0.7885
+      },
+      "soft_quantile": {
+        "iforest_rule": "same selected validation quantile as AE; not used to select operating point",
+        "rule": "smallest candidate quantile with validation alerts/min < 1.0; candidates [0.999, 0.9995, 0.9999, 0.99995, 1.0]",
+        "selection_model": "ae",
+        "split": "val",
+        "table": [
+          {
+            "ae_threshold_moving": 11.99461681586656,
+            "ae_threshold_static": 2.121105323195467,
+            "iforest_threshold_moving": 0.6755000837028137,
+            "iforest_threshold_static": 0.5488360442179016,
+            "quantile": 0.999,
+            "val_alert_events": 29,
+            "val_alerts_per_minute": 13.737,
+            "val_fp_flagged": 0.002484275664261436,
+            "val_minutes": 2.111
+          },
+          {
+            "ae_threshold_moving": 12.138397399645422,
+            "ae_threshold_static": 2.261261866159273,
+            "iforest_threshold_moving": 0.6828788072767019,
+            "iforest_threshold_static": 0.5561307833833665,
+            "quantile": 0.9995,
+            "val_alert_events": 12,
+            "val_alerts_per_minute": 5.684,
+            "val_fp_flagged": 0.0008356199961606649,
+            "val_minutes": 2.111
+          },
+          {
+            "ae_threshold_moving": 12.391257845763064,
+            "ae_threshold_static": 2.5394326878376674,
+            "iforest_threshold_moving": 0.689135215808091,
+            "iforest_threshold_static": 0.5670340557153015,
+            "quantile": 0.9999,
+            "val_alert_events": 1,
+            "val_alerts_per_minute": 0.474,
+            "val_fp_flagged": 3.387648633083776e-05,
+            "val_minutes": 2.111
+          },
+          {
+            "ae_threshold_moving": 12.422865401527721,
+            "ae_threshold_static": 2.6567397412993827,
+            "iforest_threshold_moving": 0.6899172668745135,
+            "iforest_threshold_static": 0.5791333296134886,
+            "quantile": 0.99995,
+            "val_alert_events": 1,
+            "val_alerts_per_minute": 0.474,
+            "val_fp_flagged": 3.387648633083776e-05,
+            "val_minutes": 2.111
+          },
+          {
+            "ae_threshold_moving": 12.454472957292475,
+            "ae_threshold_static": 2.7032513873637427,
+            "iforest_threshold_moving": 0.6906993179409383,
+            "iforest_threshold_static": 0.5853618834280881,
+            "quantile": 1.0,
+            "val_alert_events": 1,
+            "val_alerts_per_minute": 0.474,
+            "val_fp_flagged": 3.387648633083776e-05,
+            "val_minutes": 2.111
+          }
+        ],
+        "value": 0.9999
+      }
+    }
+  },
+  "checkpoint_contract_sha256": "d2c0be9f04219d5bdf35",
+  "completed_attack_runs": 2411,
+  "completed_clean_runs": 8,
+  "configuration": {
+    "attack": {
+      "T1": {
+        "count": [
+          1,
+          3
+        ],
+        "life": [
+          20,
+          150
+        ]
+      },
+      "T2": {
+        "count": [
+          10,
+          30
+        ],
+        "life": [
+          10,
+          60
+        ]
+      },
+      "T3": {
+        "max_len": 80,
+        "min_len": 20
+      },
+      "T4": {
+        "drift_per_cycle": [
+          0.02,
+          0.08
+        ],
+        "life": [
+          20,
+          80
+        ]
+      },
+      "instances_per_run": 6,
+      "min_gap_cycles": 60,
+      "seeds": [
+        11,
+        22,
+        33
+      ]
+    },
+    "baseline": {
+      "hard_quantile": 0.999,
+      "margin_ticks": 2,
+      "soft_quantile": 0.99
+    },
+    "data": {
+      "files": [
+        "emptyRoom.csv",
+        "onePersonMovingFrontAndBack.csv",
+        "onePersonMovingSideToSide.csv",
+        "multiplePeopleChaotic.csv"
+      ],
+      "processed_dir": "data/processed",
+      "raw_dir": "data/raw"
+    },
+    "eval": {
+      "runs_per_cell": 3,
+      "workers": 4
+    },
+    "fusion": {
+      "learned_alone": false,
+      "m": 3,
+      "mn_candidates": [
+        [
+          3,
+          5
+        ],
+        [
+          4,
+          6
+        ],
+        [
+          5,
+          8
+        ]
+      ],
+      "n": 5
+    },
+    "kinematic": {
+      "min_moving_cycles": 10,
+      "rcs_window_cycles": 15,
+      "window_cycles": 15
+    },
+    "latency": {
+      "p99_budget_ms": 10.0
+    },
+    "learned": {
+      "batch_size": 512,
+      "epochs": 30,
+      "hidden": 32,
+      "iforest_trees": 200,
+      "latent": 6,
+      "lr": 0.001,
+      "max_train_seconds": 300,
+      "threshold_quantile": 0.999,
+      "window_cycles": 10
+    },
+    "motion": {
+      "moving_threshold_mps": 0.3
+    },
+    "protocol": {
+      "cadence_warmup_cycles": 2,
+      "count_margin": 3,
+      "header_can_id": 1546,
+      "header_len": 5,
+      "header_status_ok": 1,
+      "object_can_id": 1547,
+      "object_len": 8
+    },
+    "replay": {
+      "disp_quant": 0.2,
+      "history_cycles": 20000,
+      "k_gram": 12,
+      "min_complexity": 4,
+      "vel_quant": 0.25
+    },
+    "roi": {
+      "max_range": 15.0
+    },
+    "splits": {
+      "train_frac": 0.6,
+      "val_frac": 0.2
+    },
+    "tracks": {
+      "max_gap_cycles": 1,
+      "min_track_cycles_for_stats": 20,
+      "reassign_jump_default": 1.0
+    },
+    "units": {
+      "tick_seconds": 0.0001
+    },
+    "zones": {
+      "mid_max_range": 15.0,
+      "near_max_range": 4.0
+    }
+  },
+  "configuration_sha256": "3b868243603521e439bb81009af736a33c25e9533ce9ec7f7f190cc3d977cbb8",
+  "effective_seed_rule": "numpy SeedSequence([configured_seed, run_index]).generate_state(1)[0]",
+  "evaluation_scope": "full configured sweep",
+  "generated_utc": "2026-10-04T18:02:49.230971+00:00",
+  "git_branch": "codex/portable-hosted-prototype",
+  "git_dirty": false,
+  "git_head": "7eb3ec216ffd0efc4bd69bffa01ee2f09bebef1a",
+  "historical_test_disclosure": "Test results had previously been inspected before the historical validation calibration; see docs/decisions.md. No new test-driven selection is performed.",
+  "implementation_sha256": {
+    "scripts/calibrate.py": "0762fa0c2e7329970304315c72294d52338aad4c4cce6c8df78d9d8a4448c5be",
+    "scripts/learn_baseline.py": "924b00364c118eb1269a72ba478bb728191ac8f47130675c5ff567da0ec57edf",
+    "scripts/replay_demo.py": "fad66582664fd41f3eba2b01a2da072651cc0bb99222f0957dcab83ff7f133bc",
+    "scripts/run_attack_eval.py": "5e72d6fc125eaa122bff2ecaa2dcace082f417e7b97cfb599a17b87e1a2e7024",
+    "scripts/run_clean_eval.py": "352dcaa7c198e29680cd492c99cd7ba789c9ab1d110701349e5220fc0405ca73",
+    "scripts/train.py": "a5ef6853798715b7a7b6969f07ae4c7fe93a67b26a9c4643320e41801f1c8915",
+    "src/phantomguard/__init__.py": "246ea1d8450986074facefcc46160f790c17a392b0e74d0f7cd7b297a7b1a7c1",
+    "src/phantomguard/__main__.py": "2bfd49629cbeaf34d1d53eadbeccb267fa3bb3fe4dc9e5b08bff0bcb6d1e47e1",
+    "src/phantomguard/attack/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/phantomguard/attack/injector.py": "089f9a3076c4cbd1af28c427a974fb15a8710568ce3f4c3eb56a3c069afe43a7",
+    "src/phantomguard/attack/levels.py": "5238d1c3c6f81838fdecceb0bb067aea83908534049e58eb7b238d5ad9841d39",
+    "src/phantomguard/attack/pools.py": "689c79b8cde560b1fcc4c152d1315ac3473f77a83cf7e3c19b145dcdafc27a9f",
+    "src/phantomguard/attack/scenarios.py": "cfbabf31b662da71ca98ae76a6fbebf29fa4eab568c9939f02bd5c501bb0091e",
+    "src/phantomguard/bundle.py": "e495e54ea20e5bdf420fd29d8b2869f346b9b5eae1da49c02b214a398c2216f6",
+    "src/phantomguard/cli.py": "9c01f7ccf70276ed9130095d3b56e359294e8678631583799bbd73069d62d28b",
+    "src/phantomguard/commands/__init__.py": "f00f90a1c93798685339e7ef4ab0f2cb314b51a7323049af8276cfe308350b23",
+    "src/phantomguard/commands/calibrate.py": "4ece032b6062e920ad1a71a2785dd0e5b951d2da1dda04f8eed13ac736f808fd",
+    "src/phantomguard/commands/learn_baseline.py": "a1d2838cf42589fe3d952f3f533f71eb7a14307e9358fe75889ca4663ae61615",
+    "src/phantomguard/commands/replay_demo.py": "b54db791aa5de5ae542120aa0e13844aa6589ed919be96203f5c9390e2dd9282",
+    "src/phantomguard/commands/run_attack_eval.py": "227b949f2cd33f33368a1b367bbf9f101bc79906428a46f280cecbecfbbb032c",
+    "src/phantomguard/commands/run_clean_eval.py": "7a18b0b86b808fabeb52f021ce3f33408713a5413cbbc67dc838e4546e312b4e",
+    "src/phantomguard/commands/train.py": "fa29f6fe903853fc06533a57dcd156c509f3e660c03aaef98de5e52ffdd7d017",
+    "src/phantomguard/config.py": "ec46aea6bca4ed7a89192ff39f033507a5be37a00ec9cabd3bfc18f221dc080c",
+    "src/phantomguard/cycles.py": "4d24d32bdaea13a016872758d30f65d7ccb2bcf4dd046c1fe0383be9fc89049c",
+    "src/phantomguard/decoder.py": "e8e4ea27ed13d946bc5745afafdd72b220ff0944016358b5fd759a0c2cd966f0",
+    "src/phantomguard/detect/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/phantomguard/detect/autoencoder.py": "0d54eeaea3e85eb00c5ca3ab9ed30de9275cb1d93eb83fce829c5067c8e43517",
+    "src/phantomguard/detect/common.py": "e44d45ac5134e169a14d601ef825d5aad34c5590690672c43ba26c6a4e21d80f",
+    "src/phantomguard/detect/fusion.py": "a1999955fb19d25e03f6dafa493575c364ea3d0d7b2b12744fd3dc7c43560c6c",
+    "src/phantomguard/detect/kinematic.py": "aa17a5b4bc8c2efb7a516283ecdeb376a8a3e446cda137a11094cce28ff0bc88",
+    "src/phantomguard/detect/pipeline.py": "b301be4dc6b8ff3df610af062b1879acaf83c6e1c3adf445e787042a7ac508a1",
+    "src/phantomguard/detect/protocol.py": "aa0c33cd4b6cfe43dbc716049335503d7550fa819e19e7ace41528c4c5377d5f",
+    "src/phantomguard/detect/replay_fp.py": "801db021f2a2b930d5e090aaa1bbfccd714e198e4d5512af352890e56756f0ca",
+    "src/phantomguard/eval/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/phantomguard/eval/attack_adapter.py": "b152d82a6efd77e52139a5ef387ffe54e9a4ec24da882df35a26775dab3a0d6a",
+    "src/phantomguard/eval/metrics.py": "b0466fd11075e8fb216fae299fb4bf443838df790182562d920ac32876239855",
+    "src/phantomguard/eval/report.py": "c88c99715f7adbc42b8a18949b890d6150aacb03a2c63f6690a19d609ac195a2",
+    "src/phantomguard/eval/splits.py": "bcf5d96eeffa225ba9b6fcdf321c5085e5116567f33318fe8524e7d08cc42000",
+    "src/phantomguard/frames.py": "bdfc355a36e99b911a5874d57aadb682dc88b5c5b644ba7401e4ccb83c41e9d2",
+    "src/phantomguard/io/__init__.py": "d62b916a7ac9027ceb25ab9d464907304560decd56f26648cfc9948a748f5044",
+    "src/phantomguard/io/live.py": "af149ec972a484b6eaef8ea817ff6b07c601279822dfab68c7aa43317d8f8e21",
+    "src/phantomguard/io/replay.py": "0be490ee45b91d7399f1b9ecddf5dbb8d995f33980cb1c2cc128201096947aab",
+    "src/phantomguard/io/source.py": "9b67b71fc143197b538b307af17b218af0fd40924e4125487b6e565ec20fdb71",
+    "src/phantomguard/paths.py": "6c25b8345f3e4d3c267385a5e2fa038217fc0b7e6b831dc59540b17a82397e7e",
+    "src/phantomguard/resources/__init__.py": "01ef767a2aafc42bb2f737e8d5278b5eee1add12e874fdc1daa49ac94b979056",
+    "src/phantomguard/stats/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/phantomguard/stats/baseline.py": "2210e0fcd5f4c4f808f4a03e6613f3659cb6d27a49c56d81dc67e7b033661796",
+    "src/phantomguard/tracks.py": "67ac22978a863568f763396e724853c91e03674a6305d3aaf06466b7d6fee9ae",
+    "src/phantomguard/viz/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/phantomguard/viz/console.py": "986ab9c036bcabf5354b3a8bdd97907a33062f0a4df3b25976763786fb944e4f",
+    "src/phantomguard/web/__init__.py": "a4a060a74be5ddfdeda75f77e20e23bacc278153370611988b42a2850fc82a1e",
+    "src/phantomguard/web/api.py": "3fbd56d7d33e1e0335801365c2133d68ca7a54d97b72bf8f9914a61d7275ca36",
+    "src/phantomguard/web/jobs.py": "910c2a0d39dfd581f749cefb4c71c5ed5771a4155fe21fb3f4133888f355183f",
+    "src/phantomguard/workspace.py": "9798513d86bc8e19b531085c816520fe1a8fd5c2ea2855f688b64ab4f07fa01c",
+    "tools/check_browser.py": "7ce1f069c61f71a32d4985280d5bf6131ad3b182e5fa77dc8909c1fdc94416e1",
+    "tools/decode.py": "7082e27a277466a4455797d9671f00028995d6019f00a2ed6829d3cc062a1f8a"
+  },
+  "logical_cpu_count": 32,
+  "model_selection": "AE fixed for NumPy online deployment before attack testing; IF is an offline comparator",
+  "packages": {
+    "matplotlib": "3.11.2",
+    "numpy": "2.4.6",
+    "pandas": "3.0.6",
+    "scikit-learn": "1.9.1",
+    "scipy": "1.17.1",
+    "torch": "2.14.1+cpu"
+  },
+  "phase2_provider": "phantomguard.attack.scenarios:create_attacker + injector.AttackedSource",
+  "platform": "Windows-10-10.0.26200-SP0",
+  "portable_presentation": {
+    "benchmark_code_sha": "7eb3ec216ffd0efc4bd69bffa01ee2f09bebef1a",
+    "changes": [
+      "Canonical relative baseline and sidecar references only; all scores/counts/timing remain original"
+    ],
+    "code_sha": "91a79bb07123d5445dbc16569cb80c9ce0b5af31",
+    "original_manifest_sha256": "ec356998ca7c166579c8d73d0b0ffd304cb32a7d77d8ccabc677478fc1ae4263"
+  },
+  "preflight_only": false,
+  "processing_timer": "perf_counter elapsed time for grouping/decoding and detector CPU work; source I/O excluded",
+  "python": "3.11.9",
+  "recordings": [
+    {
+      "file": "emptyRoom.csv",
+      "path": "data/raw/emptyRoom.csv",
+      "sha256": "13fb666d6525e90f42bf823c7a938ee96d5819f5b541a834edda631bf6be2ebc"
+    },
+    {
+      "file": "onePersonMovingFrontAndBack.csv",
+      "path": "data/raw/onePersonMovingFrontAndBack.csv",
+      "sha256": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e"
+    },
+    {
+      "file": "onePersonMovingSideToSide.csv",
+      "path": "data/raw/onePersonMovingSideToSide.csv",
+      "sha256": "04f105a1e412abfe4ce0153d8f2787a9b1ee79aba04a0a362b1d44ad4c2a6340"
+    },
+    {
+      "file": "multiplePeopleChaotic.csv",
+      "path": "data/raw/multiplePeopleChaotic.csv",
+      "sha256": "2e08ed3c26c9cb64a5039878b1ef371fc2138ad0aa717efddc2eca1bea952f52"
+    }
+  ],
+  "requested_part": "test",
+  "requested_split": "all",
+  "run_status_counts": {
+    "no_eligible_attack": 1782,
+    "ok": 21699,
+    "unsupported": 1296,
+    "unsupported_provider": 55
+  },
+  "runs_per_cell": 3,
+  "seeds": [
+    11,
+    22,
+    33
+  ],
+  "split_identities": [
+    {
+      "baseline_path": "configs/baseline.json",
+      "fold": "timeblock",
+      "measurement_workers": 24,
+      "part": "test",
+      "split": "timeblock",
+      "tag": "timeblock",
+      "test": [
+        {
+          "file": "emptyRoom.csv",
+          "hi": 4378,
+          "lo": 3502
+        },
+        {
+          "file": "onePersonMovingFrontAndBack.csv",
+          "hi": 4127,
+          "lo": 3301
+        },
+        {
+          "file": "onePersonMovingSideToSide.csv",
+          "hi": 4993,
+          "lo": 3994
+        },
+        {
+          "file": "multiplePeopleChaotic.csv",
+          "hi": 5597,
+          "lo": 4477
+        }
+      ],
+      "train": [
+        {
+          "file": "emptyRoom.csv",
+          "hi": 2626,
+          "lo": 0
+        },
+        {
+          "file": "onePersonMovingFrontAndBack.csv",
+          "hi": 2476,
+          "lo": 0
+        },
+        {
+          "file": "onePersonMovingSideToSide.csv",
+          "hi": 2995,
+          "lo": 0
+        },
+        {
+          "file": "multiplePeopleChaotic.csv",
+          "hi": 3358,
+          "lo": 0
+        }
+      ],
+      "val": [
+        {
+          "file": "emptyRoom.csv",
+          "hi": 3502,
+          "lo": 2626
+        },
+        {
+          "file": "onePersonMovingFrontAndBack.csv",
+          "hi": 3301,
+          "lo": 2476
+        },
+        {
+          "file": "onePersonMovingSideToSide.csv",
+          "hi": 3994,
+          "lo": 2995
+        },
+        {
+          "file": "multiplePeopleChaotic.csv",
+          "hi": 4477,
+          "lo": 3358
+        }
+      ]
+    },
+    {
+      "baseline_path": "data/processed/baseline_loso_emptyRoom.json",
+      "fold": "emptyRoom.csv",
+      "measurement_workers": 24,
+      "part": "test",
+      "split": "loso",
+      "tag": "loso_emptyRoom",
+      "test": [
+        {
+          "file": "emptyRoom.csv",
+          "hi": 4378,
+          "lo": 0
+        }
+      ],
+      "train": [
+        {
+          "file": "onePersonMovingFrontAndBack.csv",
+          "hi": 3301,
+          "lo": 0
+        },
+        {
+          "file": "onePersonMovingSideToSide.csv",
+          "hi": 3994,
+          "lo": 0
+        },
+        {
+          "file": "multiplePeopleChaotic.csv",
+          "hi": 4477,
+          "lo": 0
+        }
+      ],
+      "val": [
+        {
+          "file": "onePersonMovingFrontAndBack.csv",
+          "hi": 4127,
+          "lo": 3301
+        },
+        {
+          "file": "onePersonMovingSideToSide.csv",
+          "hi": 4993,
+          "lo": 3994
+        },
+        {
+          "file": "multiplePeopleChaotic.csv",
+          "hi": 5597,
+          "lo": 4477
+        }
+      ]
+    },
+    {
+      "baseline_path": "data/processed/baseline_loso_onePersonMovingFrontAndBack.json",
+      "fold": "onePersonMovingFrontAndBack.csv",
+      "measurement_workers": 24,
+      "part": "test",
+      "split": "loso",
+      "tag": "loso_onePersonMovingFrontAndBack",
+      "test": [
+        {
+          "file": "onePersonMovingFrontAndBack.csv",
+          "hi": 4127,
+          "lo": 0
+        }
+      ],
+      "train": [
+        {
+          "file": "emptyRoom.csv",
+          "hi": 3502,
+          "lo": 0
+        },
+        {
+          "file": "onePersonMovingSideToSide.csv",
+          "hi": 3994,
+          "lo": 0
+        },
+        {
+          "file": "multiplePeopleChaotic.csv",
+          "hi": 4477,
+          "lo": 0
+        }
+      ],
+      "val": [
+        {
+          "file": "emptyRoom.csv",
+          "hi": 4378,
+          "lo": 3502
+        },
+        {
+          "file": "onePersonMovingSideToSide.csv",
+          "hi": 4993,
+          "lo": 3994
+        },
+        {
+          "file": "multiplePeopleChaotic.csv",
+          "hi": 5597,
+          "lo": 4477
+        }
+      ]
+    },
+    {
+      "baseline_path": "data/processed/baseline_loso_onePersonMovingSideToSide.json",
+      "fold": "onePersonMovingSideToSide.csv",
+      "measurement_workers": 24,
+      "part": "test",
+      "split": "loso",
+      "tag": "loso_onePersonMovingSideToSide",
+      "test": [
+        {
+          "file": "onePersonMovingSideToSide.csv",
+          "hi": 4993,
+          "lo": 0
+        }
+      ],
+      "train": [
+        {
+          "file": "emptyRoom.csv",
+          "hi": 3502,
+          "lo": 0
+        },
+        {
+          "file": "onePersonMovingFrontAndBack.csv",
+          "hi": 3301,
+          "lo": 0
+        },
+        {
+          "file": "multiplePeopleChaotic.csv",
+          "hi": 4477,
+          "lo": 0
+        }
+      ],
+      "val": [
+        {
+          "file": "emptyRoom.csv",
+          "hi": 4378,
+          "lo": 3502
+        },
+        {
+          "file": "onePersonMovingFrontAndBack.csv",
+          "hi": 4127,
+          "lo": 3301
+        },
+        {
+          "file": "multiplePeopleChaotic.csv",
+          "hi": 5597,
+          "lo": 4477
+        }
+      ]
+    },
+    {
+      "baseline_path": "data/processed/baseline_loso_multiplePeopleChaotic.json",
+      "fold": "multiplePeopleChaotic.csv",
+      "measurement_workers": 24,
+      "part": "test",
+      "split": "loso",
+      "tag": "loso_multiplePeopleChaotic",
+      "test": [
+        {
+          "file": "multiplePeopleChaotic.csv",
+          "hi": 5597,
+          "lo": 0
+        }
+      ],
+      "train": [
+        {
+          "file": "emptyRoom.csv",
+          "hi": 3502,
+          "lo": 0
+        },
+        {
+          "file": "onePersonMovingFrontAndBack.csv",
+          "hi": 3301,
+          "lo": 0
+        },
+        {
+          "file": "onePersonMovingSideToSide.csv",
+          "hi": 3994,
+          "lo": 0
+        }
+      ],
+      "val": [
+        {
+          "file": "emptyRoom.csv",
+          "hi": 4378,
+          "lo": 3502
+        },
+        {
+          "file": "onePersonMovingFrontAndBack.csv",
+          "hi": 4127,
+          "lo": 3301
+        },
+        {
+          "file": "onePersonMovingSideToSide.csv",
+          "hi": 4993,
+          "lo": 3994
+        }
+      ]
+    }
+  ],
+  "workers": 24
+}

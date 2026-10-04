@@ -95,6 +95,12 @@ substitution; the Python CLI does not silently load it. `.env` is ignored.
   Start with one or two on the server. Browser jobs are bounded separately and can
   be cancelled/reset; expired jobs are cleaned. Run one service per output directory.
 - **Headless display:** `replay --export` uses Agg; omit `--export` only with a GUI.
+- **PowerShell activation blocked:** call `.\.venv\Scripts\python.exe` explicitly
+  instead of changing the machine's execution policy. Set `PHANTOMGUARD_ROOT`
+  as shown in the quick start.
+- **Updated native checkout:** reinstall its wheel with
+  `python -m pip install --no-deps --force-reinstall .`; an earlier installed wheel
+  does not update just because Git advanced. Container users rebuild the image.
   Browser playback works without a display server.
 - **No eligible attack:** some static/short clips lack moving material or free slots.
   This is an explicit unsupported/no-material outcome, not a successful detection.

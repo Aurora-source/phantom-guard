@@ -1,5 +1,34 @@
 # Current validation evidence
 
+## Portable prototype validation (2026-10-05)
+
+The fresh full matrix is [portable/summary.md](portable/summary.md), with matching
+clean/layer/ablation/instance/exclusion CSVs and provenance. The matrix ran on
+`7eb3ec2`; final code `91a79bb` adds explicit-root reporting and UTF-8 text I/O.
+All detector/attacker/feature/fusion/metric sources are unchanged, and fresh clean
+classifications plus all 36 smoke layer rows match the full matrix exactly.
+[portable_validation.json](portable_validation.json) records that comparison,
+168 passing tests with zero skips on Windows and Ubuntu 26.04.1 WSL, normal-wheel
+fresh-clone checks, real browser/API checks and separate single-worker latency.
+
+Results remain 1.42 clean alerts/minute on time-block test and 3.41 on LOSO:
+**the under-one target is not met**. There are 2,411 eligible attack runs, 198
+no-material attempts, 55 slot-capacity exclusions and 1,296 unsupported requests.
+Eighteen completed runs evade scene detection. Scene/instance detection and exact
+forged-object identification remain separate. Original data/model hashes and
+fixed training/validation policy are retained; no new held-out tuning occurred.
+
+Fresh browser screenshots are under `portable/browser`. The checks use Windows
+Chromium against Windows, native WSL Ubuntu and Debian container APIs; they do
+not claim a native Linux desktop browser or human usability review. Bundle
+verification/restoration evidence is [bundle_validation.json](bundle_validation.json).
+Historical reports below retain their original source provenance; they are not
+the newly executed matrix. Historical source locations in those manifests are
+provenance, not deployment configuration. Portable reports canonicalize baseline
+and sidecar references; private sidecars are not included in the deployment ZIP.
+
+## Accepted earlier workflow evidence
+
 The current programmatic evidence is [summary.md](summary.md),
 [clean_eval.md](clean_eval.md), and `attack_eval_*.csv/json`. The CSVs retain every
 requested seed, repetition, supported/unsupported outcome, observed instance,

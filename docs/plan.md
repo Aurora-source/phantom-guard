@@ -255,3 +255,30 @@ This section supersedes earlier availability/status snapshots, which remain as h
 - Publication is to the verified `Aurora-source/phantom-guard` fork, followed by a
   cross-fork PR to `Krishna-Gunjan/phantom-guard:main`. This replaces the old
   push-after-each-phase/main-publication instructions for the current assignment.
+
+## Final extension status (2026-10-05)
+
+- Accepted Phases 0-6 remain implemented: decoder/source/baseline and real attacker
+  integration; causal protocol/physics/replay; CPU AE, offline IF and validation
+  fusion; full clean/attack/layer/ablation reporting; real matplotlib replay. No
+  attacker contract dependency remains. The under-one clean FP criterion is failing.
+- Added installed CPU CLI, a canonical immutable/raw-processed-model-runs layout,
+  shared anchored configuration, directory initialization/import/checksums, doctor,
+  pinned runtime/offline/training locks and explicit Python 3.11 support. Decoder
+  and commands live in the package; compatibility wrappers retain their interfaces.
+- Added bounded isolated browser/API jobs using real test replay and accepted
+  attacks, actual published evaluation data, detector colors/reasons/velocity/logs,
+  reset/cancellation and immutable playback seeks. Ground truth never affects it.
+  Linux deployment uses a pinned nonroot/read-only container and dedicated outputs.
+- Full matrix source `7eb3ec2`; tested final code `91a79bb` changes only reporting
+  anchors/references and UTF-8 I/O afterward. Clean and smoke metric equivalence
+  plus source-hash checks preserve the benchmark's actual provenance. Final tests:
+  168 pass/zero skips on Windows and Ubuntu 26.04.1 WSL; fresh normal-wheel setup,
+  real clean/attacked exports, browser/API and container checks pass.
+- Fresh generated results and portability evidence are under docs/results/portable
+  and portable_validation.json. Compatible artifacts are reused without training
+  or calibration. Clean FP is 1.42/3.41 per minute; eighteen evading completed runs
+  remain reported. Full performance acceptance is not claimed.
+- Private reproducible deployment ZIP, checksums and server handoff are prepared
+  locally; final archive verification/restoration and publication status are in the
+  handoff/delivery response. Actual home-server deployment is a later assignment.

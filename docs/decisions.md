@@ -1,5 +1,45 @@
 # Decisions and data surprises
 
+## Final portable validation (2026-10-05)
+
+- Upstream PR #5 merged at `fc88afe` during validation. Merged it with both
+  histories preserved (`7eb3ec2`), retained its plain-git/relative-path tests and
+  one-argument reporter interface, and moved its Arch guidance into setup-arch.md
+  using the tested Python 3.11 pins. No contributor branch or original worktree changed.
+- Full fixed-code matrix at `7eb3ec2`: 2,411 eligible runs; 198 no-material,
+  55 stable-slot capacity exclusions, 1,296 unsupported T3/A0-A2 requests. Matching
+  checkpoints from twelve workers were resumed with twenty-four after resource
+  sampling (39% CPU and over 10 GiB free on 32 logical CPUs). Per-run concurrency
+  remains recorded. Interrupted/migrating runs are not successful validations.
+- Final code `91a79bb` fixes explicit `--root` provenance when no environment root
+  exists, canonical baseline/sidecar report references, and explicit UTF-8 text
+  ingestion/export. Detector, attacker, features, metrics and thresholds are
+  unchanged. Fresh clean CSVs and all 36 smoke layer results match the full matrix
+  exactly; generated evidence preserves its actual benchmark SHA and records the
+  metadata-only report conversion rather than pretending it ran at another SHA.
+- Final suites: 168 passed, zero skipped on Windows 11/Python 3.11.9 and native
+  Ubuntu 26.04.1 WSL/Python 3.11.16, including normal wheel installations in paths
+  with spaces. Root-only CLI from outside each checkout, import, doctor, PNG/GIF,
+  full clean evaluation, four-cell real attack smoke, browser reset/cancel/session
+  isolation and pinned Python 3.11.17 Debian container checks passed. One WSL PyPI
+  build request timed out; rebuilding the same pinned cached packages offline
+  resolved it. Initial missing-Torch, migration and harness failures remain failures
+  in history; successful retries are identified separately.
+- Clean results: 1.42/min time-block, 3.41/min LOSO. Ablations/reasons implicate
+  genuine RCS/envelope variability and repeated motion, plus cross-scenario
+  protocol/envelope generalization. No held-out threshold tuning follows. The
+  under-one performance criterion remains NOT MET. Worst completed attacked-run
+  processing p99 is 5.41 ms; separate single-worker clean p99 max is 1.98 ms.
+  Assembly p99 remains 33.5-33.6 ms under the assumed tick duration; eighteen
+  completed runs fully evade scene detection. All misses/denominators stay visible.
+- Local private bundle contains all four unchanged CSVs, fifteen artifacts, four
+  fold baselines, portable configuration and required real reports; no environment,
+  credentials or temporary jobs. Payload text metadata is LF while original input
+  bytes and model binaries are unchanged. Exact final checksum/restoration checks
+  and future server instructions are recorded in server-handoff.md. Actual home
+  server deployment, live hardware, Arch, public proxy integration and human
+  usability are not claimed.
+
 ## Portable hosted prototype assignment (2026-10-04)
 
 - PR #4 was accepted at upstream `89b182ff5777fe11c1676443085b36a52df0e94c`.
