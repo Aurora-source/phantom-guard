@@ -20,7 +20,8 @@ import numpy as np
 from sklearn.ensemble import IsolationForest
 
 from phantomguard.config import REPO_ROOT, load_baseline, load_config, save_baseline, BASELINE_PATH
-from phantomguard.detect.autoencoder import NumpyAE, train_autoencoder, windows_from_tracks
+from phantomguard.detect.autoencoder import (NumpyAE, build_model_metadata, calibrated_thresholds,
+                                             collection_config, score_iforest, train_autoencoder, windows_from_tracks)
 from phantomguard.detect.pipeline import MODELS_DIR
 from phantomguard.detect.replay_fp import build_library
 from phantomguard.eval.splits import loso_folds, time_block_segments
@@ -35,36 +36,68 @@ def train_one(cfg, train_segs, val_segs, baseline_path: Path, tag: str, seed: in
     lc = cfg["learned"]
     n, roi, thr = lc["window_cycles"], cfg["roi"]["max_range"], cfg["motion"]["moving_threshold_mps"]
     q = lc["threshold_quantile"]
-    tr_tracks, va_tracks = tracks_of(cfg, train_segs), tracks_of(cfg, val_segs)
+    b = load_baseline(baseline_path)
+    collect_cfg = collection_config(cfg, b)
+    tr_tracks, va_tracks = tracks_of(collect_cfg, train_segs), tracks_of(collect_cfg, val_segs)
     xtr, mtr = windows_from_tracks(tr_tracks, n, roi, thr)
     xva, mva = windows_from_tracks(va_tracks, n, roi, thr)
     print(f"[{tag}] windows: train {len(xtr)} ({mtr.sum()} moving), val {len(xva)} ({mva.sum()} moving)")
+    if not len(xtr):
+        raise ValueError(f"[{tag}] no eligible training windows; learned models unavailable")
+    # Validate both calibration populations before training or replacing any artifact.
+    calibrated_thresholds(np.zeros(len(xva)), mva, q, "AE", n)
+    if b.get("_meta", {}).get("train_segments") != [dict(s.__dict__) for s in train_segs]:
+        raise ValueError(f"[{tag}] baseline train segments do not match requested training split")
+    if b.get("_meta", {}).get("val_segments") != [dict(s.__dict__) for s in val_segs]:
+        raise ValueError(f"[{tag}] baseline validation segments do not match requested calibration split")
     params = train_autoencoder(xtr, cfg, seed=seed)
     ae = NumpyAE(params)
-    MODELS_DIR.mkdir(exist_ok=True)
-    np.savez(MODELS_DIR / f"ae_{tag}.npz", params=np.array(params, dtype=object))
     e_va = ae.errors(xva)
     e_tr = ae.errors(xtr)
-    b = load_baseline(baseline_path)
-    rule = f"q{q} of VALIDATION clean AE reconstruction error ({{}} windows, window={n} cycles)"
-    b["ae_threshold_static"] = {"value": float(np.quantile(e_va[~mva], q)), "rule": rule.format("static"),
-                                "split": "val", "n_windows": int((~mva).sum()),
-                                "train_exceedance": float((e_tr[~mtr] > np.quantile(e_va[~mva], q)).mean())}
-    b["ae_threshold_moving"] = {"value": float(np.quantile(e_va[mva], q)), "rule": rule.format("moving"),
-                                "split": "val", "n_windows": int(mva.sum()),
-                                "train_exceedance": float((e_tr[mtr] > np.quantile(e_va[mva], q)).mean())}
+    thresholds = calibrated_thresholds(e_va, mva, q, "AE reconstruction error", n)
+    for label, mask in (("static", ~mtr), ("moving", mtr)):
+        b[f"ae_threshold_{label}"] = dict(thresholds[label],
+            train_exceedance=float((e_tr[mask] > thresholds[label]["value"]).mean()) if mask.any() else None,
+            train_windows=int(mask.sum()))
     # Isolation forest baseline (same windows, same calibration rule)
     rng = np.random.default_rng(seed)
     z_mean, z_std = params["mean"], params["std"]
     sub = xtr[rng.choice(len(xtr), size=min(len(xtr), 50000), replace=False)]
     iso = IsolationForest(n_estimators=lc["iforest_trees"], random_state=seed).fit((sub - z_mean) / z_std)
-    s_va = -iso.score_samples((xva - z_mean) / z_std)
-    b["iforest_threshold_static"] = {"value": float(np.quantile(s_va[~mva], q)), "rule": rule.replace("AE reconstruction error", "isolation-forest anomaly score").format("static"), "split": "val"}
-    b["iforest_threshold_moving"] = {"value": float(np.quantile(s_va[mva], q)), "rule": rule.replace("AE reconstruction error", "isolation-forest anomaly score").format("moving"), "split": "val"}
-    (MODELS_DIR / f"iforest_{tag}.pkl").write_bytes(pickle.dumps({"model": iso, "mean": z_mean, "std": z_std}))
+    if_artifact = {"model": iso, "mean": z_mean, "std": z_std}
+    s_va = score_iforest(if_artifact, xva)
+    if_thresholds = calibrated_thresholds(s_va, mva, q, "isolation-forest anomaly", n)
+    for label in ("static", "moving"):
+        b[f"iforest_threshold_{label}"] = if_thresholds[label]
     lib = build_library(cfg, tr_tracks)
-    (MODELS_DIR / f"replay_library_{tag}.pkl").write_bytes(pickle.dumps(lib))
+    metadata = {}
+    for kind, payload in (("ae", pickle.dumps(params)), ("iforest", pickle.dumps(if_artifact)),
+                          ("replay", pickle.dumps(sorted(lib)))):
+        metadata[kind] = build_model_metadata(cfg, train_segs, val_segs, tag, seed, b, kind, payload)
+        metadata[kind]["train_windows"] = len(xtr)
+        metadata[kind]["val_windows"] = len(xva)
+        metadata[kind]["train_moving_windows"] = int(mtr.sum())
+        metadata[kind]["val_moving_windows"] = int(mva.sum())
+    params["metadata"] = metadata["ae"]
+    metadata["ae"]["training"] = {"epochs_configured": lc["epochs"],
+        "epochs_completed": params["epochs_completed"], "stopping_reason": params["stopping_reason"],
+        "train_seconds": params["train_seconds"], "hidden": lc["hidden"], "latent": lc["latent"],
+        "batch_size": lc["batch_size"], "learning_rate": lc["lr"], "max_train_seconds": lc["max_train_seconds"]}
+    if_artifact["metadata"] = metadata["iforest"]
+    if_artifact["metadata"]["fit_windows"] = len(sub)
+    if_artifact["metadata"]["trees"] = lc["iforest_trees"]
+    if_artifact["metadata"]["max_samples"] = int(iso.max_samples_)
+    if_artifact["metadata"]["max_features"] = iso.max_features
+    if_artifact["metadata"]["contamination"] = iso.contamination
+    if_artifact["metadata"]["bootstrap"] = iso.bootstrap
+    b["learned_artifacts"] = metadata
+    b["learned_selection"] = {"model": "ae", "rule": metadata["ae"]["selection_rule"],
+                              "comparison_windows": "identical eligible windows and train-only normalization"}
     b["replay_library_size"] = {"value": len(lib), "rule": "fingerprints of moving in-ROI train tracks", "split": "train"}
+    MODELS_DIR.mkdir(exist_ok=True)
+    np.savez(MODELS_DIR / f"ae_{tag}.npz", params=np.array(params, dtype=object))
+    (MODELS_DIR / f"iforest_{tag}.pkl").write_bytes(pickle.dumps(if_artifact))
+    (MODELS_DIR / f"replay_library_{tag}.pkl").write_bytes(pickle.dumps({"fingerprints": lib, "metadata": metadata["replay"]}))
     save_baseline(b, baseline_path)
     print(f"[{tag}] AE train {params['train_seconds']:.0f}s; thresholds static {b['ae_threshold_static']['value']:.4f} "
           f"moving {b['ae_threshold_moving']['value']:.4f}; val error medians static {np.median(e_va[~mva]):.4f} "

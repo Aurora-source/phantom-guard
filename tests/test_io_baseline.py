@@ -95,6 +95,18 @@ def test_baseline_json_records_rule_for_every_threshold():
     for k, v in b.items():
         if k.startswith("_"):
             continue
+        if k == "learned_artifacts":
+            # Provenance is not a detector threshold; each model records permitted
+            # train/validation segments and a stable artifact identity.
+            assert set(v) == {"ae", "iforest", "replay"}
+            for artifact in v.values():
+                assert artifact["artifact_id"] and artifact["schema_version"] == 1
+                assert set(artifact["segments"]) == {"train", "val"}
+                assert artifact["normalization_split"] == "train"
+            continue
+        if k == "learned_selection":
+            assert v["model"] == "ae" and "no test selection" in v["rule"]
+            continue
         assert "rule" in v and "value" in v, k
         # thresholds come from train, calibration from validation; never from test (hard rule 5)
         assert v["split"] in ("train", "val"), (k, v["split"])

@@ -48,6 +48,8 @@ class Cycle:
     objects: list[ObjObs] = field(default_factory=list)
     other: list[OtherFrame] = field(default_factory=list)
     malformed_objects: list[ObjObs] = field(default_factory=list)
+    header_frame: Frame | None = None
+    closed_t: int | None = None  # next header arrival; None for an EOF-flushed cycle
 
     @property
     def n_received(self) -> int:
@@ -55,7 +57,11 @@ class Cycle:
 
 
 class CycleAssembler:
-    def __init__(self) -> None:
+    def __init__(self, header_can_id: int = CAN_ID_HEADER, object_can_id: int = CAN_ID_OBJECT,
+                 header_min_len: int = 5) -> None:
+        self.header_can_id = header_can_id
+        self.object_can_id = object_can_id
+        self.header_min_len = header_min_len
         self._cur: Cycle | None = None
         self._n = 0
         self._next_frame_index = 0
@@ -65,18 +71,23 @@ class CycleAssembler:
         fi = self._next_frame_index
         self._next_frame_index += 1
         done = None
-        if frame.can_id == CAN_ID_HEADER:
+        if frame.can_id == self.header_can_id:
+            # A header CAN ID is a boundary even when its payload is invalid. Otherwise the
+            # future malformed header and its objects contaminate the preceding closed cycle.
+            done = self._close(frame.timestamp_ticks)
             try:
+                if len(frame.data) < self.header_min_len:
+                    raise MalformedFrame("header shorter than configured minimum")
                 hdr = parse_header(frame.data)
             except MalformedFrame:
-                self._ensure_cycle().other.append(OtherFrame(fi, frame, "SHORT_HEADER"))
-                return None
-            done = self._close()
-            self._cur = Cycle(self._n, hdr, fi, frame.timestamp_ticks)
+                hdr = None
+            self._cur = Cycle(self._n, hdr, fi, frame.timestamp_ticks, header_frame=frame)
+            if hdr is None:
+                self._cur.other.append(OtherFrame(fi, frame, "SHORT_HEADER"))
             self._n += 1
             return done
         cyc = self._ensure_cycle()
-        if frame.can_id != CAN_ID_OBJECT:
+        if frame.can_id != self.object_can_id:
             cyc.other.append(OtherFrame(fi, frame, "BAD_ID"))
             return None
         off = frame.timestamp_ticks - cyc.header_t if cyc.header_t is not None else None
@@ -97,8 +108,10 @@ class CycleAssembler:
             self._n += 1
         return self._cur
 
-    def _close(self) -> Cycle | None:
+    def _close(self, closed_t: int | None = None) -> Cycle | None:
         c, self._cur = self._cur, None
+        if c is not None:
+            c.closed_t = closed_t
         return c
 
 

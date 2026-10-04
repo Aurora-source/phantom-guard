@@ -14,16 +14,29 @@ from phantomguard.detect.common import CycleResult, is_hard, layer_of
 class Fusion:
     def __init__(self, cfg: dict, layers: tuple[str, ...]):
         self.m, self.n = cfg["fusion"]["m"], cfg["fusion"]["n"]
+        if not 1 <= self.m <= self.n:
+            raise ValueError("fusion requires 1 <= m <= n")
         self.layers = set(layers)
         self.hist: dict[int, deque] = {}
+        self._last_cycle: int | None = None
 
     def active(self, codes: list[str]) -> list[str]:
         return [c for c in codes if layer_of(c) in self.layers]
 
-    def apply(self, res: CycleResult) -> None:
+    def apply(self, res: CycleResult, active_track_ids: set[int] | None = None) -> None:
+        """Missing observations count as unflagged scan cycles, never as extra evidence.
+
+        Pipeline passes active IDs so ended/reassigned tracks retire immediately. Standalone
+        scoring retires a history after N unobserved cycles, when no old vote can survive.
+        """
+        skipped = max(0, res.index - self._last_cycle - 1) if self._last_cycle is not None else 0
+        for history in self.hist.values():
+            history.extend([False] * min(skipped, self.n))
+        self._last_cycle = res.index
         cyc = self.active(res.cycle_reasons)
         res.cycle_alert = any(is_hard(c) for c in cyc)
         live = set()
+        grouped: dict[int, list[tuple[object, bool]]] = {}
         for v in res.objects:
             codes = self.active(v.reasons)
             v.flagged = bool(codes)
@@ -32,9 +45,18 @@ class Fusion:
                 v.alert = hard
                 continue
             live.add(v.track_id)
-            h = self.hist.setdefault(v.track_id, deque(maxlen=self.n))
-            h.append(v.flagged)
-            v.alert = hard or sum(h) >= self.m
-        for tid in [t for t in self.hist if t not in live]:  # forget tracks that ended
-            if len(self.hist) > 4096:
+            grouped.setdefault(v.track_id, []).append((v, hard))
+        for tid, group in grouped.items():
+            h = self.hist.setdefault(tid, deque(maxlen=self.n))
+            # A track casts at most one vote per scan even if an external evaluation
+            # record associates multiple duplicate-slot verdicts with that same ID.
+            h.append(any(v.flagged for v, _ in group))
+            persistent = sum(h) >= self.m
+            for v, hard in group:
+                v.alert = hard or persistent
+        for tid in [t for t in self.hist if t not in live]:
+            self.hist[tid].append(False)
+            ended = active_track_ids is not None and tid not in active_track_ids
+            expired = active_track_ids is None and len(self.hist[tid]) == self.n and not any(self.hist[tid])
+            if ended or expired:
                 del self.hist[tid]

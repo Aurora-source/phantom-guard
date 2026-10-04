@@ -17,7 +17,8 @@ from pathlib import Path
 import numpy as np
 
 from phantomguard.config import BASELINE_PATH, REPO_ROOT, load_baseline, load_config, raw_path, save_baseline
-from phantomguard.detect.autoencoder import windows_from_tracks
+from phantomguard.detect.autoencoder import (calibrated_thresholds, load_iforest, score_iforest,
+                                             collection_config, windows_from_tracks)
 from phantomguard.detect.pipeline import Detector, load_artifacts
 from phantomguard.eval.metrics import lite, score
 from phantomguard.eval.splits import loso_folds, time_block_segments
@@ -32,22 +33,28 @@ TARGET_PER_MIN = 1.0
 
 def calibrate(cfg, train, val, baseline_path: Path, tag: str) -> None:
     base = load_baseline(baseline_path)
-    ae, lib = load_artifacts(tag)
-    st_tr = collect(cfg, train)
+    ae, lib = load_artifacts(tag, strict=True, cfg=cfg, baseline=base)
+    iforest = load_iforest(tag, strict=True, cfg=cfg, baseline=base)
+    collect_cfg = collection_config(cfg, base)
+    st_tr = collect(collect_cfg, train)
     tf_tr = track_features(st_tr, cfg)
-    st_va = collect(cfg, val)
+    st_va = collect(collect_cfg, val)
     tf_va = track_features(st_va, cfg)
     n, roi, thr = cfg["learned"]["window_cycles"], cfg["roi"]["max_range"], cfg["motion"]["moving_threshold_mps"]
     xva, mva = windows_from_tracks(list(st_va.tracks.values()), n, roi, thr)
     e_va = ae.errors(xva)
+    s_va = score_iforest(iforest, xva)
     table, chosen = [], None
     for q in CANDIDATES:
         cand = derive_thresholds(st_tr, tf_tr, cfg, kq=q)
         b = dict(base)
         for k in SOFT_KEYS:
             b[k] = cand[k]
-        b["ae_threshold_static"] = dict(base["ae_threshold_static"], value=float(np.quantile(e_va[~mva], q)))
-        b["ae_threshold_moving"] = dict(base["ae_threshold_moving"], value=float(np.quantile(e_va[mva], q)))
+        ae_thresholds = calibrated_thresholds(e_va, mva, q, "AE reconstruction error", n)
+        if_thresholds = calibrated_thresholds(s_va, mva, q, "isolation-forest anomaly", n)
+        for label in ("static", "moving"):
+            b[f"ae_threshold_{label}"] = dict(base[f"ae_threshold_{label}"], **ae_thresholds[label])
+            b[f"iforest_threshold_{label}"] = dict(base[f"iforest_threshold_{label}"], **if_thresholds[label])
         events = minutes = flagged = objs = 0
         for seg in val:  # score each segment on its own: separate streams, separate time spans
             det = Detector(cfg, b, ae, lib)
@@ -57,9 +64,15 @@ def calibrate(cfg, train, val, baseline_path: Path, tag: str) -> None:
             minutes += m.minutes
             flagged += m.flagged
             objs += m.obj_cycles
+        if minutes <= 0 or objs == 0:
+            raise ValueError(f"[{tag}] validation has no elapsed time or object-cycles; calibration unavailable")
         apm = events / minutes
         table.append({"quantile": q, "val_alerts_per_minute": round(apm, 3), "val_fp_flagged": flagged / objs,
-                      "val_alert_events": events, "val_minutes": round(minutes, 3)})
+                      "val_alert_events": events, "val_minutes": round(minutes, 3),
+                      "ae_threshold_static": ae_thresholds["static"]["value"],
+                      "ae_threshold_moving": ae_thresholds["moving"]["value"],
+                      "iforest_threshold_static": if_thresholds["static"]["value"],
+                      "iforest_threshold_moving": if_thresholds["moving"]["value"]})
         print(f"[{tag}] q={q}: val {apm:.2f} alerts/min ({events} in {minutes:.2f} min), flagged {100 * flagged / objs:.3f}%")
         if chosen is None and apm < TARGET_PER_MIN:
             chosen = (q, b)
@@ -74,10 +87,9 @@ def calibrate(cfg, train, val, baseline_path: Path, tag: str) -> None:
     for k, ek in (("accel_hard", "accel_hard"), ("rr_resid_hard", "rr_resid_hard"), ("pos_speed_hard", "pos_speed_hard"),
                   ("rcs_std_hard", "rcs_std_hard"), ("rcs_by_range", "rcs_by_range"), ("colocation_min", "colocation")):
         b[k]["val_exceedance"] = exc[ek]
-    for k in ("ae_threshold_static", "ae_threshold_moving"):
-        b[k]["rule"] = b[k]["rule"].replace(f"q{cfg['learned']['threshold_quantile']}", f"q{q}")
     b["soft_quantile"] = {"value": q, "rule": note + "; candidates " + str(CANDIDATES), "split": "val",
-                          "table": table}
+                          "table": table, "selection_model": "ae",
+                          "iforest_rule": "same selected validation quantile as AE; not used to select operating point"}
     save_baseline(b, baseline_path)
     print(f"[{tag}] chosen soft quantile {q} ({note})")
 
