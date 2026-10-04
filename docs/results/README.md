@@ -11,6 +11,9 @@ normal-wheel checks on Windows and Ubuntu 26.04.1 WSL, real browser/API checks
 and separate single-worker latency. A subsequent viewer path fix prevents a
 caller-directory recording from overriding configured inputs; it does not alter
 detector, attacker, features, thresholds or metric calculations.
+Final full suites passed 170 tests with zero skips on Windows and Ubuntu WSL.
+Both installed-wheel smoke matrices match the full sweep's 36 corresponding
+layer rows, including actual AE/IF AUROCs where available.
 
 Results remain 1.42 clean alerts/minute on time-block test and 3.41 on LOSO:
 **the under-one target is not met**. There are 2,411 eligible attack runs, 198

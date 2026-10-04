@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "tested_code_sha": "e530d8f41dfd1fac75623907c1a5dc5f4b3ab2b7",
+  "tested_code_sha": "12e78353c7867ba8f8bbf246a0fa4eda35ec37dd",
   "integrated_upstream": "f93f283b09649a0d0165bc14e11b202c4572eb37",
   "initial_base": "89b182ff5777fe11c1676443085b36a52df0e94c",
   "runtime": {
@@ -188,30 +188,28 @@
   ],
   "tests": {
     "windows_worktree": {
-      "tests": "168",
+      "tests": "170",
       "failures": "0",
       "errors": "0",
       "skipped": "0",
-      "time": "55.247",
-      "timestamp": "2026-10-05T00:29:43.221078+05:30"
+      "time": "82.238",
+      "timestamp": "2026-10-05T01:12:57.637534+05:30"
     },
     "windows_normal_wheel": {
-      "tests": "168",
+      "tests": "170",
       "failures": "0",
       "errors": "0",
       "skipped": "0",
-      "time": "141.153",
-      "timestamp": "2026-10-05T00:31:27.594777+05:30",
-      "smoke_manifest_sha256": "5818332b63057e6b193cbdb61d91e16aecfa665816ee2de2e3bc3cb945e3d426"
+      "time": "86.712",
+      "timestamp": "2026-10-05T01:13:05.175553+05:30"
     },
     "ubuntu_26_04_1_wsl_normal_wheel": {
-      "tests": "168",
+      "tests": "170",
       "failures": "0",
       "errors": "0",
       "skipped": "0",
-      "time": "109.409",
-      "timestamp": "2026-10-04T19:01:25.655838+00:00",
-      "smoke_manifest_sha256": "13a2d6f6e91688ac11238d84f6e8acea95721d4ec9f65f7a5eb1e6a54a7b5172"
+      "time": "57.585",
+      "timestamp": "2026-10-04T19:43:00.019850+00:00"
     }
   },
   "browser": {
@@ -294,21 +292,21 @@
       "timeblock: trained artifacts missing: /workspace/models/ae_timeblock.npz, /workspace/models/replay_library_timeblock.pkl; run scripts/train.py; next: restore matching bundle, or offline baseline --loso -> train --loso -> calibrate --loso"
     ],
     "normal_readiness": 200,
-    "image_id": "sha256:a7e6e35f04d6df92bfc18b8f853cf385b22c30e43d236f21ec7ac7ee6e84c7ff",
+    "image_id": "sha256:bc85916abf90f56b175f0ad6ba9c1e58ca76078b7a469ceac78c6435be69cc1d",
     "read_only_root": true,
     "read_only_input_mounts": true,
     "memory_limit_bytes": 2147483648,
     "cpu_limit": 2,
     "pids_limit": 64,
     "stats": {
-      "BlockIO": "20MB / 0B",
-      "CPUPerc": "122.81%",
+      "BlockIO": "19.9MB / 4.1kB",
+      "CPUPerc": "126.85%",
       "Container": "phantomguard-p31-prototype-1",
-      "ID": "05f70f6dfe28",
-      "MemPerc": "5.64%",
-      "MemUsage": "115.5MiB / 2GiB",
+      "ID": "817b3db56201",
+      "MemPerc": "7.06%",
+      "MemUsage": "144.7MiB / 2GiB",
       "Name": "phantomguard-p31-prototype-1",
-      "NetIO": "20.5kB / 90.7kB",
+      "NetIO": "16.2kB / 84.4kB",
       "PIDs": "14"
     }
   },
@@ -325,7 +323,7 @@
           "cycles": 600
         },
         "state": "complete",
-        "seconds": 28.188000000000102,
+        "seconds": 9.78099999999904,
         "provenance": {
           "source": "recorded sensor replay",
           "attack": "simulated CAN attack",
@@ -492,7 +490,7 @@
           "cycles": 600
         },
         "state": "complete",
-        "seconds": 22.90600000000086,
+        "seconds": 9.609000000000378,
         "provenance": {
           "source": "recorded sensor replay",
           "attack": "simulated CAN attack",
@@ -659,7 +657,7 @@
           "cycles": 600
         },
         "state": "complete",
-        "seconds": 22.35900000000038,
+        "seconds": 9.32799999999952,
         "provenance": {
           "source": "recorded sensor replay",
           "attack": "simulated CAN attack",
@@ -826,7 +824,7 @@
           "cycles": 600
         },
         "state": "complete",
-        "seconds": 23.32799999999952,
+        "seconds": 9.5,
         "provenance": {
           "source": "recorded sensor replay",
           "attack": "simulated CAN attack",
@@ -1070,7 +1068,7 @@
         "--force-reinstall",
         "."
       ],
-      "seconds": 7.406000000000859,
+      "seconds": 7.484999999998763,
       "exit_code": 0
     },
     {
@@ -1081,7 +1079,7 @@
         "-q",
         "--junitxml=runs/windows-current-tests.xml"
       ],
-      "seconds": 143.9369999999999,
+      "seconds": 88.23400000000038,
       "exit_code": 0
     },
     {
@@ -1092,7 +1090,7 @@
         "doctor",
         "--full"
       ],
-      "seconds": 4.5789999999997235,
+      "seconds": 1.5630000000001019,
       "exit_code": 0
     },
     {
@@ -1109,7 +1107,7 @@
         "--output-dir",
         "runs/current-root-smoke"
       ],
-      "seconds": 64.09300000000076,
+      "seconds": 24.843000000000757,
       "exit_code": 0
     },
     {
@@ -1128,7 +1126,7 @@
         "--output-dir",
         "runs/current-replay/clean"
       ],
-      "seconds": 14.563000000000102,
+      "seconds": 5.57799999999952,
       "exit_code": 0
     },
     {
@@ -1153,7 +1151,7 @@
         "--output-dir",
         "runs/current-replay/attack"
       ],
-      "seconds": 25.639999999999418,
+      "seconds": 10.5,
       "exit_code": 0
     }
   ],
@@ -1826,5 +1824,90 @@
     "No native Linux desktop browser or human usability review",
     "Arch and hosted CI not run in this assignment",
     "Coordinate/tick/header assumptions unverified on hardware"
-  ]
+  ],
+  "benchmark_code_sha": "e530d8f41dfd1fac75623907c1a5dc5f4b3ab2b7",
+  "post_viewer_fix": {
+    "changed_source_files": [
+      "src/phantomguard/commands/replay_demo.py",
+      "src/phantomguard/paths.py"
+    ],
+    "existing_path_ast_identical": true,
+    "scoring_source_lf_hashes_unchanged": true,
+    "smoke_equivalence": {
+      "windows": {
+        "matching_layer_rows": 36,
+        "fields": [
+          "attack_instances",
+          "detected_instances",
+          "identified_instances",
+          "undetected_instances",
+          "right_censored_instances",
+          "forged_object_frames",
+          "identified_object_frames",
+          "object_detection_rate",
+          "median_ttd_cycles_detected",
+          "static_forged_roi_objects",
+          "moving_forged_roi_objects",
+          "ae_valid_scores",
+          "ae_attack_scores",
+          "ae_auroc",
+          "iforest_valid_scores",
+          "iforest_attack_scores",
+          "iforest_auroc"
+        ],
+        "numeric_tolerance": 1e-12
+      },
+      "ubuntu_wsl": {
+        "matching_layer_rows": 36,
+        "fields": [
+          "attack_instances",
+          "detected_instances",
+          "identified_instances",
+          "undetected_instances",
+          "right_censored_instances",
+          "forged_object_frames",
+          "identified_object_frames",
+          "object_detection_rate",
+          "median_ttd_cycles_detected",
+          "static_forged_roi_objects",
+          "moving_forged_roi_objects",
+          "ae_valid_scores",
+          "ae_attack_scores",
+          "ae_auroc",
+          "iforest_valid_scores",
+          "iforest_attack_scores",
+          "iforest_auroc"
+        ],
+        "numeric_tolerance": 1e-12
+      }
+    }
+  },
+  "served_fresh_report_check": {
+    "url": "http://127.0.0.1:8766/api/evaluation",
+    "git_head": "e530d8f41dfd1fac75623907c1a5dc5f4b3ab2b7",
+    "completed_attack_runs": 2411,
+    "configuration_sha256": "3b868243603521e439bb81009af736a33c25e9533ce9ec7f7f190cc3d977cbb8"
+  },
+  "linux_case_check": {
+    "argv": [
+      "wsl",
+      "-d",
+      "Ubuntu-26.04",
+      "--exec",
+      "/home/rikon/Phantom Guard clean Linux v2/.venv/bin/python",
+      "-m",
+      "phantomguard",
+      "replay",
+      "--root",
+      "/home/rikon/Phantom Guard clean Linux v2",
+      "--file",
+      "OnePersonMovingFrontAndBack.csv",
+      "--cycles",
+      "1",
+      "--export"
+    ],
+    "exit_code": 2,
+    "expected_nonzero": true,
+    "stderr": "usage: __main__.py [-h] [--file FILE] [--config CONFIG] [--baseline BASELINE]\n                   [--output-dir OUTPUT_DIR] [--part {train,val,test,all}]\n                   [--start START] [--cycles CYCLES] [--attack {T1,T2,T3,T4}]\n                   [--level {A0,A1,A2,A3,A4}] [--provider PROVIDER]\n                   [--seed SEED] [--export] [--around-first-alert]\n                   [--gif-cycles GIF_CYCLES] [--stride STRIDE] [--root ROOT]\n                   [--data-dir DATA_DIR] [--processed-dir PROCESSED_DIR]\n                   [--models-dir MODELS_DIR] [--reports-dir REPORTS_DIR]\n__main__.py: error: [Errno 2] No such file or directory: '/home/rikon/Phantom Guard clean Linux v2/data/raw/OnePersonMovingFrontAndBack.csv'\n"
+  }
 }

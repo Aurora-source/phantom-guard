@@ -89,3 +89,17 @@ in the final handoff identify machine, OS, workers and scope.
 Selected report evidence is tracked in `docs/results`; disposable jobs stay in
 runs. For publication copy only completed script outputs deliberately, preserve
 their manifest/config/artifact/source hashes, and inspect staging before commit.
+
+## Measured preparation and serving cost
+
+The latest Windows validation on a 32-logical-CPU workstation completed baseline,
+all five model bundles and calibration in about 232 seconds (30, 70 and 132 seconds).
+Single-worker clean evaluation took 47 seconds; the full 24-worker attack sweep
+took 1,987 seconds. These are observed workstation timings, not server guarantees.
+The documented server commands use one or two evaluation workers to bound memory.
+Full unit suites took 58–87 seconds on the tested Windows/WSL environments.
+
+In the 2-CPU/2-GiB container, representative 600-cycle T1–T4 jobs took 9.3–9.8
+seconds. A concurrent activity sample used 145 MiB; this is an observation, not a
+peak-memory bound. The container and scheduler enforce their documented limits.
+Serving uses restored models; these jobs never perform training or calibration.
