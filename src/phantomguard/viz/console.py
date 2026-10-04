@@ -33,7 +33,7 @@ class ConsoleView:
             return "out"
         return "alert" if v.alert else ("flag" if v.flagged else "ok")
 
-    def render(self, res: CycleResult, title: str = "") -> None:
+    def render(self, res: CycleResult, title: str = "", fab_frames: set | None = None) -> None:
         ax = self.ax
         ax.clear()
         ax.set_xlim(-self.lim, self.lim)
@@ -47,12 +47,19 @@ class ConsoleView:
             self.t0 = res.header_t
         t = (res.header_t - self.t0) * self.tick if res.header_t is not None and self.t0 is not None else 0.0
         n_alert = 0
+        fab_frames = fab_frames or set()
+        n_fab = n_fab_caught = 0
         for v in res.objects:
             if v.x is None:
                 continue
             st = self._status(v)
             c = COLORS[st]
-            ax.scatter([v.y], [v.x], s=40 if st != "out" else 12, color=c, zorder=3)
+            is_fab = v.frame_index in fab_frames
+            ax.scatter([v.y], [v.x], s=40 if st != "out" else 12, color=c, zorder=3,
+                       edgecolors="black" if is_fab else "none", linewidths=1.3)
+            if is_fab:
+                n_fab += 1
+                n_fab_caught += bool(v.flagged)
             if (v.vx or v.vy) and st != "out":
                 ax.arrow(v.y, v.x, 0.35 * v.vy, 0.35 * v.vx, color=c, width=0.03, head_width=0.18,
                          length_includes_head=True, zorder=2)
@@ -64,7 +71,8 @@ class ConsoleView:
                 self.log.append(f"{t:7.2f}s cyc {res.index:5d} slot 0x{v.slot:02x}: {','.join(v.reasons)}")
         for r in res.cycle_reasons:
             self.log.append(f"{t:7.2f}s cyc {res.index:5d} CYCLE: {r}")
-        ax.set_title(f"{title}  t={t:6.2f}s  cycle {res.index}  objects {len(res.objects)}  alerting {n_alert}",
+        extra = f"  fabricated {n_fab} (caught {n_fab_caught})" if fab_frames else ""
+        ax.set_title(f"{title}  t={t:6.2f}s  cycle {res.index}  objects {len(res.objects)}  alerting {n_alert}{extra}",
                      fontsize=9)
         al = self.axlog
         al.clear()
@@ -74,4 +82,6 @@ class ConsoleView:
                 transform=al.transAxes)
         handles = [plt.Line2D([], [], marker="o", ls="", color=COLORS[k], label=lab) for k, lab in
                    (("ok", "authentic"), ("flag", "flagged"), ("alert", "alert"), ("out", "outside ROI"))]
+        if fab_frames:
+            handles.append(plt.Line2D([], [], marker="o", ls="", mfc="none", mec="black", label="fabricated (truth)"))
         ax.legend(handles=handles, loc="upper right", fontsize=7)

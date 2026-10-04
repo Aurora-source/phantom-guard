@@ -203,6 +203,37 @@
       ]
     }
   },
+  "fusion_mn": {
+    "rule": "fewest CLEAN validation alert events over mn_candidates; ties -> smallest N (fastest detection); no attack labels used",
+    "split": "val",
+    "table": [
+      {
+        "m": 3,
+        "n": 5,
+        "val_alert_events": 1,
+        "val_alerts_per_minute": 0.474,
+        "val_minutes": 2.111
+      },
+      {
+        "m": 4,
+        "n": 6,
+        "val_alert_events": 0,
+        "val_alerts_per_minute": 0.0,
+        "val_minutes": 2.111
+      },
+      {
+        "m": 5,
+        "n": 8,
+        "val_alert_events": 0,
+        "val_alerts_per_minute": 0.0,
+        "val_minutes": 2.111
+      }
+    ],
+    "value": [
+      4,
+      6
+    ]
+  },
   "hold_frac_moving": {
     "rule": "p5/p50/p95 over moving in-ROI tracks of the fraction of cycles where x, y, vx, vy are all unchanged",
     "split": "train",
@@ -853,30 +884,30 @@
     "table": [
       {
         "quantile": 0.999,
-        "val_alert_events": 33,
-        "val_alerts_per_minute": 15.631,
-        "val_fp_flagged": 0.0028907935002314895,
+        "val_alert_events": 30,
+        "val_alerts_per_minute": 14.21,
+        "val_fp_flagged": 0.002518152150592274,
         "val_minutes": 2.111
       },
       {
         "quantile": 0.9995,
-        "val_alert_events": 15,
-        "val_alerts_per_minute": 7.105,
-        "val_fp_flagged": 0.0010727554004765292,
+        "val_alert_events": 13,
+        "val_alerts_per_minute": 6.158,
+        "val_fp_flagged": 0.0008807886446017819,
         "val_minutes": 2.111
       },
       {
         "quantile": 0.9999,
         "val_alert_events": 1,
         "val_alerts_per_minute": 0.474,
-        "val_fp_flagged": 9.033729688223405e-05,
+        "val_fp_flagged": 3.387648633083776e-05,
         "val_minutes": 2.111
       },
       {
         "quantile": 0.99995,
         "val_alert_events": 1,
         "val_alerts_per_minute": 0.474,
-        "val_fp_flagged": 6.775297266167552e-05,
+        "val_fp_flagged": 3.387648633083776e-05,
         "val_minutes": 2.111
       },
       {

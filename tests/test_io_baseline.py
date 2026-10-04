@@ -99,7 +99,7 @@ def test_baseline_json_records_rule_for_every_threshold():
         # thresholds come from train, calibration from validation; never from test (hard rule 5)
         assert v["split"] in ("train", "val"), (k, v["split"])
         if v["split"] == "val":
-            assert k.startswith(("ae_threshold", "iforest_threshold", "soft_quantile")), k
+            assert k.startswith(("ae_threshold", "iforest_threshold", "soft_quantile", "fusion_mn")), k
     # every threshold that can be checked on held-out clean data has a val exceedance recorded
     for k in ("cadence_lo", "arrival_hi", "burst_gap_hi", "range_order_tol", "rr_resid_hard", "rcs_std_hard",
               "speed_max", "rcs_by_range", "colocation_min"):
