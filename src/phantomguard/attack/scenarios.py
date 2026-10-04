@@ -185,7 +185,7 @@ def _naive_trajectory(ctx: GenContext, c0: int, life: int, jump: bool, moving: b
 
 def _object_trajectory(ctx: GenContext, c0: int, life: int, moving: bool) -> dict[int, Fields | None]:
     if ctx.level.data_aware and moving:
-        seg = _pick_real_segment(ctx, ctx.known, 20, life)
+        seg = _pick_real_segment(ctx, ctx.known, min(20, life), life)
         return _segment_to_fields(ctx, seg, c0, 0, 0) if seg is not None else {}
     if ctx.level.physics:                       # A3/A4
         return _moving_trajectory(ctx, c0, life) if moving else _static_trajectory(ctx, c0, life)

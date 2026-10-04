@@ -19,6 +19,7 @@ REASONS: dict[str, tuple[str, bool]] = {
     "STATUS": ("protocol", True),
     "BAD_ID": ("protocol", True),
     "SHORT_HEADER": ("protocol", True),
+    "HEADER_LEN": ("protocol", True),
     "NO_HEADER": ("protocol", True),
     # protocol, object level
     "FRAME_LEN": ("protocol", True),

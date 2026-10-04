@@ -83,7 +83,8 @@ class CycleAssembler:
                 hdr = None
             self._cur = Cycle(self._n, hdr, fi, frame.timestamp_ticks, header_frame=frame)
             if hdr is None:
-                self._cur.other.append(OtherFrame(fi, frame, "SHORT_HEADER"))
+                reason = "SHORT_HEADER" if len(frame.data) < self.header_min_len else "HEADER_LEN"
+                self._cur.other.append(OtherFrame(fi, frame, reason))
             self._n += 1
             return done
         cyc = self._ensure_cycle()

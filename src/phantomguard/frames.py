@@ -18,6 +18,7 @@ CAN_ID_HEADER = 0x60A
 CAN_ID_OBJECT = 0x60B
 OBJECT_LEN = 8
 HEADER_MIN_LEN = 5  # bytes 0..4 carry count, counter, (unknown byte3), status
+CLASSIC_CAN_MAX_LEN = 8
 
 _DECODER_PATH = Path(__file__).resolve().parents[2] / "tools" / "decode.py"
 
@@ -188,15 +189,15 @@ def build_header(count: int, meas_counter: int, status: int = 0x01, length: int 
     """0x60A payload: byte0 count, bytes1-2 counter (big-endian), byte3 0x00, byte4 status."""
     if not 0 <= count <= 0xFF or not 0 <= meas_counter <= 0xFFFF:
         raise ValueError("count or meas_counter out of range")
-    if length < HEADER_MIN_LEN:
-        raise ValueError(f"header length must be >= {HEADER_MIN_LEN}")
+    if not HEADER_MIN_LEN <= length <= CLASSIC_CAN_MAX_LEN:
+        raise ValueError(f"classic CAN header length must be {HEADER_MIN_LEN}..{CLASSIC_CAN_MAX_LEN}")
     body = [count, (meas_counter >> 8) & 0xFF, meas_counter & 0xFF, 0x00, status]
     return bytes(body + [0] * (length - HEADER_MIN_LEN))
 
 
 def parse_header(data: bytes) -> Header:
-    if len(data) < HEADER_MIN_LEN:
-        raise MalformedFrame(f"header frame has {len(data)} bytes, expected >= {HEADER_MIN_LEN}")
+    if not HEADER_MIN_LEN <= len(data) <= CLASSIC_CAN_MAX_LEN:
+        raise MalformedFrame(f"header frame has {len(data)} bytes, expected {HEADER_MIN_LEN}..{CLASSIC_CAN_MAX_LEN}")
     return Header(count=data[0], meas_counter=(data[1] << 8) | data[2], status=data[4], byte3=data[3])
 
 

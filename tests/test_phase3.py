@@ -72,6 +72,15 @@ def test_next_header_payload_and_future_frames_cannot_change_closed_verdict(conf
     assert "SHORT_HEADER" in b[3].cycle_reasons
 
 
+def test_oversized_classic_can_header_alerts_at_its_own_causal_boundary(config, baseline):
+    prefix = frames_at([0, 332, 664])
+    invalid = Frame(CAN_ID_HEADER, build_header(1, 3) + bytes(4), 996)
+    results = list(Detector(config, baseline).run(prefix + [invalid, object_frame(t=999)]))
+    assert "HEADER_LEN" not in results[2].cycle_reasons
+    assert "HEADER_LEN" in results[3].cycle_reasons and results[3].cycle_alert
+    assert results[3].frames[0].frame_index == 6
+
+
 @pytest.mark.parametrize("warmup", [0, 1, 2])
 def test_exactly_configured_cadence_gaps_are_skipped(config, baseline, warmup):
     config["protocol"]["cadence_warmup_cycles"] = warmup
