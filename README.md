@@ -78,7 +78,7 @@ python -m phantomguard doctor --full
 python -m phantomguard replay --file onePersonMovingFrontAndBack.csv --cycles 150 --gif-cycles 40 --export --output-dir runs/smoke/clean
 python -m phantomguard replay --file onePersonMovingFrontAndBack.csv --attack T1 --level A2 --seed 11 --cycles 150 --gif-cycles 40 --export --output-dir runs/smoke/attack
 python -m phantomguard attack-eval --smoke --workers 1 --output-dir runs/smoke/evaluation
-python -m phantomguard serve --port 8765
+python -m phantomguard serve --port 8765 --reports-dir docs/results/portable
 ```
 
 Open **http://127.0.0.1:8765**. Stop with Ctrl+C. Exports are PNG/GIF plus detector
@@ -121,7 +121,7 @@ python -m phantomguard doctor --full
 python -m phantomguard replay --file onePersonMovingFrontAndBack.csv --cycles 150 --gif-cycles 40 --export --output-dir runs/smoke/clean
 python -m phantomguard replay --file onePersonMovingFrontAndBack.csv --attack T1 --level A2 --seed 11 --cycles 150 --gif-cycles 40 --export --output-dir runs/smoke/attack
 python -m phantomguard attack-eval --smoke --workers 1 --output-dir runs/smoke/evaluation
-python -m phantomguard serve --port 8765
+python -m phantomguard serve --port 8765 --reports-dir docs/results/portable
 ```
 
 When restoring compatible artifacts, skip the installation/training/calibration
@@ -145,6 +145,11 @@ includes configured seeds/repetitions, fixed time-block and LOSO splits,
 static/moving cases, supported levels, replay-source provenance, layer comparisons
 and ablations. It takes substantially longer than smoke. Never choose a threshold
 or model from held-out results; unsupported/missed/censored attacks remain visible.
+
+The examples display the published full validation reports. After generating
+your own complete evaluation in `runs/validation`, display that matching run with
+`python -m phantomguard serve --reports-dir runs/validation`. A smoke evaluation
+is an interface check and does not replace the full performance benchmark.
 
 For the Ubuntu home server, follow [server-handoff.md](docs/server-handoff.md):
 matching tested Git SHA, verified ZIP/checksum, read-only dataset/model mounts,

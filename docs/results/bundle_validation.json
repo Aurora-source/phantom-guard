@@ -1,0 +1,168 @@
+{
+  "schema": 1,
+  "tested_code_sha": "c2cc251c6f4cbaf64dc36ad73a0b4d515dbeff79",
+  "benchmark_code_sha": "e530d8f41dfd1fac75623907c1a5dc5f4b3ab2b7",
+  "bundle_path": "D:\\Hacksprint\\phantom-guard-portable-hosted-prototype\\deployment-bundles\\phantomguard-c2cc251c6f4c.zip",
+  "bundle_bytes": 10319138,
+  "ok": true,
+  "sha256": "849dbd5c12410e75fd4d1ffc43aee45a7380756639548ac7d921dd7a65f90ad3",
+  "payload_bytes": 154599161,
+  "payload_files": 54,
+  "payload_sha256_verified_on_windows_and_ubuntu_wsl": true,
+  "deterministic_second_build_sha256": "849dbd5c12410e75fd4d1ffc43aee45a7380756639548ac7d921dd7a65f90ad3",
+  "original_dataset_hashes_unchanged": true,
+  "restoration_idempotent_both_os": true,
+  "windows_fresh_clone": "D:\\Hacksprint\\Phantom Guard portable release Windows",
+  "linux_fresh_clone": "/home/rikon/Phantom Guard portable release Linux",
+  "windows_commands": [
+    {
+      "argv": [
+        "D:\\Hacksprint\\Phantom Guard portable release Windows\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pip",
+        "install",
+        "--no-deps",
+        "--force-reinstall",
+        "."
+      ],
+      "seconds": 6.20299999999952,
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "D:\\Hacksprint\\Phantom Guard portable release Windows\\.venv\\Scripts\\python.exe",
+        "-m",
+        "phantomguard",
+        "verify-bundle",
+        "--archive",
+        "D:\\Hacksprint\\phantom-guard-portable-hosted-prototype\\deployment-bundles\\phantomguard-c2cc251c6f4c.zip"
+      ],
+      "seconds": 0.375,
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "D:\\Hacksprint\\Phantom Guard portable release Windows\\.venv\\Scripts\\python.exe",
+        "-m",
+        "phantomguard",
+        "restore-bundle",
+        "--archive",
+        "D:\\Hacksprint\\phantom-guard-portable-hosted-prototype\\deployment-bundles\\phantomguard-c2cc251c6f4c.zip"
+      ],
+      "seconds": 0.7029999999995198,
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "D:\\Hacksprint\\Phantom Guard portable release Windows\\.venv\\Scripts\\python.exe",
+        "-m",
+        "phantomguard",
+        "restore-bundle",
+        "--archive",
+        "D:\\Hacksprint\\phantom-guard-portable-hosted-prototype\\deployment-bundles\\phantomguard-c2cc251c6f4c.zip"
+      ],
+      "seconds": 0.6720000000004802,
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "D:\\Hacksprint\\Phantom Guard portable release Windows\\.venv\\Scripts\\python.exe",
+        "-m",
+        "phantomguard",
+        "doctor",
+        "--full"
+      ],
+      "seconds": 6.859000000000378,
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "D:\\Hacksprint\\Phantom Guard portable release Windows\\.venv\\Scripts\\python.exe",
+        "-m",
+        "phantomguard",
+        "replay",
+        "--file",
+        "onePersonMovingFrontAndBack.csv",
+        "--cycles",
+        "150",
+        "--gif-cycles",
+        "40",
+        "--export",
+        "--output-dir",
+        "runs/bundle-replay/clean"
+      ],
+      "seconds": 7.281999999999243,
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "D:\\Hacksprint\\Phantom Guard portable release Windows\\.venv\\Scripts\\python.exe",
+        "-m",
+        "phantomguard",
+        "replay",
+        "--file",
+        "onePersonMovingFrontAndBack.csv",
+        "--attack",
+        "T1",
+        "--level",
+        "A2",
+        "--cycles",
+        "150",
+        "--gif-cycles",
+        "40",
+        "--export",
+        "--output-dir",
+        "runs/bundle-replay/attack"
+      ],
+      "seconds": 14.04700000000048,
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "D:\\Hacksprint\\Phantom Guard portable release Windows\\.venv\\Scripts\\python.exe",
+        "-m",
+        "phantomguard",
+        "attack-eval",
+        "--smoke",
+        "--workers",
+        "1",
+        "--output-dir",
+        "runs/bundle-smoke"
+      ],
+      "seconds": 34.5,
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "D:\\Hacksprint\\Phantom Guard portable release Windows\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pip",
+        "check"
+      ],
+      "seconds": 0.5779999999995198,
+      "exit_code": 0
+    }
+  ],
+  "linux_checks": [
+    "normal wheel",
+    "verify all archive/payload SHA256",
+    "restore twice",
+    "doctor --full",
+    "clean PNG/GIF",
+    "T1/A2 PNG/GIF",
+    "four real T1\u2013T4 smoke cells",
+    "uv pip check"
+  ],
+  "release_full_windows_suite": {
+    "name": "pytest",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "tests": "170",
+    "time": "76.168",
+    "timestamp": "2026-10-05T01:17:35.884349+05:30",
+    "hostname": "Lucifer-PC"
+  },
+  "training_absent_in_restored_environments": true,
+  "implementation_matches_validated_parent": true
+}
