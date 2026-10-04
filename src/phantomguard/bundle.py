@@ -44,6 +44,13 @@ def build(cfg: dict, archive=None) -> dict:
     for name in ('dataset_inventory.json','portable_validation.json','rcs_vs_range.md','README.md'):
         if (p.reports/name).is_file():
             payload['docs/results/'+name] = p.reports/name
+    # Keep accepted historical evidence alongside fresh portable validation.
+    # The explicit allow-list excludes job logs, caches and incidental outputs.
+    for name in REQUIRED_REPORTS + ('portable_validation.json', 'dataset_inventory.json',
+                                   'clean_eval_ablation.csv', 'clean_eval_ae_vs_iforest.csv',
+                                   'clean_eval_operating_point.csv', 'clean_eval_reasons.csv'):
+        if (p.reports/'portable'/name).is_file():
+            payload['docs/results/portable/'+name] = p.reports/'portable'/name
     # Deploy configuration must contain only portable relative paths. Baselines
     # contain split names and calibration metadata, never developer data roots.
     from phantomguard.eval.report import portable_config
