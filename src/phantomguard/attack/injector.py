@@ -15,6 +15,7 @@ and the whole cycle burst is re-spaced back-to-back, matching the sensor's obser
 from __future__ import annotations
 
 import csv
+import json
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterator
@@ -40,11 +41,13 @@ class Label:
 class MixedSource:
     """FrameSource over a recorded file with fabricated frames mixed in at planned cycles."""
 
-    def __init__(self, base: ReplaySource, ctx: GenContext, instances: list[Instance], tag: str = ""):
+    def __init__(self, base: ReplaySource, ctx: GenContext, instances: list[Instance], tag: str = "",
+                 complete_labels: bool = False):
         self.base = base
         self.ctx = ctx
         self.name = f"{base.name}+{tag}" if tag else base.name
         self.labels: list[Label] = []
+        self.complete_labels = complete_labels
         # index instances' objects by the cycles they are active in
         self._by_cycle: dict[int, list[tuple[Instance, int]]] = {}
         for inst in instances:
@@ -67,7 +70,7 @@ class MixedSource:
         reserved_by_cycle: dict[int, set[int]] = {}
         for inst in self.instances:
             for obj in inst.objects:
-                if obj.slot_pref is None or obj.replace:
+                if obj.slot_pref is None or obj.replace or inst.atype == "T4":
                     continue
                 active = [c for c in obj.per_cycle if 0 <= c < n]
                 blocked: set[int] = set()
@@ -81,7 +84,9 @@ class MixedSource:
                     slot = next((int(x) for x in order if int(x) not in blocked and int(x) <= self.ctx.slot_max),
                                 None)
                     if slot is None:
-                        slot = next((k for k in range(self.ctx.slot_max + 1) if k not in blocked), 0)
+                        from phantomguard.eval.attack_adapter import UnsupportedAttack
+                        raise UnsupportedAttack("no stable free slot across requested attack lifetime; "
+                                                "cannot preserve slot uniqueness without a generation artefact")
                 obj.slot_pref = slot
                 for c in active:
                     reserved_by_cycle.setdefault(c, set()).add(slot)
@@ -106,7 +111,7 @@ class MixedSource:
             raw = bytes(int(b) for b in self.ctx.rng.integers(0, 256, size=8))
             return raw[0], raw, None, None
         x, y, vx, vy, rcs = fields
-        if obj.replace:                                   # T4 A2+: overwrite the real slot in place
+        if obj.replace or inst.atype == "T4":              # T4 A0/A1 must append with the SAME slot
             slot = obj.slot_pref
         elif obj.slot_pref is not None:                   # A1+: keep the stable slot if free, else a free one
             slot = obj.slot_pref
@@ -121,6 +126,7 @@ class MixedSource:
 
     # ------------------------------------------------------------------ iteration
     def __iter__(self) -> Iterator[Frame]:
+        self.labels.clear()
         fi = 0
         base_cycles = self.base.cycles
         lo, hi = self.base.cycle_range
@@ -163,17 +169,35 @@ class MixedSource:
                         f[0] = real_by_slot[rs][0]  # inherit the real frame's timestamp
 
             emit = self._assemble(rc, header_t, have_header, reals, fabs)
-            # header
+            # Every rewritten count header is a forged frame, separate from object identification.
+            original_header = getattr(self.base, "headers", {}).get(cidx)
             if have_header:
                 count = len(emit) if ctx.level.fix_header else rc.obj_count_header
                 status = rc.sync_status if rc.sync_status is not None else 1
-                yield Frame(CAN_ID_HEADER, build_header(count, rc.meas_counter, status), header_t)
+                active = self._by_cycle.get(cidx, [])
+                changed = count != rc.obj_count_header
+                if self.complete_labels:
+                    inst = active[0][0] if changed and active else None
+                    self.labels.append(Label(fi, int(inst is not None), inst.attack_id if inst else "",
+                                             inst.atype if inst else "", inst.level if inst else ""))
+                data = build_header(count, rc.meas_counter, status)
+                yield original_header if original_header and not changed else Frame(CAN_ID_HEADER, data, header_t)
                 fi += 1
-            for ts, raw, slot, is_fab, meta in emit:
+            elif original_header is not None:
+                if self.complete_labels:
+                    self.labels.append(Label(fi, 0, "", "", ""))
+                yield original_header
+                fi += 1
+            outgoing = [(Frame(CAN_ID_OBJECT, raw, ts), is_fab, meta) for ts, raw, slot, is_fab, meta in emit]
+            outgoing += [(frame, False, None) for frame in getattr(self.base, "others", {}).get(cidx, [])]
+            outgoing.sort(key=lambda item: item[0].timestamp_ticks)
+            for frame, is_fab, meta in outgoing:
                 if is_fab and meta is not None:
                     aid, atype, lvl = meta
                     self.labels.append(Label(fi, 1, aid, atype, lvl))
-                yield Frame(CAN_ID_OBJECT, raw, ts)
+                elif self.complete_labels:
+                    self.labels.append(Label(fi, 0, "", "", ""))
+                yield frame
                 fi += 1
 
     def _assemble(self, rc, header_t, have_header, reals, fabs):
@@ -217,4 +241,53 @@ class MixedSource:
 
 
 def label_map(src: MixedSource) -> dict[int, Label]:
-    return {lb.frame_index: lb for lb in src.labels}
+    return {lb.frame_index: lb for lb in src.labels if lb.is_attack}
+
+
+class _BufferedSource:
+    """Offline adapter for an ordinary FrameSource, preserving anomalous input frames."""
+    def __init__(self, source):
+        from phantomguard.cycles import iter_cycles
+        self.name = getattr(source, "name", "frame-source")
+        self.cycles, self.headers, self.others = [], {}, {}
+        for c in iter_cycles(source):
+            h = c.header
+            objects = sorted(c.objects + c.malformed_objects, key=lambda o: o.frame_index)
+            self.cycles.append(RecordedCycle(c.index, h.meas_counter if h else None,
+                                             h.count if h else None, h.status if h else None, c.header_t,
+                                             tuple((o.t, o.data) for o in objects)))
+            if c.header_frame is not None:
+                self.headers[c.index] = c.header_frame
+            self.others[c.index] = [o.frame for o in c.other if o.frame_index != c.header_frame_index]
+        self.cycle_range = (0, len(self.cycles))
+
+
+class AttackedSource(MixedSource):
+    """Documented FrameSource wrapper; labels/lifecycle stay in separate sidecars.
+
+    This is an offline generator and buffers a generic source for scenario scheduling.
+    Earlier-stream replay planners may read only the prefix preceding their onset.
+    """
+    def __init__(self, source, attacker, labels_path=None):
+        base = source if isinstance(source, ReplaySource) else _BufferedSource(source)
+        instances = attacker.plan(base)
+        super().__init__(base, attacker.context, instances, complete_labels=True)
+        self.labels_path = Path(labels_path) if labels_path else None
+        self.seed, self.run_index = attacker.seed, attacker.run_index
+
+    def __iter__(self):
+        yield from super().__iter__()
+        if self.labels_path:
+            self.labels_path.parent.mkdir(parents=True, exist_ok=True)
+            self.write_labels(self.labels_path)
+            emitted = {str(l.attack_id) for l in self.labels if l.is_attack}
+            lo, hi = self.base.cycle_range
+            lifecycle = [{"attack_id": i.attack_id, "attack_type": i.atype, "level": i.level,
+                          "scheduled_first_cycle": i.c0-lo, "scheduled_last_cycle": i.c1-lo,
+                          "emitted": str(i.attack_id) in emitted, "note": i.note,
+                          "truncated_by_eof": any(c >= hi for o in i.objects for c in o.per_cycle)}
+                         for i in self.instances]
+            self.labels_path.with_suffix(".instances.json").write_text(
+                json.dumps({"seed": self.seed, "run_index": self.run_index,
+                            "requested_instances": self.ctx.cfg["attack"]["instances_per_run"],
+                            "planned_instances": lifecycle}, indent=2) + "\n", encoding="utf-8")

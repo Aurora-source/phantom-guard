@@ -38,7 +38,7 @@ def baseline():
         rcs_lo=-30., rcs_hi=30., speed_max=10., accel_hard=1000., rr_scale=.8, rr_resid_hard=10.,
         pos_speed_hard=20., rcs_std_hard=10., rcs_by_range={"edges": [0., 15.], "bands": [[-30., 30., 100]]},
         colocation_min=.1, birth_range_hist={"edges": [0., 5., 10., 15.], "counts": [10, 10, 10]},
-        reassign_jump=1.)
+        reassign_jump=1., objs_per_cycle_lo=0, objs_per_cycle_hi=50)
 
 
 def object_frame(slot=1, x=3., t=3, vx=0., rcs=20., can_id=CAN_ID_OBJECT):

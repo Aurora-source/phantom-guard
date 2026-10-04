@@ -295,6 +295,7 @@ def derive_thresholds(st: SegmentStats, tf: TrackFeatures, cfg: dict, kq: float 
     b = {}
     b["cadence_lo"] = entry(int(gaps.min()) - m, f"min(train header gaps after {cfg['protocol']['cadence_warmup_cycles']}-cycle warm-up) - {m} ticks")
     b["cadence_hi"] = entry(int(gaps.max()) + m, f"max(train header gaps) + {m} ticks")
+    b["cadence_median"] = entry(float(np.median(gaps)), "median(train header gaps after capture warm-up)")
     b["counter_step"] = entry(1, "every train counter step is +1 (mod 65536)",
                               observed=sorted(set(int(s) for s in st.counter_steps)))
     b["arrival_lo"] = entry(max(0, int(offs.min()) - m), f"min(train arrival offsets) - {m} ticks")

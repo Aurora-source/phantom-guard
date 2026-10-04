@@ -72,6 +72,9 @@ class GenContext:
     rcs_grid: bool
     rcs_lo: float
     rcs_hi: float
+    motion_case: str | None = None
+    replay_provenance: str | None = None
+    replay_variant: str | None = None
 
     # ---- samplers (all from real data) ----
     def sample_offset_window(self) -> int:
@@ -115,12 +118,13 @@ def make_context(cfg: dict, baseline: dict, level_name: str, rng: np.random.Gene
                  unseen: Pools | None) -> GenContext:
     use = np.asarray(bval(baseline, "slot_use_hist"), dtype=float)
     use = use / use.sum()
-    ff = bval(baseline, "fixed_fields")
+    period = bval(baseline, "cadence_median") if "cadence_median" in baseline else (
+        bval(baseline, "cadence_lo") + bval(baseline, "cadence_hi")) / 2
     return GenContext(
         cfg=cfg, baseline=baseline, level=LEVELS[level_name], rng=rng, known=known, unseen=unseen,
-        dt_cycle=cfg["units"]["tick_seconds"] * 332, rr_scale=bval(baseline, "rr_scale"),
+        dt_cycle=cfg["units"]["tick_seconds"] * period, rr_scale=bval(baseline, "rr_scale"),
         slot_max=bval(baseline, "slot_max"), slot_p=use,
-        arrival=(bval(baseline, "arrival_lo"), bval(baseline, "arrival_hi")), period=332,
+        arrival=(bval(baseline, "arrival_lo"), bval(baseline, "arrival_hi")), period=int(round(period)),
         roi=cfg["roi"]["max_range"], az=tuple(known.azimuth_range),
         rcs_grid=bool(bval(baseline, "rcs_integer")), rcs_lo=bval(baseline, "rcs_lo"), rcs_hi=bval(baseline, "rcs_hi"))
 
@@ -161,7 +165,7 @@ def _static_trajectory(ctx: GenContext, c0: int, life: int) -> dict[int, Fields]
     return {c0 + k: f for k in range(life)}
 
 
-def _naive_trajectory(ctx: GenContext, c0: int, life: int, jump: bool) -> dict[int, Fields | None]:
+def _naive_trajectory(ctx: GenContext, c0: int, life: int, jump: bool, moving: bool) -> dict[int, Fields | None]:
     """A1/A2 kinematics: positions in ROI but jumping; velocity unrelated to motion.
 
     A0 (no level fields set) emits None -> random raw bytes, handled by the injector.
@@ -173,23 +177,27 @@ def _naive_trajectory(ctx: GenContext, c0: int, life: int, jump: bool) -> dict[i
     for k in range(life):
         if jump or k == 0:
             x, y = ctx.sample_pos_roi()
-        vx = float(ctx.rng.uniform(-6, 6))
-        vy = float(ctx.rng.uniform(-4, 4))
+        vx, vy = ctx.sample_velocity() if moving else (0.0, 0.0)
         rcs = ctx.sample_rcs()
         out[c0 + k] = (_q("x", x), _q("y", y), _q("vx", vx), _q("vy", vy), _clip_rcs(ctx, rcs))
     return out
 
 
 def _object_trajectory(ctx: GenContext, c0: int, life: int, moving: bool) -> dict[int, Fields | None]:
+    if ctx.level.data_aware and moving:
+        seg = _pick_real_segment(ctx, ctx.known, 20, life)
+        return _segment_to_fields(ctx, seg, c0, 0, 0) if seg is not None else {}
     if ctx.level.physics:                       # A3/A4
         return _moving_trajectory(ctx, c0, life) if moving else _static_trajectory(ctx, c0, life)
-    return _naive_trajectory(ctx, c0, life, jump=True)  # A0/A1/A2
+    return _naive_trajectory(ctx, c0, life, jump=True, moving=moving)  # A0/A1/A2
 
 
 # --------------------------------------------------------------------------- scenario planners
 
 
 def _pick_real_segment(ctx: GenContext, pool: Pools, min_len: int, max_len: int) -> np.ndarray | None:
+    if max_len < min_len:
+        return None
     moving = [t for t in pool.moving_tracks if len(t) >= min_len]
     if not moving:
         return None
@@ -206,7 +214,7 @@ def _segment_to_fields(ctx: GenContext, seg: np.ndarray, c0: int, dx: float, dy:
         x, y = p[P_X] + dx, p[P_Y] + dy
         if not ctx.in_scene(x, y):
             break
-        out[c0 + k] = (_q("x", x), _q("y", y), _q("vx", p[P_VX]), _q("vy", p[P_VY]), _clip_rcs(ctx, float(p[P_RCS])))
+        out[c0 + k] = (_q("x", x), _q("y", y), _q("vx", p[P_VX]), _q("vy", p[P_VY]), float(p[P_RCS]))
     return out
 
 
@@ -217,7 +225,7 @@ def plan_instance(ctx: GenContext, atype: str, attack_id: int, c0: int, base_cyc
     if atype == "T1":
         n = int(ctx.rng.integers(ac["T1"]["count"][0], ac["T1"]["count"][1] + 1))
         life = int(ctx.rng.integers(ac["T1"]["life"][0], ac["T1"]["life"][1] + 1))
-        moving = bool(ctx.rng.random() < 0.5)
+        moving = ctx.motion_case == "moving" if ctx.motion_case else bool(ctx.rng.random() < 0.5)
         objs = []
         for _ in range(n):
             traj = _object_trajectory(ctx, c0, life, moving)
@@ -230,17 +238,30 @@ def plan_instance(ctx: GenContext, atype: str, attack_id: int, c0: int, base_cyc
         objs = []
         for _ in range(n):
             start = c0 + int(ctx.rng.integers(0, max(1, life // 2)))
-            ln = int(ctx.rng.integers(max(2, life // 4), life + 1))
-            traj = _object_trajectory(ctx, start, ln, moving=bool(ctx.rng.random() < 0.3))
+            remaining = life - (start-c0)
+            ln = int(ctx.rng.integers(min(remaining, max(2, life // 4)), remaining + 1))
+            moving = ctx.motion_case == "moving" if ctx.motion_case else bool(ctx.rng.random() < 0.3)
+            traj = _object_trajectory(ctx, start, ln, moving=moving)
             if traj:
                 objs.append(ObjPlan(_pref_slot(ctx), False, traj))
         return Instance(attack_id, atype, L.name, c0, c0 + life - 1, objs, f"flood x{n}") if objs else None
     if atype == "T3":
-        pool = ctx.unseen if (L.data_aware and ctx.unseen is not None) else ctx.known
+        if ctx.replay_provenance == "earlier_stream":
+            from phantomguard.attack.pools import stream_pools
+            try:
+                pool = stream_pools(ctx.cfg, base_cycles, lo, c0)
+            except ValueError:
+                return None
+        elif ctx.replay_provenance == "unseen":
+            pool = ctx.unseen
+        else:
+            pool = ctx.unseen if (ctx.replay_provenance is None and L.data_aware and ctx.unseen is not None) else ctx.known
+        if pool is None:
+            return None
         seg = _pick_real_segment(ctx, pool, ac["T3"]["min_len"], ac["T3"]["max_len"])
         if seg is None:
             return None
-        translate = bool(ctx.rng.random() < 0.5)
+        translate = ctx.replay_variant == "translated" if ctx.replay_variant else bool(ctx.rng.random() < 0.5)
         dx = dy = 0.0
         if translate:  # shift while keeping the copy inside the scene
             for _ in range(20):
@@ -248,9 +269,9 @@ def plan_instance(ctx: GenContext, atype: str, attack_id: int, c0: int, base_cyc
                 if ctx.in_scene(seg[0, P_X] + dx, seg[0, P_Y] + dy) and ctx.in_scene(seg[-1, P_X] + dx, seg[-1, P_Y] + dy):
                     break
             else:
-                dx = dy = 0.0
+                return None  # never call an exact copy a translated replay
         traj = _segment_to_fields(ctx, seg, c0, dx, dy)
-        if not traj:
+        if len(traj) < ac["T3"]["min_len"]:
             return None
         return Instance(attack_id, atype, L.name, c0, max(traj), [ObjPlan(_pref_slot(ctx), False, traj)],
                         f"replay {'translated' if (dx or dy) else 'exact'} len{len(seg)}")
@@ -306,13 +327,15 @@ def _pick_live_moving_track(base_cycles, lo: int, c0: int, cfg: dict):
             if o.range > roi:
                 continue
             key = o.slot
-            if key in tracks and ci - prev_seen[key] > 2:
+            if key in tracks and (ci - prev_seen[key] != 1 or
+                                  math.hypot(o.x-tracks[key][-1][1][0], o.y-tracks[key][-1][1][1]) >
+                                  cfg["tracks"]["reassign_jump_default"]):
                 continue  # broken; keep the first contiguous run
             tracks.setdefault(key, []).append((ci, (o.x, o.y, o.vx, o.vy, o.rcs), o.speed))
             prev_seen[key] = ci
     for slot, pts in tracks.items():
         moving = sum(1 for _, _, s in pts if s >= thr)
-        if moving >= 8 and len(pts) >= 12:
+        if moving >= cfg["kinematic"]["min_moving_cycles"] and len(pts) >= cfg["attack"]["T4"]["life"][0]:
             start_c = pts[0][0]
             seg = [f for _, f, _ in pts]
             return slot, start_c, seg
@@ -338,3 +361,36 @@ def plan_run(ctx: GenContext, atype: str, base_cycles, lo: int, hi: int) -> list
             instances.append(inst)
             aid += 1
     return instances
+
+
+@dataclass
+class Attacker:
+    context: GenContext
+    attack_type: str
+    seed: int
+    run_index: int
+
+    def plan(self, source):
+        lo, hi = source.cycle_range
+        return plan_run(self.context, self.attack_type, source.cycles, lo, hi)
+
+
+def create_attacker(cfg, baseline, *, attack_type, level, seed, train_segments,
+                    replay_provenance="training", unseen_segments=(), motion_case="moving",
+                    replay_variant="exact", run_index=0):
+    """Use accepted scenario planners with explicit evaluation scopes and effective seed."""
+    from phantomguard.attack.pools import build_pools
+    from phantomguard.detect.autoencoder import collection_config
+    from phantomguard.eval.attack_adapter import UnsupportedAttack, support_reason
+
+    reason = support_reason(attack_type, level, motion_case)
+    if reason:
+        raise UnsupportedAttack(reason)
+    cfg = collection_config(cfg, baseline)
+    known = build_pools(cfg, list(train_segments))
+    unseen = build_pools(cfg, list(unseen_segments)) if replay_provenance == "unseen" else None
+    if motion_case == "moving" and attack_type in {"T1", "T2"} and not len(known.vel_moving):
+        raise UnsupportedAttack("no recorded moving velocity samples in permitted training segments")
+    context = make_context(cfg, baseline, level, np.random.default_rng(seed), known, unseen)
+    context.motion_case, context.replay_provenance, context.replay_variant = motion_case, replay_provenance, replay_variant
+    return Attacker(context, attack_type, int(seed), int(run_index))

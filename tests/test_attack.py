@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import numpy as np
 import pytest
+from copy import deepcopy
 
 from conftest import needs_data
 from phantomguard.attack.injector import MixedSource, label_map
@@ -19,8 +20,8 @@ pytestmark = [pytest.mark.skipif(not BASELINE_PATH.exists(), reason="run scripts
 CFG = load_config()
 
 
-def build(atype, level, file="multiplePeopleChaotic.csv", part="test", seed=11):
-    cfg = CFG
+def build(atype, level, file="multiplePeopleChaotic.csv", part="test", seed=11, cfg=None):
+    cfg = cfg or CFG
     b = load_baseline()
     segs = time_block_segments(cfg)
     seg = next(s for s in segs[part] if s.file == file)
@@ -103,13 +104,17 @@ def test_fabricated_values_lie_in_real_ranges():
 
 def test_labels_are_side_output_only_and_deterministic():
     # frames carry no label information; labels only index fabricated object frames
-    cfg, b, src, frames, lm = build("T2", "A2", seed=7)
+    # Determinism is tested inside available slot capacity; exhaustion is a separate outcome.
+    test_cfg = deepcopy(CFG)
+    test_cfg["attack"]["T2"]["count"] = [10, 10]
+    test_cfg["attack"]["instances_per_run"] = 1
+    cfg, b, src, frames, lm = build("T2", "A2", seed=7, cfg=test_cfg)
     n_obj = sum(1 for f in frames if f.can_id == CAN_ID_OBJECT)
     assert all(0 <= k < len(frames) for k in lm)
     assert all(frames[k].can_id == CAN_ID_OBJECT for k in lm)
     assert 0 < len(lm) <= n_obj
     # same seed -> identical labels
-    _, _, _, _, lm2 = build("T2", "A2", seed=7)
+    _, _, _, _, lm2 = build("T2", "A2", seed=7, cfg=test_cfg)
     assert sorted(lm) == sorted(lm2)
 
 
