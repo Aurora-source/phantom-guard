@@ -1,0 +1,16 @@
+{
+  "status": "passed",
+  "method": "real Tk event loop, automated closure after 600 ms; no human review claimed",
+  "runs": [
+    {
+      "backend": "TkAgg",
+      "axes": 2,
+      "title": "onePersonMovingFrontAndBack.csv [test] clean replay; alerts are false positives (green =\nnot flagged)\nt=  0.30s  cycle 9  objects 24  alerting 0"
+    },
+    {
+      "backend": "TkAgg",
+      "axes": 2,
+      "title": "onePersonMovingFrontAndBack.csv [test] T1 A2 seed 11 (green = not flagged)\nt=  0.30s  cycle 209  objects 24  alerting 1"
+    }
+  ]
+}

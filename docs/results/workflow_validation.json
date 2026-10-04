@@ -1,0 +1,146 @@
+{
+  "source_commit": "6d77465a5bc8442ce31f2cb8efdb14169e36272b",
+  "upstream_integrated": "1f5d2eea3d9bc8343666fb20025ea6fdf2d0d3da",
+  "commands_completed": [
+    "python scripts/learn_baseline.py --loso",
+    "python scripts/train.py --loso",
+    "python scripts/calibrate.py --loso",
+    "python scripts/run_clean_eval.py --workers 1 --output-dir runs/workflow-validation",
+    "python -m pytest -q --junitxml=runs/workflow-validation/validation.xml",
+    "python -m compileall -q src scripts",
+    "python -m pip check",
+    "git diff --check",
+    "python scripts/run_attack_eval.py --workers 16 --output-dir runs/workflow-validation (resumed fixed-code 8-worker checkpoints)"
+  ],
+  "pytest": {
+    "name": "pytest",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "tests": "139",
+    "time": "49.811",
+    "timestamp": "2026-10-04T20:00:25.110177+05:30",
+    "hostname": "Lucifer-PC"
+  },
+  "viewer": [
+    {
+      "file": "demo_multiplePeopleChaotic_test_clean.gif",
+      "bytes": 211108,
+      "sha256": "ea2b9014c836111eff0e542db7ceffdff5507af02b41af3c2cf85bef330cf14b",
+      "size": [
+        840,
+        378
+      ],
+      "frames": 75
+    },
+    {
+      "file": "demo_multiplePeopleChaotic_test_clean_mid.png",
+      "bytes": 48403,
+      "sha256": "93cc4763e47413fa9d9505055b6dd1fb0e32120de4842421eb95d0a6b05900f7",
+      "size": [
+        1320,
+        594
+      ],
+      "frames": 1
+    },
+    {
+      "file": "demo_multiplePeopleChaotic_test_T1_A3_seed11.gif",
+      "bytes": 396315,
+      "sha256": "312abdefafb59a7b30db59d591429ba9a3385d4c75cdd065604d7788cad205d0",
+      "size": [
+        840,
+        378
+      ],
+      "frames": 75
+    },
+    {
+      "file": "demo_multiplePeopleChaotic_test_T1_A3_seed11_first_alert.png",
+      "bytes": 50183,
+      "sha256": "ab5c35b559a45ca8b4b559b08ffd40dc32680c76b32ec850f5173d7a23c5fd37",
+      "size": [
+        1320,
+        594
+      ],
+      "frames": 1
+    },
+    {
+      "file": "demo_onePersonMovingFrontAndBack_test_clean.gif",
+      "bytes": 322329,
+      "sha256": "e39be61b3c24eb1ec0d58697ade2ccd3903f6dde7bbe1e40fb0141f3e1237a93",
+      "size": [
+        840,
+        378
+      ],
+      "frames": 75
+    },
+    {
+      "file": "demo_onePersonMovingFrontAndBack_test_clean_first_alert.png",
+      "bytes": 53024,
+      "sha256": "0bacbd34f70d155d9e030308e12eb1cfe97c36260aedbfbaa4997556f2887367",
+      "size": [
+        1320,
+        594
+      ],
+      "frames": 1
+    },
+    {
+      "file": "demo_onePersonMovingFrontAndBack_test_T1_A2_seed11.gif",
+      "bytes": 548581,
+      "sha256": "85ee3d4b38ae2d3ed82276e4844d607e015c8740c83a581aad06f52805232740",
+      "size": [
+        840,
+        378
+      ],
+      "frames": 75
+    },
+    {
+      "file": "demo_onePersonMovingFrontAndBack_test_T1_A2_seed11_first_alert.png",
+      "bytes": 51209,
+      "sha256": "6ee04ec05246822d53fb42e271ecb516020e2b0ff2d8b4909025124b04dcad81",
+      "size": [
+        1320,
+        594
+      ],
+      "frames": 1
+    }
+  ],
+  "interactive": {
+    "status": "passed",
+    "method": "real Tk event loop, automated closure after 600 ms; no human review claimed",
+    "runs": [
+      {
+        "backend": "TkAgg",
+        "axes": 2,
+        "title": "onePersonMovingFrontAndBack.csv [test] clean replay; alerts are false positives (green =\nnot flagged)\nt=  0.30s  cycle 9  objects 24  alerting 0"
+      },
+      {
+        "backend": "TkAgg",
+        "axes": 2,
+        "title": "onePersonMovingFrontAndBack.csv [test] T1 A2 seed 11 (green = not flagged)\nt=  0.30s  cycle 209  objects 24  alerting 1"
+      }
+    ]
+  },
+  "failed_intermediate_attempts": [
+    "12-worker matrix failed with MemoryError/OpenBLAS allocation; corrected BLAS workspace multiplication",
+    "Earlier matrices stopped after discovering overlong CAN headers, arrival-order and overlapping T4 scheduler defects; excluded from final reports",
+    "Initial local Tk smoke harness incorrectly intercepted nonblocking show; corrected harness, rerun passed"
+  ],
+  "limitations": [
+    "Coordinate units and tick duration unverified",
+    "Header DLC reconstructed as five bytes; classic CAN max eight enforced",
+    "No human interactive usability review",
+    "Clean under-one-alert-per-minute goal not met; no held-out tuning"
+  ],
+  "attack_evaluation": {
+    "completed_attack_runs": 2411,
+    "completed_clean_runs": 8,
+    "run_status_counts": {
+      "no_eligible_attack": 1782,
+      "ok": 21699,
+      "unsupported": 1296,
+      "unsupported_provider": 55
+    },
+    "blockers": [],
+    "checkpoint_contract_sha256": "70df615ad39148521d89"
+  }
+}

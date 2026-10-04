@@ -5,11 +5,11 @@
         "status": "configuration"
       },
       "path": "D:\\Hacksprint\\phantom-guard-phases-3-6\\configs\\baseline.json",
-      "sha256": "ad19c7a6ff0b9e29e1c8ad72ae8e7b88fad9bee89d92b4b90ff4753c110540c6"
+      "sha256": "34ec5e614dd16dd82c32dffc9a0d07bfac4edfebc353369f8da2d41457ca8cfb"
     },
     {
       "details": {
-        "epochs_completed": null,
+        "epochs_completed": 30,
         "feature_width": 70,
         "layer_widths": [
           [
@@ -30,7 +30,7 @@
           ]
         ],
         "metadata": {
-          "artifact_id": "f64e029c63199e0ac8f7d8f0aab7f271aa2f870dd2f720af0f56a60c0fa0c277",
+          "artifact_id": "f264e65b56ced6cf60e30a9292f04809d0258e8ac11d9a69c442a0a6d47b76a6",
           "baseline_signature": "40ffb109eb8d969a532ec57e7daf272b009392fde825978a13121fbbb61d40be",
           "contract": {
             "features": [
@@ -111,15 +111,26 @@
           "threshold_split": "val",
           "train_moving_windows": 4170,
           "train_windows": 107838,
+          "training": {
+            "batch_size": 512,
+            "epochs_completed": 30,
+            "epochs_configured": 30,
+            "hidden": 32,
+            "latent": 6,
+            "learning_rate": 0.001,
+            "max_train_seconds": 300,
+            "stopping_reason": "configured_epochs_complete",
+            "train_seconds": 7.909224271774292
+          },
           "val_moving_windows": 1479,
           "val_windows": 35178
         },
         "status": "ok",
-        "stopping_reason": null,
-        "train_seconds": 7.042264938354492
+        "stopping_reason": "configured_epochs_complete",
+        "train_seconds": 7.909224271774292
       },
       "path": "D:\\Hacksprint\\phantom-guard-phases-3-6\\models\\ae_timeblock.npz",
-      "sha256": "5082dba43b80068d435a09c15ef095e34e6968304a028e11a9598ea81a6dc17e"
+      "sha256": "75b1de14c7a02211f8dfcdab01d44a3a4ddb26abe7b091be0702fe29bd8795da"
     },
     {
       "details": {
@@ -131,6 +142,8 @@
         "metadata": {
           "artifact_id": "c804cd658e4119cbb28d1466bc2dc82bcf3808fe1242431eaddfbf3bb532f13c",
           "baseline_signature": "40ffb109eb8d969a532ec57e7daf272b009392fde825978a13121fbbb61d40be",
+          "bootstrap": false,
+          "contamination": "auto",
           "contract": {
             "features": [
               "dx",
@@ -151,6 +164,8 @@
           },
           "fit_windows": 50000,
           "kind": "iforest",
+          "max_features": 1.0,
+          "max_samples": 256,
           "normalization_split": "train",
           "schema_version": 1,
           "seed": 11,
@@ -220,7 +235,7 @@
         "trees": 200
       },
       "path": "D:\\Hacksprint\\phantom-guard-phases-3-6\\models\\iforest_timeblock.pkl",
-      "sha256": "403adf76cbff5c7776280da8bd16d5d3e6374ac826b42a2760523e2537de5586"
+      "sha256": "4656cc8907159fa455c7330b5385679d9009cf6af1ea9a33de5eda5c3f51b450"
     },
     {
       "details": {
@@ -310,18 +325,18 @@
         "status": "ok"
       },
       "path": "D:\\Hacksprint\\phantom-guard-phases-3-6\\models\\replay_library_timeblock.pkl",
-      "sha256": "298e6a0c90804d97fb2defe525f429f49476677ec6a3b318057046192b5392c7"
+      "sha256": "6d28df9fb5f64fa09244a81de331a80ffbbce8defa082843f4b7598bdca9d983"
     },
     {
       "details": {
         "status": "configuration"
       },
       "path": "D:\\Hacksprint\\phantom-guard-phases-3-6\\data\\processed\\baseline_loso_emptyRoom.json",
-      "sha256": "6042f17e4f5c4ec31ad3ce74d0b29f0a72d3ebe5874abb06085de3f9dcfb784d"
+      "sha256": "6752ab2df1855d560fda4b1720840acd62f39a2ed23e75648c8d5b20360d4c2b"
     },
     {
       "details": {
-        "epochs_completed": null,
+        "epochs_completed": 30,
         "feature_width": 70,
         "layer_widths": [
           [
@@ -342,7 +357,7 @@
           ]
         ],
         "metadata": {
-          "artifact_id": "b876861435eb9cc24e3c947df294c06aae5640b5bdd3d47dca85edc297dd53b5",
+          "artifact_id": "5c6645138520215720a0c29e368faef36f371e748ef583a0591ff5e961af658c",
           "baseline_signature": "5217b80a93929011d88beabc6a636aad8fd22ee6c65da1b4e87c36d392f471f2",
           "contract": {
             "features": [
@@ -412,15 +427,26 @@
           "threshold_split": "val",
           "train_moving_windows": 5663,
           "train_windows": 108602,
+          "training": {
+            "batch_size": 512,
+            "epochs_completed": 30,
+            "epochs_configured": 30,
+            "hidden": 32,
+            "latent": 6,
+            "learning_rate": 0.001,
+            "max_train_seconds": 300,
+            "stopping_reason": "configured_epochs_complete",
+            "train_seconds": 7.547359228134155
+          },
           "val_moving_windows": 2693,
           "val_windows": 28228
         },
         "status": "ok",
-        "stopping_reason": null,
-        "train_seconds": 6.856381416320801
+        "stopping_reason": "configured_epochs_complete",
+        "train_seconds": 7.547359228134155
       },
       "path": "D:\\Hacksprint\\phantom-guard-phases-3-6\\models\\ae_loso_emptyRoom.npz",
-      "sha256": "7ab202ba70b10dcf0584437f8fcf2f21e3cc2e672b5711e6e134f3c0bbecce84"
+      "sha256": "59bd9ab2960bf4d8c8dfc1069ece53ce3024f85c5c04433b19afc4266ee240b3"
     },
     {
       "details": {
@@ -432,6 +458,8 @@
         "metadata": {
           "artifact_id": "61727391c4bcbbfcbfa9a90a995b5b0cc6b9bf887370eb22dface4265e03e368",
           "baseline_signature": "5217b80a93929011d88beabc6a636aad8fd22ee6c65da1b4e87c36d392f471f2",
+          "bootstrap": false,
+          "contamination": "auto",
           "contract": {
             "features": [
               "dx",
@@ -452,6 +480,8 @@
           },
           "fit_windows": 50000,
           "kind": "iforest",
+          "max_features": 1.0,
+          "max_samples": 256,
           "normalization_split": "train",
           "schema_version": 1,
           "seed": 11,
@@ -510,7 +540,7 @@
         "trees": 200
       },
       "path": "D:\\Hacksprint\\phantom-guard-phases-3-6\\models\\iforest_loso_emptyRoom.pkl",
-      "sha256": "05397357592d87d1999ad8672bae985dfdd8287ff3b3a961c4b9c4a620e6a975"
+      "sha256": "a7ee56adb9d83f5f43ad0033377e83d36ebb9ab2eac3c84cf54a9b3f3eaef95d"
     },
     {
       "details": {
@@ -589,18 +619,18 @@
         "status": "ok"
       },
       "path": "D:\\Hacksprint\\phantom-guard-phases-3-6\\models\\replay_library_loso_emptyRoom.pkl",
-      "sha256": "2396758ae6102dda0a4bdf1d158003777c1a684980259dbcf69ab5481ada1c73"
+      "sha256": "36e9452e25ad4b809118bd80d29c14049408bea97d4676020e4463cc0c7b7304"
     },
     {
       "details": {
         "status": "configuration"
       },
       "path": "D:\\Hacksprint\\phantom-guard-phases-3-6\\data\\processed\\baseline_loso_onePersonMovingFrontAndBack.json",
-      "sha256": "22290f62d05fe5455f1a5fea5975b851f368207c3dee4bc21a9e0a8c6ea8bcd8"
+      "sha256": "40354fa1061c19b02f4a31f5dbaa97b7229ef344bec3c7ffdc9847e6a50abc4e"
     },
     {
       "details": {
-        "epochs_completed": null,
+        "epochs_completed": 30,
         "feature_width": 70,
         "layer_widths": [
           [
@@ -621,7 +651,7 @@
           ]
         ],
         "metadata": {
-          "artifact_id": "4953272cc804b299587ece3ba81dabe3e8d4a8923cdc4cb657e4db3a8cf6f705",
+          "artifact_id": "018142692834b3b5cfd4426b5d8e7170935e14dac0041a43146c208d249f5ff0",
           "baseline_signature": "8c3b803030b39a986262df0842d1ae7e580dfeedbf1bfc5bd4bef19a196d6dcc",
           "contract": {
             "features": [
@@ -691,15 +721,26 @@
           "threshold_split": "val",
           "train_moving_windows": 5367,
           "train_windows": 114540,
+          "training": {
+            "batch_size": 512,
+            "epochs_completed": 30,
+            "epochs_configured": 30,
+            "hidden": 32,
+            "latent": 6,
+            "learning_rate": 0.001,
+            "max_train_seconds": 300,
+            "stopping_reason": "configured_epochs_complete",
+            "train_seconds": 7.853057146072388
+          },
           "val_moving_windows": 2275,
           "val_windows": 29093
         },
         "status": "ok",
-        "stopping_reason": null,
-        "train_seconds": 7.224195957183838
+        "stopping_reason": "configured_epochs_complete",
+        "train_seconds": 7.853057146072388
       },
       "path": "D:\\Hacksprint\\phantom-guard-phases-3-6\\models\\ae_loso_onePersonMovingFrontAndBack.npz",
-      "sha256": "04d484fbd262bd00e32d19241e1b55bf79b83d9842a7de472cc48c58fb6d10d5"
+      "sha256": "e000d9b2003264983476f8ec58e4afd0582e38c265dee144fcef2450f0ca91ef"
     },
     {
       "details": {
@@ -711,6 +752,8 @@
         "metadata": {
           "artifact_id": "a2338ee0066d0dc32a9e79c7e136aca5e10038a033448be68fb69c27333f214c",
           "baseline_signature": "8c3b803030b39a986262df0842d1ae7e580dfeedbf1bfc5bd4bef19a196d6dcc",
+          "bootstrap": false,
+          "contamination": "auto",
           "contract": {
             "features": [
               "dx",
@@ -731,6 +774,8 @@
           },
           "fit_windows": 50000,
           "kind": "iforest",
+          "max_features": 1.0,
+          "max_samples": 256,
           "normalization_split": "train",
           "schema_version": 1,
           "seed": 11,
@@ -789,7 +834,7 @@
         "trees": 200
       },
       "path": "D:\\Hacksprint\\phantom-guard-phases-3-6\\models\\iforest_loso_onePersonMovingFrontAndBack.pkl",
-      "sha256": "571dba4c24a9c9f1436a5eda3940289eeb616695b56da12890feef86683924b4"
+      "sha256": "3ab5de782f567bc071ae04bf8707463c623cbecd0e33a48f4f85f336e502cf00"
     },
     {
       "details": {
@@ -868,18 +913,18 @@
         "status": "ok"
       },
       "path": "D:\\Hacksprint\\phantom-guard-phases-3-6\\models\\replay_library_loso_onePersonMovingFrontAndBack.pkl",
-      "sha256": "a111b31a63f6682df43324f1d374ee90d6d6aed478ae8cb1dc7750f3bceca05a"
+      "sha256": "5c8d0555558bc0c840ff18db1b4ba62915c01a085a6bf61a78e904d9775a5b9d"
     },
     {
       "details": {
         "status": "configuration"
       },
       "path": "D:\\Hacksprint\\phantom-guard-phases-3-6\\data\\processed\\baseline_loso_onePersonMovingSideToSide.json",
-      "sha256": "f2881cf93100ada24b63b1b28c925749cf78d66568cd53d0d1ecd74e3b22225f"
+      "sha256": "1ed3867c8e89e1f11c1279e3c8e3d568fdca41edfc45c7e98d07b298a3269824"
     },
     {
       "details": {
-        "epochs_completed": null,
+        "epochs_completed": 30,
         "feature_width": 70,
         "layer_widths": [
           [
@@ -900,7 +945,7 @@
           ]
         ],
         "metadata": {
-          "artifact_id": "7d6404cb9ecf2c15a3ae23912a19c6188aa47542a7c58025601c481bfe0c49c9",
+          "artifact_id": "d438b234162900e41a76fc4a22df91d4fb9cc22ea1c0e3c5a43daef590ee632b",
           "baseline_signature": "62b8eefd37895ddb174343c522604ff3d7c4bc1abcb4f2cd73928ab372054139",
           "contract": {
             "features": [
@@ -970,15 +1015,26 @@
           "threshold_split": "val",
           "train_moving_windows": 4403,
           "train_windows": 105368,
+          "training": {
+            "batch_size": 512,
+            "epochs_completed": 30,
+            "epochs_configured": 30,
+            "hidden": 32,
+            "latent": 6,
+            "learning_rate": 0.001,
+            "max_train_seconds": 300,
+            "stopping_reason": "configured_epochs_complete",
+            "train_seconds": 7.205024719238281
+          },
           "val_moving_windows": 1991,
           "val_windows": 26801
         },
         "status": "ok",
-        "stopping_reason": null,
-        "train_seconds": 6.678918838500977
+        "stopping_reason": "configured_epochs_complete",
+        "train_seconds": 7.205024719238281
       },
       "path": "D:\\Hacksprint\\phantom-guard-phases-3-6\\models\\ae_loso_onePersonMovingSideToSide.npz",
-      "sha256": "b5031d250e36291e2e130b4b14fd20983351b8804da2e488dc8973a14f52519a"
+      "sha256": "7ba22ce6901ff384b9783bb0077cb9568cd851fbd9a86e6bd5ae93e33b53faae"
     },
     {
       "details": {
@@ -990,6 +1046,8 @@
         "metadata": {
           "artifact_id": "b095954d93668ddeef8fba5f1eeb4978147a540862838acd23efe0e54bc0b59f",
           "baseline_signature": "62b8eefd37895ddb174343c522604ff3d7c4bc1abcb4f2cd73928ab372054139",
+          "bootstrap": false,
+          "contamination": "auto",
           "contract": {
             "features": [
               "dx",
@@ -1010,6 +1068,8 @@
           },
           "fit_windows": 50000,
           "kind": "iforest",
+          "max_features": 1.0,
+          "max_samples": 256,
           "normalization_split": "train",
           "schema_version": 1,
           "seed": 11,
@@ -1068,7 +1128,7 @@
         "trees": 200
       },
       "path": "D:\\Hacksprint\\phantom-guard-phases-3-6\\models\\iforest_loso_onePersonMovingSideToSide.pkl",
-      "sha256": "582923c2f17bf2174aed76f1c7beccfd6e201c3ced0021d3bc6adb7a13f9a8d6"
+      "sha256": "1e79372afc4ec938aaeda47a00e01e3f128c450df5253adedbac3759caf970c5"
     },
     {
       "details": {
@@ -1147,18 +1207,18 @@
         "status": "ok"
       },
       "path": "D:\\Hacksprint\\phantom-guard-phases-3-6\\models\\replay_library_loso_onePersonMovingSideToSide.pkl",
-      "sha256": "c0c3aa1083dc669901939cd2bf55a973a11c44cd8133d6633b91a769171885a0"
+      "sha256": "912363feeeef00ab44d46e1817df97d67a10288b278b32f7a563450c79dfb60e"
     },
     {
       "details": {
         "status": "configuration"
       },
       "path": "D:\\Hacksprint\\phantom-guard-phases-3-6\\data\\processed\\baseline_loso_multiplePeopleChaotic.json",
-      "sha256": "c2443c7755a735efdfaddcc37b4368d626ffd3ca58e0e701db714bae474b1a1a"
+      "sha256": "e89d547d14650a5935c064ac26ef7cc0fc370a5bdd9e92e378c176b5f3d005a2"
     },
     {
       "details": {
-        "epochs_completed": null,
+        "epochs_completed": 30,
         "feature_width": 70,
         "layer_widths": [
           [
@@ -1179,7 +1239,7 @@
           ]
         ],
         "metadata": {
-          "artifact_id": "0c7cc903ea0dac62840540a89a818380af397e2f308e47c1a84c844ee83b845e",
+          "artifact_id": "3848287c3be5fd33cdf6f304fbc178bdbd355c4f961a79fa20d9ab9013c9e664",
           "baseline_signature": "445a85afa2b34b03b72c8c7b9022fb79bc58dca4bb2a67255ea05611a9c135df",
           "contract": {
             "features": [
@@ -1249,15 +1309,26 @@
           "threshold_split": "val",
           "train_moving_windows": 1556,
           "train_windows": 101633,
+          "training": {
+            "batch_size": 512,
+            "epochs_completed": 30,
+            "epochs_configured": 30,
+            "hidden": 32,
+            "latent": 6,
+            "learning_rate": 0.001,
+            "max_train_seconds": 300,
+            "stopping_reason": "configured_epochs_complete",
+            "train_seconds": 7.033258438110352
+          },
           "val_moving_windows": 1120,
           "val_windows": 25183
         },
         "status": "ok",
-        "stopping_reason": null,
-        "train_seconds": 6.428023099899292
+        "stopping_reason": "configured_epochs_complete",
+        "train_seconds": 7.033258438110352
       },
       "path": "D:\\Hacksprint\\phantom-guard-phases-3-6\\models\\ae_loso_multiplePeopleChaotic.npz",
-      "sha256": "65281a3f1823a33449ca01ea05b51845bfe5e0f1826a27028369aecfbc794f54"
+      "sha256": "1adb7d2c264c12362506dfb5683d9d079ddaab4170b6ee623f256766f01718c6"
     },
     {
       "details": {
@@ -1269,6 +1340,8 @@
         "metadata": {
           "artifact_id": "91a13cc7088b7f24b5ac36f4e9d8010c1b3a67379559a62923e75e553caadeba",
           "baseline_signature": "445a85afa2b34b03b72c8c7b9022fb79bc58dca4bb2a67255ea05611a9c135df",
+          "bootstrap": false,
+          "contamination": "auto",
           "contract": {
             "features": [
               "dx",
@@ -1289,6 +1362,8 @@
           },
           "fit_windows": 50000,
           "kind": "iforest",
+          "max_features": 1.0,
+          "max_samples": 256,
           "normalization_split": "train",
           "schema_version": 1,
           "seed": 11,
@@ -1347,7 +1422,7 @@
         "trees": 200
       },
       "path": "D:\\Hacksprint\\phantom-guard-phases-3-6\\models\\iforest_loso_multiplePeopleChaotic.pkl",
-      "sha256": "1a1d6d01b4eaa724c932b3eca8a3e82906f56c462be1189223f205a5f5ce0e82"
+      "sha256": "3b6cdb3c19e31d5ca414f9c95c9422d02f83c9a9a05852edd8450e140736c6ac"
     },
     {
       "details": {
@@ -1426,12 +1501,15 @@
         "status": "ok"
       },
       "path": "D:\\Hacksprint\\phantom-guard-phases-3-6\\models\\replay_library_loso_multiplePeopleChaotic.pkl",
-      "sha256": "8125d1be5069f8a6cd5d99ad25f26dbb00d4b0ee5a276b9710e0d3a3846e175e"
+      "sha256": "4ddda2f10cb58e1451fe6a9ae2de840989f352f0d74ddb9ab526fd72dfbadefc"
     }
   ],
-  "blockers": [
-    "Phase 2 unavailable: attack/scenarios.py and attack/injector.py must provide create_attacker and AttackedSource; see docs/phase2-handoff.md"
-  ],
+  "blas_environment": {
+    "MKL_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1"
+  },
+  "blockers": [],
   "calibration": {
     "loso_emptyRoom": {
       "_meta": {
@@ -1489,6 +1567,37 @@
         "train_windows": 102939,
         "value": 3.08842510380694
       },
+      "fusion_mn": {
+        "rule": "fewest CLEAN validation alert events over mn_candidates; ties -> smallest N (fastest detection); no attack labels used",
+        "split": "val",
+        "table": [
+          {
+            "m": 3,
+            "n": 5,
+            "val_alert_events": 4,
+            "val_alerts_per_minute": 2.457,
+            "val_minutes": 1.628
+          },
+          {
+            "m": 4,
+            "n": 6,
+            "val_alert_events": 2,
+            "val_alerts_per_minute": 1.228,
+            "val_minutes": 1.628
+          },
+          {
+            "m": 5,
+            "n": 8,
+            "val_alert_events": 1,
+            "val_alerts_per_minute": 0.614,
+            "val_minutes": 1.628
+          }
+        ],
+        "value": [
+          5,
+          8
+        ]
+      },
       "iforest_threshold_moving": {
         "n_windows": 2693,
         "quantile": 1.0,
@@ -1505,7 +1614,7 @@
       },
       "learned_artifacts": {
         "ae": {
-          "artifact_id": "b876861435eb9cc24e3c947df294c06aae5640b5bdd3d47dca85edc297dd53b5",
+          "artifact_id": "5c6645138520215720a0c29e368faef36f371e748ef583a0591ff5e961af658c",
           "baseline_signature": "5217b80a93929011d88beabc6a636aad8fd22ee6c65da1b4e87c36d392f471f2",
           "contract": {
             "features": [
@@ -1575,12 +1684,25 @@
           "threshold_split": "val",
           "train_moving_windows": 5663,
           "train_windows": 108602,
+          "training": {
+            "batch_size": 512,
+            "epochs_completed": 30,
+            "epochs_configured": 30,
+            "hidden": 32,
+            "latent": 6,
+            "learning_rate": 0.001,
+            "max_train_seconds": 300,
+            "stopping_reason": "configured_epochs_complete",
+            "train_seconds": 7.547359228134155
+          },
           "val_moving_windows": 2693,
           "val_windows": 28228
         },
         "iforest": {
           "artifact_id": "61727391c4bcbbfcbfa9a90a995b5b0cc6b9bf887370eb22dface4265e03e368",
           "baseline_signature": "5217b80a93929011d88beabc6a636aad8fd22ee6c65da1b4e87c36d392f471f2",
+          "bootstrap": false,
+          "contamination": "auto",
           "contract": {
             "features": [
               "dx",
@@ -1601,6 +1723,8 @@
           },
           "fit_windows": 50000,
           "kind": "iforest",
+          "max_features": 1.0,
+          "max_samples": 256,
           "normalization_split": "train",
           "schema_version": 1,
           "seed": 11,
@@ -1750,9 +1874,9 @@
             "iforest_threshold_moving": 0.7421116500235729,
             "iforest_threshold_static": 0.5392048479674515,
             "quantile": 0.999,
-            "val_alert_events": 29,
-            "val_alerts_per_minute": 17.812,
-            "val_fp_flagged": 0.0034730467822369983,
+            "val_alert_events": 25,
+            "val_alerts_per_minute": 15.355,
+            "val_fp_flagged": 0.003101994775587746,
             "val_minutes": 1.628
           },
           {
@@ -1761,9 +1885,9 @@
             "iforest_threshold_moving": 0.7444097945624165,
             "iforest_threshold_static": 0.541755992026749,
             "quantile": 0.9995,
-            "val_alert_events": 13,
-            "val_alerts_per_minute": 7.985,
-            "val_fp_flagged": 0.0018107337924483495,
+            "val_alert_events": 11,
+            "val_alerts_per_minute": 6.756,
+            "val_fp_flagged": 0.0015881025884587985,
             "val_minutes": 1.628
           },
           {
@@ -1774,7 +1898,7 @@
             "quantile": 0.9999,
             "val_alert_events": 3,
             "val_alerts_per_minute": 1.843,
-            "val_fp_flagged": 0.0005936832106388032,
+            "val_fp_flagged": 0.0005343148895749229,
             "val_minutes": 1.628
           },
           {
@@ -1785,7 +1909,7 @@
             "quantile": 0.99995,
             "val_alert_events": 3,
             "val_alerts_per_minute": 1.843,
-            "val_fp_flagged": 0.0005194728093089527,
+            "val_fp_flagged": 0.0004749465685110425,
             "val_minutes": 1.628
           },
           {
@@ -1859,6 +1983,37 @@
         "train_windows": 100077,
         "value": 4.4840337902329415
       },
+      "fusion_mn": {
+        "rule": "fewest CLEAN validation alert events over mn_candidates; ties -> smallest N (fastest detection); no attack labels used",
+        "split": "val",
+        "table": [
+          {
+            "m": 3,
+            "n": 5,
+            "val_alert_events": 2,
+            "val_alerts_per_minute": 1.34,
+            "val_minutes": 1.493
+          },
+          {
+            "m": 4,
+            "n": 6,
+            "val_alert_events": 1,
+            "val_alerts_per_minute": 0.67,
+            "val_minutes": 1.493
+          },
+          {
+            "m": 5,
+            "n": 8,
+            "val_alert_events": 1,
+            "val_alerts_per_minute": 0.67,
+            "val_minutes": 1.493
+          }
+        ],
+        "value": [
+          4,
+          6
+        ]
+      },
       "iforest_threshold_moving": {
         "n_windows": 1120,
         "quantile": 1.0,
@@ -1875,7 +2030,7 @@
       },
       "learned_artifacts": {
         "ae": {
-          "artifact_id": "0c7cc903ea0dac62840540a89a818380af397e2f308e47c1a84c844ee83b845e",
+          "artifact_id": "3848287c3be5fd33cdf6f304fbc178bdbd355c4f961a79fa20d9ab9013c9e664",
           "baseline_signature": "445a85afa2b34b03b72c8c7b9022fb79bc58dca4bb2a67255ea05611a9c135df",
           "contract": {
             "features": [
@@ -1945,12 +2100,25 @@
           "threshold_split": "val",
           "train_moving_windows": 1556,
           "train_windows": 101633,
+          "training": {
+            "batch_size": 512,
+            "epochs_completed": 30,
+            "epochs_configured": 30,
+            "hidden": 32,
+            "latent": 6,
+            "learning_rate": 0.001,
+            "max_train_seconds": 300,
+            "stopping_reason": "configured_epochs_complete",
+            "train_seconds": 7.033258438110352
+          },
           "val_moving_windows": 1120,
           "val_windows": 25183
         },
         "iforest": {
           "artifact_id": "91a13cc7088b7f24b5ac36f4e9d8010c1b3a67379559a62923e75e553caadeba",
           "baseline_signature": "445a85afa2b34b03b72c8c7b9022fb79bc58dca4bb2a67255ea05611a9c135df",
+          "bootstrap": false,
+          "contamination": "auto",
           "contract": {
             "features": [
               "dx",
@@ -1971,6 +2139,8 @@
           },
           "fit_windows": 50000,
           "kind": "iforest",
+          "max_features": 1.0,
+          "max_samples": 256,
           "normalization_split": "train",
           "schema_version": 1,
           "seed": 11,
@@ -2120,9 +2290,9 @@
             "iforest_threshold_moving": 0.7544424269064506,
             "iforest_threshold_static": 0.6268636487983098,
             "quantile": 0.999,
-            "val_alert_events": 32,
-            "val_alerts_per_minute": 21.433,
-            "val_fp_flagged": 0.004094668741298829,
+            "val_alert_events": 28,
+            "val_alerts_per_minute": 18.754,
+            "val_fp_flagged": 0.0037015805421341413,
             "val_minutes": 1.493
           },
           {
@@ -2131,9 +2301,9 @@
             "iforest_threshold_moving": 0.7574586480314731,
             "iforest_threshold_static": 0.6311425393299441,
             "quantile": 0.9995,
-            "val_alert_events": 18,
-            "val_alerts_per_minute": 12.056,
-            "val_fp_flagged": 0.0026205879944312506,
+            "val_alert_events": 15,
+            "val_alerts_per_minute": 10.047,
+            "val_fp_flagged": 0.002391286544918516,
             "val_minutes": 1.493
           },
           {
@@ -2144,7 +2314,7 @@
             "quantile": 0.9999,
             "val_alert_events": 5,
             "val_alerts_per_minute": 3.349,
-            "val_fp_flagged": 0.0008680697731553518,
+            "val_fp_flagged": 0.0008025550732945704,
             "val_minutes": 1.493
           },
           {
@@ -2155,7 +2325,7 @@
             "quantile": 0.99995,
             "val_alert_events": 3,
             "val_alerts_per_minute": 2.009,
-            "val_fp_flagged": 0.0006387683236426173,
+            "val_fp_flagged": 0.0005896322987470313,
             "val_minutes": 1.493
           },
           {
@@ -2229,6 +2399,37 @@
         "train_windows": 109173,
         "value": 2.8827119732419755
       },
+      "fusion_mn": {
+        "rule": "fewest CLEAN validation alert events over mn_candidates; ties -> smallest N (fastest detection); no attack labels used",
+        "split": "val",
+        "table": [
+          {
+            "m": 3,
+            "n": 5,
+            "val_alert_events": 1,
+            "val_alerts_per_minute": 0.604,
+            "val_minutes": 1.656
+          },
+          {
+            "m": 4,
+            "n": 6,
+            "val_alert_events": 0,
+            "val_alerts_per_minute": 0.0,
+            "val_minutes": 1.656
+          },
+          {
+            "m": 5,
+            "n": 8,
+            "val_alert_events": 0,
+            "val_alerts_per_minute": 0.0,
+            "val_minutes": 1.656
+          }
+        ],
+        "value": [
+          4,
+          6
+        ]
+      },
       "iforest_threshold_moving": {
         "n_windows": 2275,
         "quantile": 1.0,
@@ -2245,7 +2446,7 @@
       },
       "learned_artifacts": {
         "ae": {
-          "artifact_id": "4953272cc804b299587ece3ba81dabe3e8d4a8923cdc4cb657e4db3a8cf6f705",
+          "artifact_id": "018142692834b3b5cfd4426b5d8e7170935e14dac0041a43146c208d249f5ff0",
           "baseline_signature": "8c3b803030b39a986262df0842d1ae7e580dfeedbf1bfc5bd4bef19a196d6dcc",
           "contract": {
             "features": [
@@ -2315,12 +2516,25 @@
           "threshold_split": "val",
           "train_moving_windows": 5367,
           "train_windows": 114540,
+          "training": {
+            "batch_size": 512,
+            "epochs_completed": 30,
+            "epochs_configured": 30,
+            "hidden": 32,
+            "latent": 6,
+            "learning_rate": 0.001,
+            "max_train_seconds": 300,
+            "stopping_reason": "configured_epochs_complete",
+            "train_seconds": 7.853057146072388
+          },
           "val_moving_windows": 2275,
           "val_windows": 29093
         },
         "iforest": {
           "artifact_id": "a2338ee0066d0dc32a9e79c7e136aca5e10038a033448be68fb69c27333f214c",
           "baseline_signature": "8c3b803030b39a986262df0842d1ae7e580dfeedbf1bfc5bd4bef19a196d6dcc",
+          "bootstrap": false,
+          "contamination": "auto",
           "contract": {
             "features": [
               "dx",
@@ -2341,6 +2555,8 @@
           },
           "fit_windows": 50000,
           "kind": "iforest",
+          "max_features": 1.0,
+          "max_samples": 256,
           "normalization_split": "train",
           "schema_version": 1,
           "seed": 11,
@@ -2490,9 +2706,9 @@
             "iforest_threshold_moving": 0.7400725051483669,
             "iforest_threshold_static": 0.535178490474367,
             "quantile": 0.999,
-            "val_alert_events": 26,
-            "val_alerts_per_minute": 15.703,
-            "val_fp_flagged": 0.002490731330250934,
+            "val_alert_events": 21,
+            "val_alerts_per_minute": 12.683,
+            "val_fp_flagged": 0.002104238537625789,
             "val_minutes": 1.656
           },
           {
@@ -2501,9 +2717,9 @@
             "iforest_threshold_moving": 0.7426926335469277,
             "iforest_threshold_static": 0.5390377751536806,
             "quantile": 0.9995,
-            "val_alert_events": 17,
-            "val_alerts_per_minute": 10.267,
-            "val_fp_flagged": 0.0014457693353755422,
+            "val_alert_events": 15,
+            "val_alerts_per_minute": 9.059,
+            "val_fp_flagged": 0.0012167365693754562,
             "val_minutes": 1.656
           },
           {
@@ -2514,7 +2730,7 @@
             "quantile": 0.9999,
             "val_alert_events": 5,
             "val_alerts_per_minute": 3.02,
-            "val_fp_flagged": 0.00048669462775018254,
+            "val_fp_flagged": 0.00042943643625016105,
             "val_minutes": 1.656
           },
           {
@@ -2525,7 +2741,7 @@
             "quantile": 0.99995,
             "val_alert_events": 5,
             "val_alerts_per_minute": 3.02,
-            "val_fp_flagged": 0.0004437509841251664,
+            "val_fp_flagged": 0.0004008073405001503,
             "val_minutes": 1.656
           },
           {
@@ -2599,6 +2815,37 @@
         "train_windows": 100965,
         "value": 3.574024058580431
       },
+      "fusion_mn": {
+        "rule": "fewest CLEAN validation alert events over mn_candidates; ties -> smallest N (fastest detection); no attack labels used",
+        "split": "val",
+        "table": [
+          {
+            "m": 3,
+            "n": 5,
+            "val_alert_events": 5,
+            "val_alerts_per_minute": 3.205,
+            "val_minutes": 1.56
+          },
+          {
+            "m": 4,
+            "n": 6,
+            "val_alert_events": 4,
+            "val_alerts_per_minute": 2.564,
+            "val_minutes": 1.56
+          },
+          {
+            "m": 5,
+            "n": 8,
+            "val_alert_events": 3,
+            "val_alerts_per_minute": 1.923,
+            "val_minutes": 1.56
+          }
+        ],
+        "value": [
+          5,
+          8
+        ]
+      },
       "iforest_threshold_moving": {
         "n_windows": 1991,
         "quantile": 1.0,
@@ -2615,7 +2862,7 @@
       },
       "learned_artifacts": {
         "ae": {
-          "artifact_id": "7d6404cb9ecf2c15a3ae23912a19c6188aa47542a7c58025601c481bfe0c49c9",
+          "artifact_id": "d438b234162900e41a76fc4a22df91d4fb9cc22ea1c0e3c5a43daef590ee632b",
           "baseline_signature": "62b8eefd37895ddb174343c522604ff3d7c4bc1abcb4f2cd73928ab372054139",
           "contract": {
             "features": [
@@ -2685,12 +2932,25 @@
           "threshold_split": "val",
           "train_moving_windows": 4403,
           "train_windows": 105368,
+          "training": {
+            "batch_size": 512,
+            "epochs_completed": 30,
+            "epochs_configured": 30,
+            "hidden": 32,
+            "latent": 6,
+            "learning_rate": 0.001,
+            "max_train_seconds": 300,
+            "stopping_reason": "configured_epochs_complete",
+            "train_seconds": 7.205024719238281
+          },
           "val_moving_windows": 1991,
           "val_windows": 26801
         },
         "iforest": {
           "artifact_id": "b095954d93668ddeef8fba5f1eeb4978147a540862838acd23efe0e54bc0b59f",
           "baseline_signature": "62b8eefd37895ddb174343c522604ff3d7c4bc1abcb4f2cd73928ab372054139",
+          "bootstrap": false,
+          "contamination": "auto",
           "contract": {
             "features": [
               "dx",
@@ -2711,6 +2971,8 @@
           },
           "fit_windows": 50000,
           "kind": "iforest",
+          "max_features": 1.0,
+          "max_samples": 256,
           "normalization_split": "train",
           "schema_version": 1,
           "seed": 11,
@@ -2860,9 +3122,9 @@
             "iforest_threshold_moving": 0.7272596107406513,
             "iforest_threshold_static": 0.5492532377230147,
             "quantile": 0.999,
-            "val_alert_events": 23,
-            "val_alerts_per_minute": 14.744,
-            "val_fp_flagged": 0.0033307210031347963,
+            "val_alert_events": 22,
+            "val_alerts_per_minute": 14.103,
+            "val_fp_flagged": 0.0029690137448758138,
             "val_minutes": 1.56
           },
           {
@@ -2871,9 +3133,9 @@
             "iforest_threshold_moving": 0.7280440928494809,
             "iforest_threshold_static": 0.5571226326944877,
             "quantile": 0.9995,
-            "val_alert_events": 10,
-            "val_alerts_per_minute": 6.41,
-            "val_fp_flagged": 0.0017482517482517483,
+            "val_alert_events": 9,
+            "val_alerts_per_minute": 5.769,
+            "val_fp_flagged": 0.0015523269833614662,
             "val_minutes": 1.56
           },
           {
@@ -2884,7 +3146,7 @@
             "quantile": 0.9999,
             "val_alert_events": 4,
             "val_alerts_per_minute": 2.564,
-            "val_fp_flagged": 0.000693272244996383,
+            "val_fp_flagged": 0.0006329877019532192,
             "val_minutes": 1.56
           },
           {
@@ -2895,7 +3157,7 @@
             "quantile": 0.99995,
             "val_alert_events": 4,
             "val_alerts_per_minute": 2.564,
-            "val_fp_flagged": 0.0006028454304316373,
+            "val_fp_flagged": 0.0005576320231492645,
             "val_minutes": 1.56
           },
           {
@@ -2979,6 +3241,37 @@
         "train_windows": 103668,
         "value": 2.5394326878376674
       },
+      "fusion_mn": {
+        "rule": "fewest CLEAN validation alert events over mn_candidates; ties -> smallest N (fastest detection); no attack labels used",
+        "split": "val",
+        "table": [
+          {
+            "m": 3,
+            "n": 5,
+            "val_alert_events": 1,
+            "val_alerts_per_minute": 0.474,
+            "val_minutes": 2.111
+          },
+          {
+            "m": 4,
+            "n": 6,
+            "val_alert_events": 0,
+            "val_alerts_per_minute": 0.0,
+            "val_minutes": 2.111
+          },
+          {
+            "m": 5,
+            "n": 8,
+            "val_alert_events": 0,
+            "val_alerts_per_minute": 0.0,
+            "val_minutes": 2.111
+          }
+        ],
+        "value": [
+          4,
+          6
+        ]
+      },
       "iforest_threshold_moving": {
         "n_windows": 1479,
         "quantile": 0.9999,
@@ -2995,7 +3288,7 @@
       },
       "learned_artifacts": {
         "ae": {
-          "artifact_id": "f64e029c63199e0ac8f7d8f0aab7f271aa2f870dd2f720af0f56a60c0fa0c277",
+          "artifact_id": "f264e65b56ced6cf60e30a9292f04809d0258e8ac11d9a69c442a0a6d47b76a6",
           "baseline_signature": "40ffb109eb8d969a532ec57e7daf272b009392fde825978a13121fbbb61d40be",
           "contract": {
             "features": [
@@ -3076,12 +3369,25 @@
           "threshold_split": "val",
           "train_moving_windows": 4170,
           "train_windows": 107838,
+          "training": {
+            "batch_size": 512,
+            "epochs_completed": 30,
+            "epochs_configured": 30,
+            "hidden": 32,
+            "latent": 6,
+            "learning_rate": 0.001,
+            "max_train_seconds": 300,
+            "stopping_reason": "configured_epochs_complete",
+            "train_seconds": 7.909224271774292
+          },
           "val_moving_windows": 1479,
           "val_windows": 35178
         },
         "iforest": {
           "artifact_id": "c804cd658e4119cbb28d1466bc2dc82bcf3808fe1242431eaddfbf3bb532f13c",
           "baseline_signature": "40ffb109eb8d969a532ec57e7daf272b009392fde825978a13121fbbb61d40be",
+          "bootstrap": false,
+          "contamination": "auto",
           "contract": {
             "features": [
               "dx",
@@ -3102,6 +3408,8 @@
           },
           "fit_windows": 50000,
           "kind": "iforest",
+          "max_features": 1.0,
+          "max_samples": 256,
           "normalization_split": "train",
           "schema_version": 1,
           "seed": 11,
@@ -3273,9 +3581,9 @@
             "iforest_threshold_moving": 0.6755000837028137,
             "iforest_threshold_static": 0.5488360442179016,
             "quantile": 0.999,
-            "val_alert_events": 31,
-            "val_alerts_per_minute": 14.684,
-            "val_fp_flagged": 0.002834332689680093,
+            "val_alert_events": 29,
+            "val_alerts_per_minute": 13.737,
+            "val_fp_flagged": 0.002484275664261436,
             "val_minutes": 2.111
           },
           {
@@ -3284,9 +3592,9 @@
             "iforest_threshold_moving": 0.6828788072767019,
             "iforest_threshold_static": 0.5561307833833665,
             "quantile": 0.9995,
-            "val_alert_events": 15,
-            "val_alerts_per_minute": 7.105,
-            "val_fp_flagged": 0.0010388789141456915,
+            "val_alert_events": 12,
+            "val_alerts_per_minute": 5.684,
+            "val_fp_flagged": 0.0008356199961606649,
             "val_minutes": 2.111
           },
           {
@@ -3295,9 +3603,9 @@
             "iforest_threshold_moving": 0.689135215808091,
             "iforest_threshold_static": 0.5670340557153015,
             "quantile": 0.9999,
-            "val_alert_events": 2,
-            "val_alerts_per_minute": 0.947,
-            "val_fp_flagged": 9.033729688223405e-05,
+            "val_alert_events": 1,
+            "val_alerts_per_minute": 0.474,
+            "val_fp_flagged": 3.387648633083776e-05,
             "val_minutes": 2.111
           },
           {
@@ -3308,7 +3616,7 @@
             "quantile": 0.99995,
             "val_alert_events": 1,
             "val_alerts_per_minute": 0.474,
-            "val_fp_flagged": 6.775297266167552e-05,
+            "val_fp_flagged": 3.387648633083776e-05,
             "val_minutes": 2.111
           },
           {
@@ -3327,7 +3635,8 @@
       }
     }
   },
-  "completed_attack_runs": 0,
+  "checkpoint_contract_sha256": "70df615ad39148521d89",
+  "completed_attack_runs": 2411,
   "completed_clean_runs": 8,
   "configuration": {
     "attack": {
@@ -3393,7 +3702,22 @@
       "workers": 4
     },
     "fusion": {
+      "learned_alone": false,
       "m": 3,
+      "mn_candidates": [
+        [
+          3,
+          5
+        ],
+        [
+          4,
+          6
+        ],
+        [
+          5,
+          8
+        ]
+      ],
       "n": 5
     },
     "kinematic": {
@@ -3420,6 +3744,7 @@
     },
     "protocol": {
       "cadence_warmup_cycles": 2,
+      "count_margin": 3,
       "header_can_id": 1546,
       "header_len": 5,
       "header_status_ok": 1,
@@ -3453,51 +3778,54 @@
       "near_max_range": 4.0
     }
   },
-  "configuration_sha256": "ba0561a28d1b17cb3d8e18ec29ddceaef10efbe6244bb2b0854449129bc55c6b",
+  "configuration_sha256": "3b868243603521e439bb81009af736a33c25e9533ce9ec7f7f190cc3d977cbb8",
   "effective_seed_rule": "numpy SeedSequence([configured_seed, run_index]).generate_state(1)[0]",
-  "generated_utc": "2026-10-04T08:47:02.493682+00:00",
+  "generated_utc": "2026-10-04T14:43:34.663229+00:00",
   "git_branch": "codex/phases-3-6",
   "git_dirty": true,
-  "git_head": "8b2f853dca7f88269a4b29b0e53ad8cfdec49060",
+  "git_head": "6d77465a5bc8442ce31f2cb8efdb14169e36272b",
   "historical_test_disclosure": "Test results had previously been inspected before the historical validation calibration; see docs/decisions.md. No new test-driven selection is performed.",
   "implementation_sha256": {
-    "scripts\\calibrate.py": "6cc8cfe78d94a342d75d6dde6714537e21de28297e687af64fe63a290e137942",
+    "scripts\\calibrate.py": "1313184ed9893e58dd680d463e5c45ccf902768b8d6646ed7f1cf811a3ce7a34",
     "scripts\\learn_baseline.py": "fc5e35d5b595de419b00b38dbb20f8f02e299be07eb725dc4623d9d5eb7eb0bf",
-    "scripts\\replay_demo.py": "32157d96a364f9f0824add493198a7546a4dea26627e3c54789a2401fc89a083",
-    "scripts\\run_attack_eval.py": "28ccb2e80d4c8b63ea2f5d0d3e284905f709d50bb21ad1694aba76923f49fb8f",
-    "scripts\\run_clean_eval.py": "67154593e2dd94522df3fd223fd86a70ae2e39eb7ee5c75bc03a1b6688130edc",
+    "scripts\\replay_demo.py": "eeb567ce03480d44794b508be25eba02e31837079956482f3c8b4c5ef46f3f28",
+    "scripts\\run_attack_eval.py": "6ee1b8db4d9fa81ba58222b5e7546e3a5b73b2a91fd96d67a69839df15f8d57d",
+    "scripts\\run_clean_eval.py": "0543d8ff292ee888703398c17451744660044fc3fd29452794c5f7d87c721a1d",
     "scripts\\train.py": "3e0f9f532ff78c18597b38ee6ae4c9e48834c169e9538aded04921f0d3ad7480",
     "src\\phantomguard\\__init__.py": "246ea1d8450986074facefcc46160f790c17a392b0e74d0f7cd7b297a7b1a7c1",
     "src\\phantomguard\\attack\\__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src\\phantomguard\\attack\\injector.py": "5954b8f895c4c66974c76ebb76ecf4a787fd0a62f83c202ebe8454a4504fb29f",
     "src\\phantomguard\\attack\\levels.py": "5238d1c3c6f81838fdecceb0bb067aea83908534049e58eb7b238d5ad9841d39",
-    "src\\phantomguard\\attack\\pools.py": "4d6424bf5fd314c35aa62def7f46397d5be96437c4a545ef7a5de045b92eccc2",
-    "src\\phantomguard\\config.py": "256dd8151a3d4a0509ce04da744e20fe3dfeb00ed5878718f510c1c1b163aa4a",
-    "src\\phantomguard\\cycles.py": "7b93be3dfc8bfb3f7d6781899783828908c07a185dcecaa0cc93ca7ae373bc51",
+    "src\\phantomguard\\attack\\pools.py": "2f917b42610f6c3861a639f9ce2a260a98fd596a6e8e482ebc3699c8ae283a9a",
+    "src\\phantomguard\\attack\\scenarios.py": "52fe1d717f409adbc3afc7c088f9d05f5660bc330cb24b288414c94dba9e1508",
+    "src\\phantomguard\\config.py": "2904534634956445393dc429eb9c5014199a209293d074a1f7bb0109543dc215",
+    "src\\phantomguard\\cycles.py": "71c10f0910c551b6ce8fc8d60a2c0bc248f73546c9543b4218efc32d6e95196b",
     "src\\phantomguard\\detect\\__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "src\\phantomguard\\detect\\autoencoder.py": "f36bae8da7ed2973af78a13ec0b428de66a7b94ec98c38c0a9b086953be88eca",
-    "src\\phantomguard\\detect\\common.py": "5660ced389584ab883cc0383c0d71bad54608c4a4e7513f24fd84155c323b895",
-    "src\\phantomguard\\detect\\fusion.py": "ce78c2b6c414af6d26fde65d6b086ec309cb54c49f25572239c419f151341966",
+    "src\\phantomguard\\detect\\common.py": "88c5e2f60d323abc554c33c6c29c47617a0f11444bb3ecd18d896e1f42b60884",
+    "src\\phantomguard\\detect\\fusion.py": "880fcadf9297dd1d874c3a858edde23ed2ab0c917d06f4c4a72da65dd5801762",
     "src\\phantomguard\\detect\\kinematic.py": "16442b6404625edac6df74245a5a4fdc4aa786ecf52329fe7c95e8910d14b4c1",
-    "src\\phantomguard\\detect\\pipeline.py": "266804d8e06308aeb3a5210d8c398074ff8e33bf80b42a545baa630c3ba723fd",
-    "src\\phantomguard\\detect\\protocol.py": "463bddd7c3ae5138312bb77e98417b8757802afc235a4636491e1cfc66f7d990",
+    "src\\phantomguard\\detect\\pipeline.py": "c57061eb92cf34487390317c46b784af125e174a3527fe573f8367cf9395569d",
+    "src\\phantomguard\\detect\\protocol.py": "aa0c33cd4b6cfe43dbc716049335503d7550fa819e19e7ace41528c4c5377d5f",
     "src\\phantomguard\\detect\\replay_fp.py": "e6ca9e6484e4edf0d433946a63bca96ba5d10330d542bf13b72cbab084a65ee9",
     "src\\phantomguard\\eval\\__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "src\\phantomguard\\eval\\attack_adapter.py": "2af4a5bf2295c05a11f354b772655db41cb4a286cf3c2cb8cd136be122ffbe35",
-    "src\\phantomguard\\eval\\metrics.py": "0551408c2a6389e9012533d35abfe05cdfc6da9f94a15f36c7695410244e5839",
-    "src\\phantomguard\\eval\\report.py": "132c8e853eae318e5a0198530e9f9e13ea14685e3e0edf3b8d53f1bc152c11dd",
+    "src\\phantomguard\\eval\\metrics.py": "185ced70418bfde585da2f12db0fe281ecc3bb4905ea8192b64e649937133bbb",
+    "src\\phantomguard\\eval\\report.py": "d800962e463a9638c5a6021b47eb54e1e1354157f0ec2e43fc9c1c880868e6a9",
     "src\\phantomguard\\eval\\splits.py": "bcf5d96eeffa225ba9b6fcdf321c5085e5116567f33318fe8524e7d08cc42000",
-    "src\\phantomguard\\frames.py": "36a501c36d530d9a0338aeeb3b35546ec9cda9d7b5f9500c06f50477e7e26892",
+    "src\\phantomguard\\frames.py": "e2951fec26552a304650d563cc139803b6aa8c4d57b917e1061b6a177cfeb120",
     "src\\phantomguard\\io\\__init__.py": "d62b916a7ac9027ceb25ab9d464907304560decd56f26648cfc9948a748f5044",
     "src\\phantomguard\\io\\live.py": "af149ec972a484b6eaef8ea817ff6b07c601279822dfab68c7aa43317d8f8e21",
     "src\\phantomguard\\io\\replay.py": "0be490ee45b91d7399f1b9ecddf5dbb8d995f33980cb1c2cc128201096947aab",
     "src\\phantomguard\\io\\source.py": "9b67b71fc143197b538b307af17b218af0fd40924e4125487b6e565ec20fdb71",
     "src\\phantomguard\\stats\\__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "src\\phantomguard\\stats\\baseline.py": "cc2a097d392787cc2ff3716b62321fee8600769cacc5a6840bf96faeb2facb9c",
+    "src\\phantomguard\\stats\\baseline.py": "5510c2fba9327140df4598017ccfb521f45222379fc94c276f8a9f75e40dfd0a",
     "src\\phantomguard\\tracks.py": "67ac22978a863568f763396e724853c91e03674a6305d3aaf06466b7d6fee9ae",
     "src\\phantomguard\\viz\\__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "src\\phantomguard\\viz\\console.py": "77316f551fe872b38c276e1b7d62b890a2907b510111c25b693a3ae3567158d6",
+    "src\\phantomguard\\viz\\console.py": "3d7c3686661f924aa42d705efe0aedd154b33192d4c4d5877af3765f99198111",
     "tools\\decode.py": "e8e4ea27ed13d946bc5745afafdd72b220ff0944016358b5fd759a0c2cd966f0"
   },
+  "logical_cpu_count": 32,
   "model_selection": "AE fixed for NumPy online deployment before attack testing; IF is an offline comparator",
   "packages": {
     "matplotlib": "3.11.2",
@@ -3507,9 +3835,10 @@
     "scipy": "1.17.1",
     "torch": "2.14.1"
   },
-  "phase2_provider": null,
+  "phase2_provider": "phantomguard.attack.scenarios:create_attacker + injector.AttackedSource",
   "platform": "Windows-10-10.0.26200-SP0",
   "preflight_only": false,
+  "processing_timer": "perf_counter elapsed time for grouping/decoding and detector CPU work; source I/O excluded",
   "python": "3.11.9",
   "recordings": [
     {
@@ -3536,8 +3865,10 @@
   "requested_part": "test",
   "requested_split": "all",
   "run_status_counts": {
-    "blocked_phase2": 2664,
-    "unsupported": 1296
+    "no_eligible_attack": 1782,
+    "ok": 21699,
+    "unsupported": 1296,
+    "unsupported_provider": 55
   },
   "runs_per_cell": 3,
   "seeds": [
@@ -3549,6 +3880,7 @@
     {
       "baseline_path": "D:\\Hacksprint\\phantom-guard-phases-3-6\\configs\\baseline.json",
       "fold": "timeblock",
+      "measurement_workers": 16,
       "part": "test",
       "split": "timeblock",
       "tag": "timeblock",
@@ -3622,6 +3954,7 @@
     {
       "baseline_path": "D:\\Hacksprint\\phantom-guard-phases-3-6\\data\\processed\\baseline_loso_emptyRoom.json",
       "fold": "emptyRoom.csv",
+      "measurement_workers": 16,
       "part": "test",
       "split": "loso",
       "tag": "loso_emptyRoom",
@@ -3670,6 +4003,7 @@
     {
       "baseline_path": "D:\\Hacksprint\\phantom-guard-phases-3-6\\data\\processed\\baseline_loso_onePersonMovingFrontAndBack.json",
       "fold": "onePersonMovingFrontAndBack.csv",
+      "measurement_workers": 16,
       "part": "test",
       "split": "loso",
       "tag": "loso_onePersonMovingFrontAndBack",
@@ -3718,6 +4052,7 @@
     {
       "baseline_path": "D:\\Hacksprint\\phantom-guard-phases-3-6\\data\\processed\\baseline_loso_onePersonMovingSideToSide.json",
       "fold": "onePersonMovingSideToSide.csv",
+      "measurement_workers": 16,
       "part": "test",
       "split": "loso",
       "tag": "loso_onePersonMovingSideToSide",
@@ -3766,6 +4101,7 @@
     {
       "baseline_path": "D:\\Hacksprint\\phantom-guard-phases-3-6\\data\\processed\\baseline_loso_multiplePeopleChaotic.json",
       "fold": "multiplePeopleChaotic.csv",
+      "measurement_workers": 16,
       "part": "test",
       "split": "loso",
       "tag": "loso_multiplePeopleChaotic",
@@ -3812,5 +4148,5 @@
       ]
     }
   ],
-  "workers": 4
+  "workers": 16
 }
