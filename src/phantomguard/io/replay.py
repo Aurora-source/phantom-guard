@@ -73,7 +73,7 @@ def load_recorded_cycles(csv_path: str) -> tuple[tuple[RecordedCycle, ...], Load
             rep.header_count_mismatch += 1
         cycles.append(RecordedCycle(cnum, meas, cnt, st, sts, tuple(cur_objs)))
 
-    with open(csv_path, newline="") as f:
+    with open(csv_path, newline="", encoding="utf-8") as f:
         for r in csv.DictReader(f):
             rep.rows += 1
             cnum = _int(r.get("cycle_num"))

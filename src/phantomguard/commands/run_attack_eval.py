@@ -35,7 +35,7 @@ from phantomguard.detect.pipeline import MODELS_DIR, Detector, load_artifacts
 from phantomguard.eval.attack_adapter import (ATTACK_TYPES, LEVEL_NAMES, REPLAY_PROVENANCE, AttackUnavailable,
                                              UnsupportedAttack, attack_source, check_available, support_reason)
 from phantomguard.eval.metrics import assembly_stats, attack_metrics, latency_stats, lite, parse_labels, score
-from phantomguard.eval.report import provenance, write_report
+from phantomguard.eval.report import provenance, write_report, portable_path
 from phantomguard.eval.splits import Segment, loso_folds, time_block_segments
 from phantomguard.io.replay import ReplaySource, load_recorded_cycles
 
@@ -239,7 +239,7 @@ def _run_attack(payload):
                 metrics["right_censored_instances"] = sum(i["right_censored"] for i in instances)
             status = "ok" if metrics["attack_instances"] else "no_eligible_attack"
             rows.append({**job, "layers": name, "status": status, **metrics,
-                         "labels_path": str(labels_path), "replay_provenance_scope": provenance_scope, **timing})
+                         "labels_path": portable_path(labels_path, cfg), "replay_provenance_scope": provenance_scope, **timing})
             instance_rows.extend({**job, "layers": name, **instance} for instance in instances)
         return rows, instance_rows, stream_counts(cycles, source, job)
     except UnsupportedAttack as exc:
@@ -293,7 +293,7 @@ def main(argv=None) -> int:
                      "effective_seed_rule": "numpy SeedSequence([configured_seed, run_index]).generate_state(1)[0]",
                      "phase2_provider": provider_name, "preflight_only": args.preflight,
                      "split_identities": [{k: ([asdict(s) for s in v] if k in {"train", "val", "test"}
-                                               else str(v) if isinstance(v, Path) else v)
+                                               else portable_path(v, cfg) if isinstance(v, Path) else v)
                                            for k, v in context.items()} for context in contexts], "calibration": {}})
     for context in contexts:
         try:

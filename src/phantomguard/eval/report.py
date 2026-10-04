@@ -61,6 +61,7 @@ def portable_config(cfg: dict) -> dict:
 
 
 def provenance(cfg: dict, artifacts: list[Path]) -> dict:
+    root = paths(cfg).root
     def git(*args):
         try:
             proc = subprocess.run(["git", *args], cwd=paths(cfg).root, capture_output=True, text=True, check=False)
@@ -84,8 +85,8 @@ def provenance(cfg: dict, artifacts: list[Path]) -> dict:
             "recordings": [{"file": f, "path": "data/raw/" + f, "sha256": sha256(raw_path(cfg, f))}
                            for f in cfg["data"]["files"]],
             "artifacts": [{"path": portable_path(p, cfg), "sha256": sha256(p), "details": artifact_details(p)} for p in artifacts],
-            "implementation_sha256": {p.relative_to(REPO_ROOT).as_posix(): sha256(p)
-                                      for directory in (REPO_ROOT / "src", REPO_ROOT / "scripts", REPO_ROOT / "tools")
+            "implementation_sha256": {p.relative_to(root).as_posix(): sha256(p)
+                                      for directory in (root / "src", root / "scripts", root / "tools")
                                       for p in sorted(directory.rglob("*.py"))},
             "model_selection": "AE fixed for NumPy online deployment before attack testing; IF is an offline comparator",
             "historical_test_disclosure": "Test results had previously been inspected before the historical validation calibration; "

@@ -570,7 +570,7 @@ def _fmt(v, p=2):
 
 def write_csv(cycles: list[ScanCycle], out_path: Path, label: str, thr: float) -> None:
     rows = 0
-    with open(out_path, "w", newline="") as f:
+    with open(out_path, "w", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=CSV_FIELDS)
         w.writeheader()
         for c in cycles:

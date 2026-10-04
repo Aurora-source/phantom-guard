@@ -163,7 +163,7 @@ def main(argv=None):
                          for (sp, pt), (ce, pe, mn) in op_cmp.items()])
     opdf.to_csv(global_results / "clean_eval_operating_point.csv", index=False)
     write_report(cfg, df, p_val, p_test, p_loso, drs, lat, dcmp, opdf, global_results, workers)
-    print((global_results / "clean_eval.md").read_text())
+    print((global_results / "clean_eval.md").read_text(encoding="utf-8"))
 
 
 def table(d: pd.DataFrame, cols: list[str], fmts: dict) -> str:

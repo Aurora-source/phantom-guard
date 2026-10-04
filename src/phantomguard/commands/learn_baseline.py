@@ -282,8 +282,8 @@ def main(argv=None):
     md += short_gap_investigation(cfg, per_file)
     md += tick_scale_check(cfg, tf, per_file)
     md += ["\n### Mismatches flagged\n"] + ([f"- {m}" for m in rep.mismatches] or ["- none"])
-    (results / "baseline_claims.md").write_text("\n".join(md) + "\n")
-    (results / "rcs_vs_range.md").write_text(rcs_vs_range(cfg, per_file))
+    (results / "baseline_claims.md").write_text("\n".join(md) + "\n", encoding="utf-8")
+    (results / "rcs_vs_range.md").write_text(rcs_vs_range(cfg, per_file), encoding="utf-8")
     print("\nMISMATCHES:" if rep.mismatches else "\nNo mismatches.")
     for m in rep.mismatches:
         print("  -", m)

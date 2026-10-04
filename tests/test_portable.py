@@ -102,6 +102,40 @@ def test_installed_entrypoint_from_another_directory(tmp_path):
     assert r.returncode==2 and not json.loads(r.stdout)['ok']
 
 
+def test_provenance_uses_explicit_root_without_environment(tmp_path,monkeypatch):
+    from phantomguard.eval import report
+    root=tmp_path/'explicit workspace'
+    cfg=load_config(root=root)
+    initialize(cfg)
+    module=root/'src/phantomguard/example.py'
+    module.parent.mkdir(parents=True)
+    module.write_text('# source from selected checkout\n',encoding='utf-8')
+    monkeypatch.setattr(report,'REPO_ROOT',tmp_path/'unrelated installed wheel')
+    result=report.provenance(cfg,[])
+    assert result['implementation_sha256']=={'src/phantomguard/example.py':digest(module)}
+    assert report.portable_path(paths(cfg).output/'attack_eval/x_labels.csv',cfg)=='runs/attack_eval/x_labels.csv'
+
+
+def test_decoder_csv_export_is_explicit_utf8(tmp_path,monkeypatch):
+    from phantomguard.decoder import write_csv, ScanCycle, decode_object
+    from phantomguard.io.replay import ReplaySource
+    import builtins
+    real_open=builtins.open
+    def legacy_locale(*args,**kwargs):
+        if 'b' not in (args[1] if len(args)>1 else kwargs.get('mode','r')):
+            kwargs.setdefault('encoding','cp1252')
+        return real_open(*args,**kwargs)
+    monkeypatch.setattr(builtins,'open',legacy_locale)
+    path=tmp_path/'export.csv'
+    cycle=ScanCycle(1,scan_counter=1,meas_counter=1,obj_count_hdr=1,
+                    sync_status=1,sync_timestamp=700,objects=[decode_object([0]*8,720)])
+    write_csv([cycle],path,'\u6d4b\u91cf\u2713',0.1)
+    with path.open(encoding='utf-8',newline='') as stream:
+        assert next(csv.DictReader(stream))['source_file']=='\u6d4b\u91cf\u2713'
+    frames=list(ReplaySource(path))
+    assert len(frames)==2 and frames[1].data==bytes(8)
+
+
 def test_bundle_safe_paths_and_payload_checksums(tmp_path):
     from phantomguard.bundle import verify
     import hashlib
