@@ -136,3 +136,79 @@ Newest entries are appended at the bottom of each day.
 - **Script order:** `learn_baseline.py [--loso]` -> `train.py [--loso]` -> `calibrate.py [--loso]` ->
   `run_clean_eval.py`. Re-running `learn_baseline.py` rewrites `configs/baseline.json` and drops the AE and calibration
   entries, so the later steps must be re-run after it.
+
+## 2026-10-04 — isolated Phases 3–6 completion
+
+- **Isolation and authorization:** fetched `origin` without switching/pulling the original checkout; latest accepted
+  main remained `7cdfa584edd20c8653991a8fbe8d6023c7b55493`. Created sibling worktree
+  `D:\Hacksprint\phantom-guard-phases-3-6` on `codex/phases-3-6`, with its own Python 3.11 environment.
+  The user's latest instruction explicitly authorizes pushing this branch; main is never merged or modified.
+- **Raw recordings recovered locally:** no working-copy CSVs were found. All four are present as blobs in initial
+  commit `24a987f`; copied their exact bytes into this worktree's ignored `data/raw` and set the Windows read-only
+  attribute. No original-checkout or raw recording was edited. Models, caches and generated outputs are local.
+- **Baseline before edits:** `python -m pytest -q` gave 34 passed, 1 skipped in 14.19 seconds. The skipped latency
+  check needed absent trained artifacts; imports resolved to this worktree. Phase 2 remains levels/pools only.
+- **Cadence contradiction fixed:** baseline collection/documentation skipped the first two header gaps, while
+  runtime checked the second gap. Runtime now skips exactly gaps 1 and 2, checking gap 3 onward.
+- **Malformed headers are boundaries:** every configured header CAN ID closes the preceding cycle, including
+  malformed payloads. Its identity/timestamp opens a new unparsed-header cycle; the missing counter interrupts
+  counter continuity until valid headers resume. Changing a future header payload cannot change the preceding
+  cycle verdict. Header length remains a minimum because recorded header DLC is unknown.
+- **ROI contradiction resolved explicitly:** plan text said both “protocol checks every frame” and “out-of-ROI,
+  never flagged.” Protocol checks every frame and can flag out-of-ROI objects. Physics/replay/learned checks apply
+  only within ROI; all contributing rolling samples must be in ROI. Out-of-ROI history no longer contaminates
+  windows or physics baseline envelopes. Entering ROI is not a new linked-track birth. Viewer colors reflect
+  actual protocol verdicts outside ROI. Green means “not flagged,” not proof of authenticity.
+- **Track/window policy:** physics can use actual elapsed time across the configured one-cycle bridged gap.
+  Learned/replay fingerprints require consecutive observations and reject gap-crossing windows. Feature order
+  is `[dx, dy, vx, vy, radial_velocity, rcs, range]`; identities/timestamps are used only for linking/eligibility.
+  Offline collection uses the same baseline reassignment threshold as online tracking. Fusion advances every
+  scan, treats missing observations as unflagged votes, retires ended tracks, and casts one vote per linked
+  track per scan even when duplicate verdicts exist.
+- **Replay evidence:** expiry occurs before lookup. Matches distinguish training library, earlier stream and
+  concurrent tracks. Complex nonoverlapping repeats on the same linked track can be earlier-stream evidence;
+  overlapping windows, static clutter and simple constant motion are excluded by eligibility/complexity gates.
+  Genuine complex repeated trajectories can still collide: fingerprints are suspicion, not authenticity proof.
+- **Learned availability/provenance:** missing models/calibration are explicit layer/score outcomes. Reports and
+  demos require matching schema, features, config, split identities, baseline signature, artifact IDs and source
+  hashes. Empty training/class-calibration subsets fail clearly. No fallback `rr_scale=1` is invented when moving
+  training evidence is insufficient. Recording bytes are hashed for provenance, never fed into learned features.
+- **Selection/calibration:** AE remains the fixed online NumPy choice; IF is an offline comparator, not selected
+  by test AUROC. Both use identical eligible windows/train normalization and the same selected validation
+  quantile with separate static/moving thresholds. Preparation was run once in baseline -> train -> calibrate
+  order for time-block and all LOSO folds. Fresh time-block validation selected q0.9999; three LOSO folds fail
+  <1 alert/min even at q1.0. Historical test-inspection disclosure above is retained; no new test tuning occurred.
+- **Evaluation identities and denominators:** compact records now preserve every emitted frame, timestamps,
+  scores, verdicts and layer availability. Labels join only final emitted indices. Forged headers/unknown IDs
+  can detect a cycle without identifying an object; malformed object attempts count in the overall object
+  denominator with unknown physical class. Scene detection counts any alert during observed attack cycles,
+  including incidental clean alarms; direct object identification is separate. Undetected and EOF-censored
+  observed IDs stay in denominators; schedule-only instances require a future lifecycle sidecar.
+- **Protocol levels preserved:** A2 is not required to pass range order/burst contiguity; those remain A3+.
+  Generated run rows expose those reasons separately. T4 overwrite remains level dependent. Phase 2 code is
+  untouched; optional provider integration lives in eval/demo. Config/baseline passed to providers are copies.
+- **Replay provenance scopes:** time-block unseen means unseen portions of another seen recording; LOSO unseen
+  means the wholly held-out recording. They are distinguished in run rows. Unseen replay material is never
+  loaded into defender training libraries. Earlier-stream sources must be past-only within the attacker.
+- **Latency:** CPU processing now includes frame grouping/decoding plus detector computation; source I/O and
+  capture waiting are excluded. Detector CPU, assembly CPU and timestamp-based cycle-assembly delay are separate.
+  IF batch scoring is excluded from online latency because it is an offline comparison. All p99 measurements
+  report the configured 10 ms budget, observed environment and sample count; no latency claim is fabricated.
+- **Reporting/viewer:** generated summary/CSVs include blocked/unsupported cells, per-run seeds, configurations,
+  splits, artifact hashes/calibration and excluded data. Missing Phase 2 is a nonzero blocked outcome. Viewer
+  retains clean/interactive/headless PNG/GIF/velocity/reason/log modes, distinguishes filenames, logs malformed
+  frames by index and avoids duplicate entries when animation redraws a cycle. Labels never set colors.
+- **Executed final validation:** full suite 109 passed, 0 skipped (20.67 s); generated JUnit evidence is
+  `docs/results/validation.xml`. Baseline/train/calibrate with `--loso` and clean evaluation all completed.
+  The attack evaluator completed eight independent clean segments and generated 2,664 blocked Phase 2 run cells
+  plus 1,296 unsupported cells, returning a blocked nonzero outcome. No real attack metrics or attacked demo
+  were fabricated. Final generated clean rates are 3.314/min time-block and 5.586/min LOSO; both miss the target.
+  Per-segment total processing p99 is 1.486–1.565 ms, with capture assembly p99 33.5–33.6 ms reported separately.
+- **Real viewer verification:** front/back first-alert and chaotic midpoint PNGs/GIFs/alert CSVs were exported
+  successfully. Pillow verified both GIFs at 840×378 with 75 frames (150-cycle clip, stride 2). A cropped title
+  was corrected and the exports regenerated. The exact `--attack T1 --level A2 --export` command fails clearly
+  on missing Phase 2. Raw file blob hashes still match initial Git data exactly and all four remain read-only.
+- **Final review:** detector/evaluation/viewer commits are focused; `attack/` has no diff from base; the original
+  checkout remains clean on the original main SHA. Generated model details report actual AE dimensions/training
+  seconds and IF settings (200 trees, max_samples 256); optional epoch-completion metadata was not present in
+  these already-trained artifacts and stays explicitly null rather than being invented. Future train runs record it.

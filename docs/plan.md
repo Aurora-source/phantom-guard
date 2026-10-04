@@ -135,3 +135,36 @@ range-conditional RCS band, burst-contiguity and range-order protocol checks). E
   no type x level x layer matrix, and no `run_attack_eval.py` / `summary.md`.
 - Commands: `python scripts/learn_baseline.py --loso && python scripts/train.py --loso && python scripts/calibrate.py --loso
   && python scripts/run_clean_eval.py && python scripts/replay_demo.py --file onePersonMovingFrontAndBack.csv --export --around-first-alert`
+
+## Status (2026-10-04, isolated Phases 3–6 worktree)
+
+- Worktree: `D:\Hacksprint\phantom-guard-phases-3-6`; branch `codex/phases-3-6`; base
+  `7cdfa584edd20c8653991a8fbe8d6023c7b55493`. Original checkout and contributor work are preserved.
+- Phase 3 completed/audited: exact two-gap cadence warm-up; protocol malformed/duplicate/counter handling;
+  causal malformed-header boundaries; ROI-consistent windowed physics, learned radial scale, birth/colocation,
+  replay library/history/concurrent provenance, expiry and simple/static repeat exclusions; lossless frame
+  identities and separate CPU/assembly delay. New contradictions are in the dated decisions log.
+- Phase 4 completed/audited: identical offline/online features; training-only normalization; explicit unavailable,
+  empty/gap/stale artifacts; provenance-checked AE/IF/library; separate static/moving validation thresholds;
+  fixed AE deployment selection; equivalent captured windows for offline IF; missing-scan persistence and one
+  vote per track per scan. No attack/test-driven threshold/model selection.
+- Phase 5 implemented: `eval/report.py`, `eval/attack_adapter.py`, `scripts/run_attack_eval.py`, compatible
+  lossless metrics; exact label joins, cycle versus forged-object outcomes, censoring, AUROC, per-layer/ablation,
+  clean object/episode rates, CPU p99 budget and assembly delay. Reports/configurations/provenance are generated.
+  Real attack performance remains blocked because upstream Phase 2 scenario/injector code is absent; fixture
+  verification is explicitly not an attacker benchmark. See `docs/phase2-handoff.md` for the exact adapter API.
+- Phase 6 completed: clean replay and optional attacked FrameSource, `--attack/--level/--seed/--provider`,
+  strict artifact/argument/empty checks, detector-only colors/reasons/velocity/logs, headless PNG/GIF exports
+  and distinct names. Green means “not flagged.” Real attacked exports require Phase 2.
+- Raw data recovered read-only from initial Git blobs into this worktree; preparation ran in the prescribed
+  baseline -> train -> calibrate order for all five splits. Fresh evaluation outcomes and executed validation
+  are recorded in generated `docs/results/summary.md` and the final handoff; historical results remain disclosed.
+- This assignment's latest user instruction authorizes pushing the new branch after local commits. No merge
+  into main, deployment or contributor messaging is authorized or performed.
+- Final checks: 109 tests passed with no skips; generated JUnit report `docs/results/validation.xml`.
+  All four recordings match their original Git blobs and remain read-only. Baseline/train/calibrate/clean eval
+  completed for time-block and all LOSO folds. Final attack matrix is explicitly blocked/unsupported, with
+  eight clean segments measured; real attacked-data validation and exports await Phase 2.
+- Generated outputs: `docs/results/summary.md`, `attack_eval_*.csv`, `attack_eval_manifest.json`, fresh
+  `clean_eval*` reports, and front/back/chaotic `demo_*_test_clean` PNG/GIF/alert CSVs. Both real clean GIFs
+  contain 75 frames. Final diff has no attacker changes or original-checkout changes.
