@@ -120,3 +120,20 @@ def test_header_count_fixed_only_for_a2plus():
         _, fab_cycle = fab_object_reasons(cfg, b, frames, lm)
         has_mismatch = any("COUNT_MISMATCH" in c for c in fab_cycle)
         assert has_mismatch == expect_mismatch, (level, has_mismatch)
+
+
+def test_attack_eval_seed_is_stable_across_processes():
+    import os
+    import subprocess
+    import sys
+
+    from phantomguard.config import REPO_ROOT
+
+    code = ("import sys; sys.path.insert(0, 'scripts'); import run_attack_eval as r; "
+            "print(r.job_seed(11, 'multiplePeopleChaotic.csv'))")
+    outs = set()
+    for hs in ("1", "2"):
+        env = {**os.environ, "PYTHONHASHSEED": hs}
+        outs.add(subprocess.run([sys.executable, "-c", code], cwd=REPO_ROOT, env=env, capture_output=True,
+                                text=True, check=True).stdout.strip())
+    assert len(outs) == 1, outs

@@ -12,10 +12,24 @@ Rows are scenarios, columns are generator capability levels (A0 naive -> A4 data
 
 | type | A0 | A1 | A2 | A3 | A4 |
 |---|---|---|---|---|---|
-| T1 | 100% | 100% | 100% | 77% | 63% |
+| T1 | 100% | 100% | 100% | 75% | 54% |
 | T2 | 100% | 100% | 100% | 100% | 100% |
-| T3 | 100% | 100% | 100% | 86% | 42% |
-| T4 | 100% | 100% | 72% | 68% | 68% |
+| T3 | 100% | 100% | 100% | 83% | 33% |
+| T4 | 100% | 100% | 73% | 61% | 61% |
+
+
+## Operating point trade-off (instance detection, calibrated vs previous)
+
+Same detector output, fusion re-applied offline. *calibrated* = M/N from `fusion_mn` in baseline.json with
+the autoencoder corroborating only; *previous* = 3 of 5 with the
+autoencoder allowed to alert alone. The clean-data side of this trade-off is in clean_eval.md.
+
+| type | A0 | A1 | A2 | A3 | A4 |
+|---|---|---|---|---|---|
+| T1 | 100% / 100% | 100% / 100% | 100% / 100% | 75% / 78% | 54% / 60% |
+| T2 | 100% / 100% | 100% / 100% | 100% / 100% | 100% / 100% | 100% / 100% |
+| T3 | 100% / 100% | 100% / 100% | 100% / 100% | 83% / 87% | 33% / 38% |
+| T4 | 100% / 100% | 100% / 100% | 73% / 75% | 61% / 63% | 61% / 63% |
 
 
 ## Per-layer attribution: fraction of fabricated object-cycles each layer flags (pooled over T1-T4)
@@ -26,11 +40,11 @@ real in-ROI object-windows.
 
 | level | fab_obj_cycles | any | protocol | kinematic | replay | learned | alert_rate_instances | auroc_ae |
 |---|---|---|---|---|---|---|---|---|
-| A0 | 45488 | 100% | 100% | 89% | 0% | 0% | 100% | 0.95 |
-| A1 | 45431 | 100% | 90% | 92% | 2% | 0% | 100% | 0.92 |
-| A2 | 45431 | 97% | 86% | 92% | 2% | 0% | 95% | 0.91 |
-| A3 | 39064 | 53% | 0% | 50% | 2% | 2% | 84% | 0.65 |
-| A4 | 39832 | 39% | 0% | 37% | 0% | 1% | 68% | 0.54 |
+| A0 | 48883 | 100% | 100% | 89% | 0% | 0% | 100% | 0.94 |
+| A1 | 43963 | 99% | 90% | 91% | 2% | 0% | 100% | 0.91 |
+| A2 | 43963 | 96% | 85% | 91% | 2% | 0% | 95% | 0.90 |
+| A3 | 46719 | 53% | 0% | 52% | 2% | 1% | 81% | 0.60 |
+| A4 | 47176 | 38% | 0% | 37% | 0% | 1% | 62% | 0.49 |
 
 
 ## Detection ablation (fabricated object-cycles flagged, one layer removed; pooled over T1-T4)
@@ -41,45 +55,45 @@ A big drop from `all_layers` when a layer is removed means that layer is load-be
 | level | all_layers | -protocol | -kinematic | -replay | -learned |
 |---|---|---|---|---|---|
 | A0 | 100% | 89% | 100% | 100% | 100% |
-| A1 | 100% | 94% | 90% | 99% | 100% |
-| A2 | 97% | 94% | 86% | 97% | 97% |
-| A3 | 53% | 53% | 3% | 51% | 52% |
-| A4 | 39% | 39% | 2% | 38% | 37% |
+| A1 | 99% | 93% | 90% | 99% | 99% |
+| A2 | 96% | 92% | 85% | 96% | 96% |
+| A3 | 53% | 54% | 3% | 52% | 53% |
+| A4 | 38% | 38% | 1% | 38% | 38% |
 
 
 ## Dominant catching signal at A3/A4 (per scenario)
 
 | type | level | inst_detected | top_reasons |
 |---|---|---|---|
-| T1 | A3 | 55/71 | RCS_BAND 25%, COLOC 21%, LEARNED 4% |
-| T1 | A4 | 45/71 | COLOC 21%, LEARNED 4%, RCS_BAND 2% |
-| T2 | A3 | 72/72 | COLOC 43%, RCS_BAND 23%, LEARNED 1% |
-| T2 | A4 | 72/72 | COLOC 43%, LEARNED 1%, JUMP 0% |
-| T3 | A3 | 60/70 | REPLAY 34%, RCS_BAND 5%, COLOC 5% |
-| T3 | A4 | 30/72 | COLOC 19%, RCS_BAND 3%, REPLAY 2% |
-| T4 | A3 | 32/47 | RR_RESID 37%, LEARNED 4%, COLOC 2% |
-| T4 | A4 | 32/47 | RR_RESID 37%, LEARNED 4%, COLOC 2% |
+| T1 | A3 | 54/72 | COLOC 27%, RCS_BAND 24%, LEARNED 1% |
+| T1 | A4 | 39/72 | COLOC 27%, LEARNED 1%, RCS_BAND 1% |
+| T2 | A3 | 72/72 | COLOC 41%, RCS_BAND 24%, LEARNED 1% |
+| T2 | A4 | 72/72 | COLOC 41%, RCS_BAND 1%, LEARNED 1% |
+| T3 | A3 | 59/71 | REPLAY 33%, COLOC 6%, LEARNED 2% |
+| T3 | A4 | 24/72 | COLOC 14%, REPLAY 3%, RCS_BAND 2% |
+| T4 | A3 | 31/51 | RR_RESID 31%, DUP_SLOT 9%, LEARNED 2% |
+| T4 | A4 | 31/51 | RR_RESID 31%, DUP_SLOT 9%, LEARNED 2% |
 
 
 ## Time-to-detect (median cycles from first appearance to first alert; blank = not detected)
 
 | type | A0 | A1 | A2 | A3 | A4 |
 |---|---|---|---|---|---|
-| T1 | 0 | 0 | 0 | 2 | 2 |
-| T2 | 0 | 0 | 0 | 2 | 2 |
-| T3 | 0 | 0 | 0 | 14 | 7 |
-| T4 | 0 | 0 | 11 | 11 | 11 |
+| T1 | 0 | 0 | 0 | 3 | 3 |
+| T2 | 0 | 0 | 0 | 3 | 3 |
+| T3 | 0 | 0 | 0 | 15 | 10 |
+| T4 | 0 | 0 | 12 | 11 | 11 |
 
 
 ## Static vs moving phantoms (T1): detected instances / total
 
 | level | moving_det | static_det |
 |---|---|---|
-| A0 | 40/40 | 32/32 |
-| A1 | 39/39 | 33/33 |
-| A2 | 39/39 | 33/33 |
-| A3 | 30/44 | 25/27 |
-| A4 | 22/44 | 23/27 |
+| A0 | 38/38 | 34/34 |
+| A1 | 31/31 | 41/41 |
+| A2 | 31/31 | 41/41 |
+| A3 | 20/34 | 34/38 |
+| A4 | 13/34 | 26/38 |
 
 
 Static phantoms are expected to be the hardest (CLAUDE.md): a still object at a plausible position
@@ -87,13 +101,13 @@ with a plausible RCS has no motion to contradict and no trajectory to replay-mat
 
 ## What evades
 
-- T1/A3: 16/71 instances raised no alert (2 static, 14 moving).
-- T1/A4: 26/71 instances raised no alert (4 static, 22 moving).
-- T3/A3: 10/70 instances raised no alert (0 static, 10 moving).
-- T3/A4: 42/72 instances raised no alert (0 static, 42 moving).
-- T4/A2: 13/47 instances raised no alert (0 static, 13 moving).
-- T4/A3: 15/47 instances raised no alert (0 static, 15 moving).
-- T4/A4: 15/47 instances raised no alert (0 static, 15 moving).
+- T1/A3: 18/72 instances raised no alert (4 static, 14 moving).
+- T1/A4: 33/72 instances raised no alert (12 static, 21 moving).
+- T3/A3: 12/71 instances raised no alert (0 static, 12 moving).
+- T3/A4: 48/72 instances raised no alert (0 static, 48 moving).
+- T4/A2: 14/51 instances raised no alert (0 static, 14 moving).
+- T4/A3: 20/51 instances raised no alert (0 static, 20 moving).
+- T4/A4: 20/51 instances raised no alert (0 static, 20 moving).
 
 Object-cycle level: per-object detection falls steadily as the generator gets more realistic; see the
 per-layer table. The learned autoencoder and the co-location / RCS-band kinematic checks carry A3-A4,
@@ -103,10 +117,10 @@ where the protocol layer no longer fires.
 
 | claim | supported? | evidence |
 |---|---|---|
-| kinematic plausibility | partial | catches naive motion (A2 flags 92% of fabricated object-cycles) but only 50% at A3, where motion is velocity-consistent; carried then by co-location and the RCS band, not range-rate |
-| timing signature | yes (<=A2) | protocol timing/order flags 90% (A1) and 86% (A2) of fabricated object-cycles; at A3 the burst order is replicated and it drops to 0% |
-| RCS-vs-range consistency | yes | the range-conditional RCS band flags 25% of A3 T1 object-cycles (RCS from the marginal) but only 2% of A4 T1 (RCS sampled per range), which is exactly the modelled difference |
-| learned-normal autoencoder | yes, modest | AUROC 0.65 (A3) / 0.54 (A4); it flags 2% (A3) and 1% (A4) of fabricated object-cycles, the main non-trivial signal left at A4 |
+| kinematic plausibility | partial | catches naive motion (A2 flags 91% of fabricated object-cycles) but only 52% at A3, where motion is velocity-consistent; carried then by co-location and the RCS band, not range-rate |
+| timing signature | yes (<=A2) | protocol timing/order flags 90% (A1) and 85% (A2) of fabricated object-cycles; at A3 the burst order is replicated and it drops to 0% |
+| RCS-vs-range consistency | yes | the range-conditional RCS band flags 24% of A3 T1 object-cycles (RCS from the marginal) but only 1% of A4 T1 (RCS sampled per range), which is exactly the modelled difference |
+| learned-normal autoencoder | weak | AUROC 0.60 (A3) / 0.49 (A4), where 0.5 is chance; it flags 1% (A3) and 1% (A4) of fabricated object-cycles. Used as corroborating only (a learned-only flag never alerts on its own). At A4 the realistic forgeries are carried by co-location, not by the autoencoder |
 | no labelled attack data needed | yes | every threshold is learned from clean data only; the generator and its labels are used solely to measure, never to train or tune the detector |
 
 ## Caveats

@@ -86,8 +86,13 @@ learned:
   iforest_trees: 200
 
 fusion:
+  # Defaults; scripts/calibrate.py picks M/N from mn_candidates on clean validation (fusion_mn in baseline.json).
   m: 3
   n: 5
+  mn_candidates: [[3, 5], [4, 6], [5, 8]]
+  # The autoencoder is corroborating evidence only: a learned-only object-cycle does not count toward an
+  # alert. Design rule, not tuned (see docs/decisions.md 2026-10-04).
+  learned_alone: false
 
 attack:
   seeds: [11, 22, 33]

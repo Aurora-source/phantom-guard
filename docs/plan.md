@@ -144,3 +144,8 @@ range-conditional RCS band, burst-contiguity and range-order protocol checks). E
 - Full regeneration order: `learn_baseline.py --loso` -> `train.py --loso` -> `calibrate.py --loso`
   -> `run_clean_eval.py` -> `run_attack_eval.py`
   -> `replay_demo.py --file onePersonMovingFrontAndBack.csv --attack T1 --level A3 --export`
+
+## Status (2026-10-04, fourth round): enhancement #1 (clean false alarms)
+- Autoencoder made corroborating-only; fusion M/N chosen on clean validation (`fusion_mn`, 4/6 time-block).
+- Clean test 4.73 -> 1.42 alerts/min, LOSO 5.87 -> 3.98; detection cost 2-6 points at A2-A4. Target < 1/min still not met.
+- Attack eval made reproducible (seed bug); both evals now report the previous operating point like-for-like.

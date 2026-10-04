@@ -9,7 +9,7 @@ import time
 from pathlib import Path
 from typing import Iterable, Iterator
 
-from phantomguard.config import REPO_ROOT, bval
+from phantomguard.config import REPO_ROOT, bval, effective_cfg
 from phantomguard.cycles import Cycle, CycleAssembler
 from phantomguard.detect.autoencoder import LearnedChecker, NumpyAE
 from phantomguard.detect.common import LAYERS, CycleResult, ObjVerdict
@@ -52,7 +52,7 @@ class Detector:
                    cfg["replay"]["k_gram"] + 1, cfg["learned"]["window_cycles"] + 1)
         self.tracks = TrackManager(bval(baseline, "reassign_jump"), cfg["units"]["tick_seconds"], self.thr,
                                    history=hist, max_gap_cycles=cfg["tracks"]["max_gap_cycles"])
-        self.fusion = Fusion(cfg, self.layers)
+        self.fusion = Fusion(effective_cfg(cfg, baseline), self.layers)
         # Every layer runs so reasons and scores are always reported; fusion uses only enabled layers.
 
     def process_cycle(self, cycle: Cycle) -> CycleResult:

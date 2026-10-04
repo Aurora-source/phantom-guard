@@ -185,3 +185,32 @@ No bus, no live capture, no hardware (CLAUDE.md scope).
   range-appropriate RCS, and replays of unseen recordings. These are reported, not hidden.
 - **Deck-claim check** is generated at the end of `summary.md`. "No labelled attack data needed" holds:
   no threshold uses the generator or its labels; they are measurement only.
+
+### Enhancement #1: cutting clean false alarms (operating point)
+- **Evidence gathered on validation only.** At the old operating point (3 of 5, autoencoder alerting alone), clean
+  validation had a single alert episode (`REPLAY`) in 2.1 min. Fabricated frames mixed into the validation
+  segments (A2-A4) showed no instance-detection change between the fusion variants tried. That was used as a
+  check only: hard rule 2 forbids attack labels from choosing a threshold.
+- **Change 1 (design rule, not tuned): the autoencoder is corroborating evidence.** `fusion.learned_alone: false`:
+  an object-cycle whose only reason is `LEARNED` does not count toward an alert. The code and score stay on the
+  verdict for display. Rationale: its AUROC on fabricated vs real windows is about 0.6 (A3) and about 0.5 (A4,
+  chance), so on its own it is the least specific layer. The deck-claim row for it now reads "weak", computed.
+- **Change 2 (calibrated on clean validation): persistence M of N.** `calibrate.py` stage 2 picks from
+  `fusion.mn_candidates` [[3,5],[4,6],[5,8]] the candidate with the fewest *clean validation* alert events, with
+  ties going to the smallest N (fastest detection). It is recorded as `fusion_mn` in the baseline JSON with its
+  table. Time-block chose 4/6 (1 -> 0 validation events). The LOSO folds chose 4/6 or 5/8.
+- **Test had been seen before this change** (it was the reason the autoencoder was suspected: it was the largest
+  clean-alert contributor on test). The change is justified by the validation evidence and the design rule above,
+  but the test numbers below are not blind.
+- **Results, like-for-like** (same detector output, fusion re-applied offline; `clean_eval_operating_point.csv`,
+  summary.md "Operating point trade-off"):
+  - clean false alerts: time-block test 10 -> 3 events (4.73 -> 1.42/min); LOSO 62 -> 42 (5.87 -> 3.98/min).
+  - detection cost: 2-6 points of instance detection at A2-A4 (for example T1/A4 60% -> 54%, T3/A4 38% -> 33%),
+    and 0 at A0-A1 and on T2.
+  - **The < 1 alert/min target is still not met** (1.42/min on test, from 3 kinematic-layer events in 2.1 min).
+    Validation now has zero events, so nothing further can be learned without tuning on test, and I stopped there.
+- **Bug found and fixed: the attack evaluation was not reproducible.** The per-job generator seed used `hash(file)`;
+  Python randomises string hashes per process, so two runs with identical code gave different matrices (T1/A3 66%
+  vs 72%). It now uses `zlib.crc32` via `job_seed()`, with a regression test across two PYTHONHASHSEED values.
+  A first before/after comparison that mixed this randomness into the trade-off (it suggested a 4-13 point cost)
+  was discarded in favour of the like-for-like comparison above.

@@ -17,6 +17,7 @@ Detection is reported two ways: per fabricated object-cycle (flagged by a layer)
 
 from __future__ import annotations
 
+import zlib
 from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import dataclass, field
@@ -32,6 +33,7 @@ from phantomguard.config import REPO_ROOT, load_baseline, load_config, raw_path
 from phantomguard.detect.common import LAYERS, REASONS, layer_of
 from phantomguard.detect.fusion import Fusion
 from phantomguard.detect.pipeline import MODELS_DIR, Detector, load_artifacts
+from phantomguard.eval.metrics import PREVIOUS_FUSION, LiteCycle, LiteVerdict, with_fusion
 from phantomguard.eval.splits import time_block_segments
 from phantomguard.io.replay import ReplaySource
 
@@ -61,6 +63,7 @@ class CellResult:
     inst_static: int = 0
     inst_static_detected: int = 0
     ttd: list = field(default_factory=list)                                   # cycles to first alert (detected only)
+    prev_detected: int = 0                                                    # instances detected at PREVIOUS_FUSION
     ae_fab: list = field(default_factory=list)
     ae_clean: list = field(default_factory=list)
 
@@ -76,6 +79,12 @@ class CellResult:
                     v[kk] += vv
 
 
+def job_seed(seed: int, file: str) -> int:
+    """Per-(seed, file) generator seed. Uses crc32, not hash(): str hashes are randomised per process,
+    which made earlier runs irreproducible."""
+    return seed * 1009 + zlib.crc32(file.encode()) % 997
+
+
 def run_job(job):
     atype, level, seed, file, lo, hi = job
     cfg = load_config()
@@ -84,7 +93,7 @@ def run_job(job):
     segs = time_block_segments(cfg)
     known = build_pools(cfg, segs["train"])
     unseen = build_pools(cfg, [s for s in segs["val"] if s.file != file])
-    rng = np.random.default_rng(seed * 1009 + hash(file) % 997)
+    rng = np.random.default_rng(job_seed(seed, file))
     ctx = make_context(cfg, b, level, rng, known, unseen)
     base = ReplaySource(raw_path(cfg, file), (lo, hi))
     instances = plan_run(ctx, atype, base.cycles, lo, hi)
@@ -100,7 +109,11 @@ def run_job(job):
     inst_moving = {}
     aid_to = {inst.attack_id: inst for inst in instances}
     thr = cfg["motion"]["moving_threshold_mps"]
+    replay_log = []  # (LiteCycle, frame indices) to re-apply the previous fusion offline
     for k, cyc in enumerate(det.run(iter(frames))):
+        replay_log.append((LiteCycle(cyc.header_t, list(cyc.cycle_reasons),
+                                     [LiteVerdict(v.track_id, v.in_roi, v.moving, list(v.reasons)) for v in cyc.objects]),
+                           [v.frame_index for v in cyc.objects]))
         for v in cyc.objects:
             if v.frame_index not in lm:
                 if ae is not None and "ae" in v.scores and v.in_roi:
@@ -113,7 +126,7 @@ def run_job(job):
             res.fab_roi += v.in_roi
             res.fab_moving += moving
             reasons = v.reasons
-            if reasons:
+            if v.flagged:  # as fused by the detector (learned-only object-cycles do not count alone)
                 res.flagged_all += 1
                 (res.__dict__.__setitem__("flagged_moving", res.flagged_moving + 1) if moving
                  else res.__dict__.__setitem__("flagged_static", res.flagged_static + 1))
@@ -136,10 +149,18 @@ def run_job(job):
                 inst_moving[aid] = bool(aid_to[aid].note.startswith(("moving", "drift", "replay")))
             if v.alert and aid not in first_alert:
                 first_alert[aid] = k
+    prev_fus = Fusion(with_fusion(cfg, PREVIOUS_FUSION), LAYERS)
+    prev_hit = set()
+    for lc, fis in replay_log:
+        prev_fus.apply(lc)
+        for lv, fi in zip(lc.objects, fis):
+            if lv.alert and fi in lm:
+                prev_hit.add(lm[fi].attack_id)
     for aid, inst in aid_to.items():
         if aid not in first_present:
             continue
         res.instances += 1
+        res.prev_detected += aid in prev_hit
         mov = inst_moving[aid]
         res.inst_moving += mov
         res.inst_static += (not mov)
@@ -253,6 +274,14 @@ def write_summary(cfg, cells, dmat, dlay, dttd):
              "## Headline: instance detection rate (a persistent alert ever fired on the fabricated track)", "",
              "Rows are scenarios, columns are generator capability levels (A0 naive -> A4 data-aware).", "",
              md_table(dmat, pf), "",
+             "## Operating point trade-off (instance detection, calibrated vs previous)", "",
+             "Same detector output, fusion re-applied offline. *calibrated* = M/N from `fusion_mn` in baseline.json with",
+             f"the autoencoder corroborating only; *previous* = {PREVIOUS_FUSION['m']} of {PREVIOUS_FUSION['n']} with the",
+             "autoencoder allowed to alert alone. The clean-data side of this trade-off is in clean_eval.md.", "",
+             md_table(pd.DataFrame([{"type": t, **{lv: (f"{pct(cells[(t, lv)].instances_detected / cells[(t, lv)].instances)} / "
+                                                         f"{pct(cells[(t, lv)].prev_detected / cells[(t, lv)].instances)}")
+                                                   if cells[(t, lv)].instances else "n/a" for lv in LEVEL_NAMES}}
+                                    for t in TYPES])), "",
              "## Per-layer attribution: fraction of fabricated object-cycles each layer flags (pooled over T1-T4)", "",
              "`any` is the full detector (any enabled layer); `alert_rate_instances` is the share of fabricated",
              "tracks that ever alert; `auroc_ae` is the AUROC of the autoencoder error separating fabricated from",
@@ -377,8 +406,12 @@ def deck_claims(cfg, cells, dlay):
     au3, au4 = auroc_level("A3"), auroc_level("A4")
     lrn3 = level_layer("A3", "learned")
     lrn4 = level_layer("A4", "learned")
-    L.append(f"| learned-normal autoencoder | yes, modest | AUROC {au3:.2f} (A3) / {au4:.2f} (A4); it flags {pct(lrn3)} "
-             f"(A3) and {pct(lrn4)} (A4) of fabricated object-cycles, the main non-trivial signal left at A4 |")
+    verdict = "weak" if (au4 != au4 or au4 < 0.6) else ("modest" if au4 < 0.75 else "yes")
+    role = ("corroborating only (a learned-only flag never alerts on its own)"
+            if not cfg["fusion"].get("learned_alone", True) else "alerts on its own")
+    L.append(f"| learned-normal autoencoder | {verdict} | AUROC {au3:.2f} (A3) / {au4:.2f} (A4), where 0.5 is chance; it "
+             f"flags {pct(lrn3)} (A3) and {pct(lrn4)} (A4) of fabricated object-cycles. Used as {role}. "
+             "At A4 the realistic forgeries are carried by co-location, not by the autoencoder |")
     # no labelled attack data
     L.append("| no labelled attack data needed | yes | every threshold is learned from clean data only; the generator "
              "and its labels are used solely to measure, never to train or tune the detector |")

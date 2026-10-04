@@ -142,3 +142,28 @@ def test_latency_p99_under_budget():
     p99 = float(np.percentile(lat, 99))
     print(f"latency over {len(lat)} cycles: p50 {np.percentile(lat, 50):.3f} ms, p99 {p99:.3f} ms, max {max(lat):.3f} ms")
     assert p99 < cfg["latency"]["p99_budget_ms"]
+
+
+def test_learned_layer_only_corroborates():
+    cfg = {**CFG, "fusion": {"m": 1, "n": 1, "learned_alone": False}}
+    fus = Fusion(cfg, ("protocol", "kinematic", "replay", "learned"))
+    alone = ObjVerdict(0, 1, 0, 0, 0, 0, True, False, track_id=1, reasons=["LEARNED"])
+    backed = ObjVerdict(1, 2, 0, 0, 0, 0, True, False, track_id=2, reasons=["LEARNED", "RCS_STD"])
+    fus.apply(CycleResult(0, 0, [alone, backed]))
+    assert not alone.flagged and not alone.alert and alone.reasons == ["LEARNED"]  # kept for display
+    assert backed.flagged and backed.alert
+    # with learned_alone the old behaviour returns
+    fus2 = Fusion({**CFG, "fusion": {"m": 1, "n": 1, "learned_alone": True}}, ("learned",))
+    v = ObjVerdict(0, 1, 0, 0, 0, 0, True, False, track_id=3, reasons=["LEARNED"])
+    fus2.apply(CycleResult(0, 0, [v]))
+    assert v.flagged and v.alert
+
+
+def test_effective_cfg_takes_calibrated_mn():
+    from phantomguard.config import effective_cfg
+
+    assert effective_cfg(CFG, {}) is CFG
+    eff = effective_cfg(CFG, {"fusion_mn": {"value": [4, 6]}})
+    assert (eff["fusion"]["m"], eff["fusion"]["n"]) == (4, 6)
+    assert eff["fusion"]["learned_alone"] == CFG["fusion"]["learned_alone"]
+    assert CFG["fusion"]["m"] == 3  # original untouched
