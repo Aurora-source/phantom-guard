@@ -205,7 +205,7 @@ def test_fixed_splits_do_not_overlap_or_cross_scenarios(monkeypatch):
 
 
 def test_evaluator_seed_repetitions_are_reproducible_and_distinct():
-    spec = importlib.util.spec_from_file_location("attack_eval_script", REPO_ROOT / "scripts/run_attack_eval.py")
+    spec = importlib.util.spec_from_file_location("attack_eval_script", REPO_ROOT / "src/phantomguard/commands/run_attack_eval.py")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     cfg = load_config()
@@ -262,7 +262,7 @@ def test_attack_runner_end_to_end_with_test_only_source(tmp_path, monkeypatch):
     from phantomguard.frames import build_header, encode_object
     import phantomguard.eval.attack_adapter as adapter
 
-    spec = importlib.util.spec_from_file_location("fixture_attack_runner", REPO_ROOT / "scripts/run_attack_eval.py")
+    spec = importlib.util.spec_from_file_location("fixture_attack_runner", REPO_ROOT / "src/phantomguard/commands/run_attack_eval.py")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     cfg = load_config()

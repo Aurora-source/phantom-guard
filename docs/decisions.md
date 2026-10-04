@@ -1,5 +1,54 @@
 # Decisions and data surprises
 
+## Portable hosted prototype assignment (2026-10-04)
+
+- PR #4 was accepted at upstream `89b182ff5777fe11c1676443085b36a52df0e94c`.
+  Created sibling `phantom-guard-portable-hosted-prototype` on
+  `codex/portable-hosted-prototype` from that SHA. Original main checkout and
+  prior implementation worktree/datasets remain unchanged. Fork main was still
+  `1f5d2ee`; preserve it and publish a new feature branch. Contributor branch
+  `1175a2b` has an in-progress Arch README/report portability correction; inspected
+  read-only, not taken over. The accepted main has no newer detector policy.
+- Owner explicitly expands the old web-UI exclusion with a recorded-data browser
+  prototype. Live capture/hardware and actual home-server deployment remain out
+  of scope. Existing Frame/attacker/detector and label-sidecar contracts are retained.
+- One portable path mechanism anchors to an explicit absolute workspace or editable
+  checkout location, never cwd. CLI overrides environment then YAML/defaults.
+  Normal wheel installation includes decoder v2 and preparation/viewer commands;
+  compatibility tools/scripts delegate. No duplicated decoding formulas or
+  undocumented PYTHONPATH. Runtime excludes Torch/sklearn/pandas; offline extras
+  and CPU training locks are separate. Supported interpreter is explicitly 3.11.
+- `dataset` is an external import source, not another pipeline root. Byte-verified
+  immutable import targets `data/raw`; generated fold baselines stay in processed,
+  models in models, disposable outputs in runs and archives in ignored bundles.
+  Tracked READMEs make empty directories visible; initialization is idempotent.
+- Existing five trained/calibrated bundles pass strict feature/data/split/baseline
+  provenance checks; reuse them. No retraining, calibration or threshold/model
+  selection follows these new held-out evaluations. Fixed 60/20/20 splits cannot
+  be reconfigured into training data. Prior test-inspection disclosure remains.
+- Browser jobs use bounded spawned processes and fresh detector/RNG state. They
+  show causal test-segment verdicts; seeking displays immutable computed outputs.
+  Offline attack generation finalizes ordinary-frame sidecars separately. Browser
+  requests never read labels, train models or claim an attack evaluation rate.
+  Real published report filters retain recording/type/level/seed/run provenance.
+- Windows progress polling exposed a transient sharing violation when atomically
+  replacing JSON snapshots. Bounded retries preserve complete old/new snapshots;
+  the regression explicitly simulates this failure. Cancellation also handles a
+  job-creation request still in flight. Unsupported options have stable values,
+  are disabled in the UI and rejected independently by the API.
+- WSL initially failed mounting its VHD with E_ACCESSDENIED and Docker was stopped.
+  The owner repaired those services; subsequent ordinary calls run Ubuntu 26.04.1
+  WSL and Docker Desktop Linux. System Python is 3.14.4, so validation uses isolated
+  CPython 3.11 instead. Container runtime is pinned Debian/Python 3.11.17, not an
+  Ubuntu image. Native WSL and container checks are reported separately.
+- Initial accepted-source test attempt: 138 passed, one failed because the new
+  environment lacked Torch. CPU Torch installation resolves that dependency.
+  Intermediate migration/UI failures are fixed and are not counted as passing.
+  Latest full suite before the final split regression: 162 passed, no skips.
+  Fresh clean evaluation still gives 1.42/min time-block and 3.41/min LOSO;
+  under-one target is not met. Final clean-clone/evaluation/bundle evidence follows
+  in the generated portability report and server handoff, not invented here.
+
 Dated log of every judgement call and every place the data disagreed with CLAUDE.md.
 Newest entries are appended at the bottom of each day.
 

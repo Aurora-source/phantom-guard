@@ -10,7 +10,7 @@ import math
 from pathlib import Path
 from typing import Iterable, Iterator
 
-from phantomguard.config import REPO_ROOT, bval, effective_cfg
+from phantomguard.config import REPO_ROOT, bval, effective_cfg, paths, load_config
 from phantomguard.cycles import Cycle, CycleAssembler
 from phantomguard.detect.autoencoder import LearnedChecker, NumpyAE
 from phantomguard.detect.common import LAYERS, CycleResult, FrameRecord, ObjVerdict
@@ -24,13 +24,14 @@ from phantomguard.tracks import TrackManager
 MODELS_DIR = REPO_ROOT / "models"
 
 
-def load_artifacts(tag: str = "timeblock", models_dir: Path = MODELS_DIR, *, cfg: dict | None = None,
+def load_artifacts(tag: str = "timeblock", models_dir: Path | None = None, *, cfg: dict | None = None,
                    baseline: dict | None = None, required: bool = False,
                    strict: bool = False) -> tuple[NumpyAE | None, set | None]:
     """Trained AE and replay library written by scripts/train.py (None if not trained yet)."""
     import pickle
 
     strict = strict or required
+    models_dir = Path(models_dir) if models_dir is not None else paths(cfg or load_config()).models
 
     ae_p = models_dir / f"ae_{tag}.npz"
     lib_p = models_dir / f"replay_library_{tag}.pkl"

@@ -1,5 +1,17 @@
 # Phantom-Guard offline prototype: plan
 
+## Current extension: portable hosted prototype
+
+PR #4's Phases 0–6 implementation is accepted on upstream main at `89b182f`.
+The owner now authorizes a CPU browser around recorded data/simulated CAN attacks,
+portable fresh-clone setup, shared paths/doctor, pinned runtime/container, real
+Windows/Linux validation and a checksummed private data/artifact handoff bundle.
+Implementation is in `codex/portable-hosted-prototype`, preserving prior histories.
+No detector operating point changes are authorized by new held-out measurements.
+The existing under-one false-alert target is still an explicitly failing criterion.
+Final executed extension status is appended after validation; see README and
+docs/setup.md, data.md, pipeline.md, deployment.md and server-handoff.md.
+
 ## Context
 The repo contains only `CLAUDE.md` (the spec), `tools/decode.py` (decoder v2) and the four recorded CSVs. The
 task is to build the offline prototype that CLAUDE.md describes (frame layer, replay source, baseline, attacker,

@@ -1,5 +1,13 @@
 # Phase 2 integration handoff
 
+Portable browser extension: the accepted attacker contract is unchanged. Serving
+uses the same `attack_source` adapter and ordinary final-index frames; complete
+sidecars remain private generated files. Browser selected seeds are used directly
+(as in replay CLI), while matrix repetitions retain the documented SeedSequence
+rule. Browser clips are causal time-block test replays, not a substitute benchmark.
+Dataset/model/baseline/output paths now use `phantomguard.paths`; serving performs
+inference only and never trains or reads attack labels for verdicts/colors.
+
 The original Phases 3–6 branch was based on
 `7cdfa584edd20c8653991a8fbe8d6023c7b55493`. Upstream subsequently accepted Phase 2
 in PR #3 (`1f5d2ee`), including the planners in `38f9693` and validation-based fusion

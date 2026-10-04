@@ -1,0 +1,5 @@
+# Python 3.11 CPU serving; includes all transitive runtime dependencies.
+numpy==2.4.6
+scipy==1.17.1
+PyYAML==6.0.3
+waitress==3.0.2

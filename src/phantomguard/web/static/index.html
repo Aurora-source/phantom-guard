@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Phantom Guard · Replay laboratory</title><link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script></head>
+<body>
+<header><a class="brand" href="/" aria-label="Phantom Guard home"><span class="mark">⌁</span> PHANTOM GUARD</a><span class="tag">P31 / RECORDED SENSOR PROTOTYPE</span><span id="ready" class="health">Checking readiness…</span></header>
+<main>
+<div class="intro"><div><div class="eyebrow">CAN INTEGRITY / SR75 RADAR</div><h1>Look beyond the frame.</h1><p>Explore real sensor recordings with the causal detector and simulated CAN attacks.</p></div><div class="disclosure">Offline recordings · CPU inference<br><strong>Not a live sensor or a safety certification.</strong></div></div>
+<div class="workspace">
+<aside class="panel controls"><h2><span class="number">01</span> Configure replay</h2>
+<label for="recording">Recorded scene</label><select id="recording"></select>
+<label for="attack">CAN injection</label><select id="attack"><option value="">Clean · no injected attack</option><option>T1</option><option>T2</option><option>T3</option><option>T4</option></select>
+<div id="attack-description" class="hint">Clean alerts are false positives.</div>
+<div class="two"><div><label for="level">Attacker capability</label><select id="level"><option value="A0">A0</option><option value="A1">A1</option><option value="A2" selected>A2</option><option value="A3">A3</option><option value="A4">A4</option></select></div><div><label for="seed">Seed</label><input id="seed" type="number" min="0" max="4294967295" value="11"></div></div>
+<div class="two"><div><label for="motion">Motion case</label><select id="motion"><option>moving</option><option>static</option></select></div><div><label for="variant">Replay shape</label><select id="variant"><option>exact</option><option>translated</option></select></div></div>
+<label for="cycles">Maximum cycles to process</label><input id="cycles" type="number" min="1" max="1200" value="600">
+<p class="hint">Test segment only. Detection starts at its first cycle. T3 uses permitted training recordings; unseen-source experiments remain in offline evaluation.</p>
+<button id="run" class="primary">Run detector <span>→</span></button><div class="two actions"><button id="cancel">Cancel job</button><button id="reset">Reset</button></div>
+<div id="progress" role="status" aria-live="polite">Ready to configure a replay.</div>
+<details><summary>What do the levels mean?</summary><p>A0 unrelated values/timing. A1 timing aware. A2 repairs counts, counters and slot uniqueness. A3 also understands physics, range order and burst continuity. A4 uses real recorded motion. T3 requires A3/A4; T3/T4 require moving tracks. Some clips have no eligible source material or free slots.</p></details>
+<div class="contract"><span>CAUSAL BY DESIGN</span><p>Labels stay in separate sidecars. They never set detector colors, scores or thresholds.</p></div>
+</aside>
+<section class="panel scene"><div class="panel-title"><h2><span class="number">02</span> Top-down replay</h2><span id="run-kind" class="badge">RECORDED SENSOR DATA</span></div>
+<div class="legend"><span class="dot green"></span> Not flagged <span class="dot amber"></span> Flagged <span class="dot red"></span> Alert <span class="velocity">↗ velocity vector (1 s display scale)</span></div>
+<div class="canvas-wrap"><canvas id="scene" width="960" height="520" aria-label="Top-down radar object positions and velocity arrows"></canvas><div id="empty">Choose a recording and run the detector.<small>Green means “not flagged,” not proven authentic.</small></div><div id="cycle-warning"></div></div>
+<div class="playback"><button id="play" aria-label="Play or pause replay">Play</button><button id="step" aria-label="Next cycle">Step</button><input id="seek" type="range" min="0" max="0" value="0" aria-label="Replay cycle"><select id="speed" aria-label="Playback speed"><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="2">2×</option><option value="4">4×</option></select><span id="clock">—</span></div>
+<p class="seek-note">Seeking displays already computed causal verdicts. Restarting creates a new detector; no session history is shared.</p>
+<div class="stats"><div><span>Object cycles</span><strong id="objects">—</strong></div><div><span>Alerting cycles</span><strong id="alerts">—</strong></div><div><span>Processing p99</span><strong id="latency">—</strong></div><div><span>Assembly p99</span><strong id="assembly">—</strong></div></div>
+</section></div>
+<div class="bottom-grid"><section class="panel"><div class="panel-title"><h2><span class="number">03</span> Detector alert log</h2><span class="badge">VERDICTS ONLY</span></div><div id="alert-log" class="log"><p class="muted">No replay processed yet.</p></div></section><section class="panel provenance"><h2>Run provenance</h2><div id="provenance"><p class="muted">Recording, split, seed, model and baseline hashes appear after processing.</p></div></section></div>
+<section class="panel evaluation"><div class="panel-title"><div><div class="eyebrow">MEASURED / OFFLINE</div><h2>Evaluation evidence</h2></div><button id="filter-results">Show matching matrix runs</button></div><p id="evaluation-note">Loading actual generated evaluation results…</p><div id="clean-results"></div><div class="table-scroll"><table><thead><tr><th>Split / recording</th><th>Attack / level</th><th>Seed / repetition</th><th>Observed instances</th><th>Scene detection</th><th>Forged object identification</th><th>Status</th></tr></thead><tbody id="evaluation-rows"></tbody></table></div><details><summary>Evidence provenance and limitations</summary><pre id="evaluation-provenance"></pre><p>Scene alarms can include incidental clean alerts. Exact forged-object identification has a separate denominator. Static phantoms and complex repeated genuine motion remain difficult. The clean under-one-alert/minute target is not met in the accepted measurements. No thresholds or models are selected using these test results.</p></details></section>
+</main><footer>PHANTOM GUARD <span>Recorded replay. Simulated attacks. Measured limitations.</span></footer>
+</body></html>

@@ -1,6 +1,6 @@
 """CAN frame model for the SR75: Frame, object decode/encode, header build/parse.
 
-Decoding delegates to ``tools/decode.py`` (decoder v2) so the field formulas exist in exactly one
+Decoding delegates to the packaged ``decoder.py`` (decoder v2) so the field formulas exist in exactly one
 place. ``encode_object`` is the exact inverse of that decoder: it uses the same bit layout and
 scale/offset values (listed in ``FIELDS`` below and checked against the decoder by the round-trip
 test over every recorded row). Forged frames are built only through ``encode_object`` /
@@ -9,10 +9,8 @@ test over every recorded row). Forged frames are built only through ``encode_obj
 
 from __future__ import annotations
 
-import importlib.util
 import math
 from dataclasses import dataclass
-from pathlib import Path
 
 CAN_ID_HEADER = 0x60A
 CAN_ID_OBJECT = 0x60B
@@ -20,19 +18,7 @@ OBJECT_LEN = 8
 HEADER_MIN_LEN = 5  # bytes 0..4 carry count, counter, (unknown byte3), status
 CLASSIC_CAN_MAX_LEN = 8
 
-_DECODER_PATH = Path(__file__).resolve().parents[2] / "tools" / "decode.py"
-
-
-def _load_decoder():
-    spec = importlib.util.spec_from_file_location("_sr75_decode_v2", _DECODER_PATH)
-    if spec is None or spec.loader is None:
-        raise ImportError(f"cannot load decoder from {_DECODER_PATH}")
-    mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)
-    return mod
-
-
-_decoder = _load_decoder()
+from phantomguard import decoder as _decoder
 
 
 @dataclass(frozen=True)
@@ -131,7 +117,7 @@ class MalformedFrame(ValueError):
 
 
 def decode_object(data: bytes) -> RadarObject:
-    """Decode one 8-byte 0x60B payload via tools/decode.py."""
+    """Decode one 8-byte 0x60B payload via the canonical decoder v2."""
     if len(data) != OBJECT_LEN:
         raise MalformedFrame(f"object frame has {len(data)} bytes, expected {OBJECT_LEN}")
     o = _decoder.decode_object(list(data), None)
