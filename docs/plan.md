@@ -135,3 +135,12 @@ range-conditional RCS band, burst-contiguity and range-order protocol checks). E
   no type x level x layer matrix, and no `run_attack_eval.py` / `summary.md`.
 - Commands: `python scripts/learn_baseline.py --loso && python scripts/train.py --loso && python scripts/calibrate.py --loso
   && python scripts/run_clean_eval.py && python scripts/replay_demo.py --file onePersonMovingFrontAndBack.csv --export --around-first-alert`
+
+## Status (2026-10-04, third round): Phase 2 complete
+- Added: synthetic fabricated-frame generator (`attack/scenarios.py`, `attack/injector.py`), the
+  attack evaluation (`scripts/run_attack_eval.py` -> `docs/results/summary.md` + attack_*.csv), the
+  `COUNT_RANGE` protocol check, viewer `--attack/--level` with ground-truth rings, attacked PNG/GIF demos.
+- All phases (0-6) now have code and generated results. 44 tests pass.
+- Full regeneration order: `learn_baseline.py --loso` -> `train.py --loso` -> `calibrate.py --loso`
+  -> `run_clean_eval.py` -> `run_attack_eval.py`
+  -> `replay_demo.py --file onePersonMovingFrontAndBack.csv --attack T1 --level A3 --export`

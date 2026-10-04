@@ -98,7 +98,7 @@ Both are calibrated to the 99.9th percentile of validation-clean scores, so the 
 
 ## Latency
 
-Per-cycle processing (all layers including AE inference), over 26735 cycles of all evaluated segments: p50 0.922 ms, **p99 3.204 ms**, max 166.407 ms (budget: p99 < 10.0 ms). Measured in worker processes running in parallel on this machine.
+Per-cycle processing (all layers including AE inference), over 26735 cycles of all evaluated segments: p50 0.941 ms, **p99 3.309 ms**, max 158.958 ms (budget: p99 < 10.0 ms). Measured in worker processes running in parallel on this machine.
 
 ## Operating point (calibrated on validation by scripts/calibrate.py)
 

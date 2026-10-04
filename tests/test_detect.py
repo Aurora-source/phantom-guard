@@ -30,9 +30,9 @@ def cycle_frames(i, objs, count=None, t0=None, counter0=1000, gap=332, first=3, 
     return out
 
 
-def clean_scene():
-    # range-sorted static objects with integer RCS inside learned bands
-    return [(1, 3.0, 0.0, 0.0, 0.0, 20.0), (2, 6.0, 1.0, 0.0, 0.0, 19.0), (3, 9.0, -1.0, 0.0, 0.0, 17.0)]
+def clean_scene(n=12):
+    # n range-sorted static objects, unique slots, integer RCS; count within the learned 11-32
+    return [(i + 1, 2.0 + i, (-1.0 if i % 2 else 1.0), 0.0, 0.0, 18.0) for i in range(n)]
 
 
 def run(frames, b=None):

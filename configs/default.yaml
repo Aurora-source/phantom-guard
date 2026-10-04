@@ -26,6 +26,10 @@ protocol:
   header_status_ok: 0x01
   # Cycles at the start of a stream whose period is not checked (capture-start flush, see decisions.md).
   cadence_warmup_cycles: 2
+  # Tolerance on the learned [min,max] objects-per-cycle bound (COUNT_RANGE). Covers cross-scenario
+  # count variation (per-file maxima differ by ~3) so normal busy cycles do not alarm; a flood adds
+  # 10-30 objects and still clears it. See docs/decisions.md 2026-10-04.
+  count_margin: 3
 
 roi:
   # UNVERIFIED distance units: coordinates may not be true metres. Provisional ROI.
