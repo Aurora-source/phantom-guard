@@ -136,6 +136,38 @@ range-conditional RCS band, burst-contiguity and range-order protocol checks). E
 - Commands: `python scripts/learn_baseline.py --loso && python scripts/train.py --loso && python scripts/calibrate.py --loso
   && python scripts/run_clean_eval.py && python scripts/replay_demo.py --file onePersonMovingFrontAndBack.csv --export --around-first-alert`
 
+## Status (2026-10-04, isolated Phases 3–6 worktree)
+
+- Worktree: `D:\Hacksprint\phantom-guard-phases-3-6`; branch `codex/phases-3-6`; base
+  `7cdfa584edd20c8653991a8fbe8d6023c7b55493`. Original checkout and contributor work are preserved.
+- Phase 3 completed/audited: exact two-gap cadence warm-up; protocol malformed/duplicate/counter handling;
+  causal malformed-header boundaries; ROI-consistent windowed physics, learned radial scale, birth/colocation,
+  replay library/history/concurrent provenance, expiry and simple/static repeat exclusions; lossless frame
+  identities and separate CPU/assembly delay. New contradictions are in the dated decisions log.
+- Phase 4 completed/audited: identical offline/online features; training-only normalization; explicit unavailable,
+  empty/gap/stale artifacts; provenance-checked AE/IF/library; separate static/moving validation thresholds;
+  fixed AE deployment selection; equivalent captured windows for offline IF; missing-scan persistence and one
+  vote per track per scan. No attack/test-driven threshold/model selection.
+- Phase 5 implemented: `eval/report.py`, `eval/attack_adapter.py`, `scripts/run_attack_eval.py`, compatible
+  lossless metrics; exact label joins, cycle versus forged-object outcomes, censoring, AUROC, per-layer/ablation,
+  clean object/episode rates, CPU p99 budget and assembly delay. Reports/configurations/provenance are generated.
+  Real attack performance remains blocked because upstream Phase 2 scenario/injector code is absent; fixture
+  verification is explicitly not an attacker benchmark. See `docs/phase2-handoff.md` for the exact adapter API.
+- Phase 6 completed: clean replay and optional attacked FrameSource, `--attack/--level/--seed/--provider`,
+  strict artifact/argument/empty checks, detector-only colors/reasons/velocity/logs, headless PNG/GIF exports
+  and distinct names. Green means “not flagged.” Real attacked exports require Phase 2.
+- Raw data recovered read-only from initial Git blobs into this worktree; preparation ran in the prescribed
+  baseline -> train -> calibrate order for all five splits. Fresh evaluation outcomes and executed validation
+  are recorded in generated `docs/results/summary.md` and the final handoff; historical results remain disclosed.
+- This assignment's latest user instruction authorizes pushing the new branch after local commits. No merge
+  into main, deployment or contributor messaging is authorized or performed.
+- Final checks: 109 tests passed with no skips; generated JUnit report `docs/results/validation.xml`.
+  All four recordings match their original Git blobs and remain read-only. Baseline/train/calibrate/clean eval
+  completed for time-block and all LOSO folds. Final attack matrix is explicitly blocked/unsupported, with
+  eight clean segments measured; real attacked-data validation and exports await Phase 2.
+- Generated outputs: `docs/results/summary.md`, `attack_eval_*.csv`, `attack_eval_manifest.json`, fresh
+  `clean_eval*` reports, and front/back/chaotic `demo_*_test_clean` PNG/GIF/alert CSVs. Both real clean GIFs
+  contain 75 frames. Final diff has no attacker changes or original-checkout changes.
 ## Status (2026-10-04, third round): Phase 2 complete
 - Added: synthetic fabricated-frame generator (`attack/scenarios.py`, `attack/injector.py`), the
   attack evaluation (`scripts/run_attack_eval.py` -> `docs/results/summary.md` + attack_*.csv), the
@@ -149,3 +181,65 @@ range-conditional RCS band, burst-contiguity and range-order protocol checks). E
 - Autoencoder made corroborating-only; fusion M/N chosen on clean validation (`fusion_mn`, 4/6 time-block).
 - Clean test 4.73 -> 1.42 alerts/min, LOSO 5.87 -> 3.98; detection cost 2-6 points at A2-A4. Target < 1/min still not met.
 - Attack eval made reproducible (seed bug); both evals now report the previous operating point like-for-like.
+
+## Final status (2026-10-04, complete workflow in the existing feature worktree)
+
+This section supersedes earlier availability/status snapshots, which remain as history.
+
+- Worktree `D:\Hacksprint\phantom-guard-phases-3-6`, branch `codex/phases-3-6`, original
+  base `7cdfa584edd20c8653991a8fbe8d6023c7b55493`. Merged accepted upstream main
+  `1f5d2eea3d9bc8343666fb20025ea6fdf2d0d3da` with both histories preserved. The three
+  new accepted commits supply Phase 2 and validation-based fusion; contributor
+  branches and the original checkout remain untouched.
+- **Phase 0:** reused accepted scaffold/decoder/byte-exact object round trips; bounded
+  classic CAN headers at eight bytes while preserving unknown reconstructed DLC.
+- **Phase 1:** reused ingestion/tracking and regenerated all training baselines,
+  including learned median cadence and `rr_scale`. All four supplied source CSVs and
+  read-only raw copies match the archived SHA256 inventory.
+- **Phase 2:** integrated accepted planners/injector through `AttackedSource` and
+  ordinary frames. Complete final-index labels include forged headers. Lifecycle
+  metadata, generic-source buffering, level-dependent T4, stable-slot handling,
+  gap-separated scheduling, serialized bus timing, real pools, and explicit replay
+  provenance are implemented and tested. A2 remains unaware of range order and
+  burst contiguity; A3+ implements them. See `docs/phase2-handoff.md`.
+- **Phase 3:** causal cycle verdicts, exact two-gap warm-up, malformed/duplicate/
+  missing-header/counter rollover checks; ROI-consistent windowed physics, track gaps
+  and reassignment; training/history/concurrent translation-invariant replay gates.
+- **Phase 4:** clean CPU AE training/NumPy inference, equivalent-window IF comparison,
+  training-only normalization, split/scenario resets, separate static/moving
+  calibration, strict artifact provenance, explicit unavailable outcomes, hard
+  immediate alerts and calibrated soft persistence. Fixed AE deployment selection;
+  no new held-out model or threshold selection. The accepted corroborating AE policy
+  adds no incremental boolean alerts; raw-score comparisons remain reported.
+- **Phase 5:** full real-data evaluation finished with seeds 11/22/33, three repetitions,
+  fixed time blocks and all four LOSO folds, every layer and ablation, static/moving
+  and replay source/translation cases. Of 2,664 supported attempts, 2,411 emitted
+  eligible attacks, 198 had no eligible source material, and 55 exhausted slot
+  capacity. T3/A0–A2 adds 1,296 explicit unsupported requests. No integration blocker;
+  no fixture headline metrics. All per-run/instance, matrix/layer, clean/exclusion,
+  provenance, AUROC, delay and latency evidence is programmatically generated.
+- **Phase 6:** actual clean and attacked CLI paths work. Four PNG/GIF pairs and alert
+  logs were regenerated (front/back clean and T1/A2; chaotic clean and T1/A3).
+  Every GIF has 75 frames at 840×378. Real Tk clean/attacked event loops passed an
+  automated window-closure smoke check; no human usability review is claimed.
+  Viewer colors remain detector-only and green means not flagged.
+- **Executed validation:** preparation ran in baseline -> train -> calibrate ->
+  clean eval -> attack eval order; all five trained/calibrated artifact bundles are
+  compatible. Full pytest: **139 passed, zero skipped**, JUnit archived. Compileall,
+  pip dependency check, diff whitespace review, source checksum/local import checks,
+  viewer exports and real Tk checks passed.
+- **Performance acceptance:** clean false alerts are **1.42/min time-block** and
+  **3.41/min LOSO**, so the under-1 target remains **NOT MET**. Single-worker clean
+  processing p99 is 1.52 ms; worst completed attacked-run p99 is 5.76 ms, with no
+  completed run over the 10 ms budget. Capture assembly p99 is separately 33.5–33.6 ms
+  under the configured, unverified tick duration. Eighteen observed runs completely
+  evade scene detection. The generated summary retains misses and differentiates
+  scene alarms from forged-object identification.
+- **Remaining limits:** static phantoms and complex genuine repeated motion,
+  cross-scenario envelope generalization, unavailable moving clips/slot capacity,
+  assumed coordinate/tick/header layout, and lack of live hardware verification.
+  No missing Phase 2 interface dependency remains. Historical test inspection is
+  still disclosed; remaining false positives did not drive new threshold tuning.
+- Publication is to the verified `Aurora-source/phantom-guard` fork, followed by a
+  cross-fork PR to `Krishna-Gunjan/phantom-guard:main`. This replaces the old
+  push-after-each-phase/main-publication instructions for the current assignment.

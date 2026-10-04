@@ -15,17 +15,22 @@ Detection rates, time-to-detect and AUROC need attacked data and are not produce
 from __future__ import annotations
 
 import json
+import argparse
 import pickle
 import sys
+import os
 from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
+
+for _thread_setting in ("OPENBLAS_NUM_THREADS", "OMP_NUM_THREADS", "MKL_NUM_THREADS"):
+    os.environ.setdefault(_thread_setting, "1")
 
 import numpy as np
 import pandas as pd
 from scipy import stats as sps
 
 from phantomguard.config import BASELINE_PATH, REPO_ROOT, effective_cfg, load_baseline, load_config, raw_path
-from phantomguard.detect.autoencoder import windows_from_tracks
+from phantomguard.detect.autoencoder import collection_config, load_iforest, score_iforest, windows_from_tracks
 from phantomguard.detect.common import LAYERS
 from phantomguard.detect.pipeline import MODELS_DIR, Detector, load_artifacts
 from phantomguard.eval.metrics import PREVIOUS_FUSION, latency_stats, lite, score, with_fusion
@@ -48,10 +53,9 @@ SUBSETS = {
 
 
 def run_segment(job):
-    split, part, seg, baseline_path, tag = job
-    cfg = load_config()
+    split, part, seg, baseline_path, tag, cfg = job
     b = load_baseline(baseline_path)
-    ae, lib = load_artifacts(tag)
+    ae, lib = load_artifacts(tag, strict=True, cfg=cfg, baseline=b)
     det = Detector(cfg, b, ae, lib)
     cycles = [lite(r) for r in det.run(ReplaySource(raw_path(cfg, seg.file), (seg.lo, seg.hi)))]
     return split, part, seg, cycles, effective_cfg(cfg, b)["fusion"]
@@ -62,7 +66,16 @@ def fmt_rate(x):
 
 
 def main():
-    cfg = load_config()
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--config", type=Path)
+    parser.add_argument("--workers", type=int)
+    parser.add_argument("--output-dir", type=Path, default=RESULTS)
+    args = parser.parse_args()
+    cfg = load_config(args.config)
+    workers = args.workers if args.workers is not None else cfg["eval"]["workers"]
+    if workers < 1:
+        parser.error("workers must be positive")
+    global_results = args.output_dir
     if not (MODELS_DIR / "ae_timeblock.npz").exists():
         sys.exit("models missing: run scripts/learn_baseline.py --loso and scripts/train.py --loso first")
     tb = time_block_segments(cfg)
@@ -71,8 +84,13 @@ def main():
     for held, fold in loso_folds(cfg).items():
         stem = Path(held).stem
         jobs.append(("loso", "test", fold["test"][0], pdir / f"baseline_loso_{stem}.json", f"loso_{stem}"))
-    with ProcessPoolExecutor(cfg["eval"]["workers"]) as ex:
-        results = list(ex.map(run_segment, jobs))
+    # Carry the selected data configuration to workers rather than reloading defaults.
+    jobs = [(*job, cfg) for job in jobs]
+    if workers == 1:
+        results = list(map(run_segment, jobs))
+    else:
+        with ProcessPoolExecutor(workers) as ex:
+            results = list(ex.map(run_segment, jobs))
 
     rows, abl, reason_rows = [], [], []
     all_lat = []
@@ -97,10 +115,10 @@ def main():
     df = pd.DataFrame(rows)
     dab = pd.DataFrame(abl)
     drs = pd.DataFrame(reason_rows)
-    RESULTS.mkdir(parents=True, exist_ok=True)
-    df.to_csv(RESULTS / "clean_eval.csv", index=False)
-    dab.to_csv(RESULTS / "clean_eval_ablation.csv", index=False)
-    drs.to_csv(RESULTS / "clean_eval_reasons.csv", index=False)
+    global_results.mkdir(parents=True, exist_ok=True)
+    df.to_csv(global_results / "clean_eval.csv", index=False)
+    dab.to_csv(global_results / "clean_eval_ablation.csv", index=False)
+    drs.to_csv(global_results / "clean_eval_reasons.csv", index=False)
     lat = latency_stats(all_lat)
 
     # Pooled ablation over the time-block TEST segments and over LOSO
@@ -123,11 +141,11 @@ def main():
     # AE vs isolation forest on held-out TEST windows (time-block), at their val-calibrated thresholds
     b = load_baseline()
     n, roi, thr = cfg["learned"]["window_cycles"], cfg["roi"]["max_range"], cfg["motion"]["moving_threshold_mps"]
-    xte, mte = windows_from_tracks(list(collect(cfg, tb["test"]).tracks.values()), n, roi, thr)
-    ae, _ = load_artifacts("timeblock")
-    iso = pickle.loads((MODELS_DIR / "iforest_timeblock.pkl").read_bytes())
+    xte, mte = windows_from_tracks(list(collect(collection_config(cfg, b), tb["test"]).tracks.values()), n, roi, thr)
+    ae, _ = load_artifacts("timeblock", strict=True, cfg=cfg, baseline=b)
+    iso = load_iforest("timeblock", cfg=cfg, baseline=b, required=True)
     e_ae = ae.errors(xte)
-    e_if = -iso["model"].score_samples((xte - iso["mean"]) / iso["std"])
+    e_if = score_iforest(iso, xte)
     cmp_rows = []
     for cls, mask in (("static", ~mte), ("moving", mte)):
         cmp_rows.append({"windows": cls, "n": int(mask.sum()),
@@ -135,14 +153,14 @@ def main():
                          "iforest_exceedance": float((e_if[mask] > b[f"iforest_threshold_{cls}"]["value"]).mean()),
                          "spearman_ae_vs_iforest": float(sps.spearmanr(e_ae[mask], e_if[mask])[0])})
     dcmp = pd.DataFrame(cmp_rows)
-    dcmp.to_csv(RESULTS / "clean_eval_ae_vs_iforest.csv", index=False)
+    dcmp.to_csv(global_results / "clean_eval_ae_vs_iforest.csv", index=False)
 
     opdf = pd.DataFrame([{"data": f"{sp} {pt}", "minutes": round(mn, 2), "calibrated_events": ce,
                           "calibrated_per_min": ce / mn, "previous_events": pe, "previous_per_min": pe / mn}
                          for (sp, pt), (ce, pe, mn) in op_cmp.items()])
-    opdf.to_csv(RESULTS / "clean_eval_operating_point.csv", index=False)
-    write_report(cfg, df, p_val, p_test, p_loso, drs, lat, dcmp, opdf)
-    print((RESULTS / "clean_eval.md").read_text())
+    opdf.to_csv(global_results / "clean_eval_operating_point.csv", index=False)
+    write_report(cfg, df, p_val, p_test, p_loso, drs, lat, dcmp, opdf, global_results, workers)
+    print((global_results / "clean_eval.md").read_text())
 
 
 def table(d: pd.DataFrame, cols: list[str], fmts: dict) -> str:
@@ -153,7 +171,7 @@ def table(d: pd.DataFrame, cols: list[str], fmts: dict) -> str:
     return head + body
 
 
-def write_report(cfg, df, p_val, p_test, p_loso, drs, lat, dcmp, opdf):
+def write_report(cfg, df, p_val, p_test, p_loso, drs, lat, dcmp, opdf, output=RESULTS, workers=None):
     pct = lambda x: f"{100 * x:.3f}%"
     f2 = lambda x: f"{x:.2f}"
     m, n = effective_cfg(cfg, load_baseline())["fusion"]["m"], effective_cfg(cfg, load_baseline())["fusion"]["n"]
@@ -192,16 +210,30 @@ def write_report(cfg, df, p_val, p_test, p_loso, drs, lat, dcmp, opdf):
     pv = drs.pivot_table(index="reason", columns=["split", "part"], values="count", aggfunc="sum", fill_value=0)
     pv.columns = [f"{a}/{b}" for a, b in pv.columns]
     lines += [table(pv.reset_index(), ["reason"] + list(pv.columns), {}), ""]
+    calibration = load_baseline()
+    quantile = calibration["soft_quantile"]["value"]
+    threshold_rows = pd.DataFrame([{"class": cls,
+                                  "ae_threshold": calibration[f"ae_threshold_{cls}"]["value"],
+                                  "iforest_threshold": calibration[f"iforest_threshold_{cls}"]["value"],
+                                  "validation_windows": calibration[f"ae_threshold_{cls}"]["n_windows"]}
+                                 for cls in ("static", "moving")])
     lines += ["## Learned layer: autoencoder vs isolation forest (time-block TEST windows)", "",
-              "Both are calibrated to the 99.9th percentile of validation-clean scores, so the exceedance on clean test windows "
-              "should be about 0.1%. Without attacked data the two cannot be ranked on detection. The AE is used online "
+              f"Both use the selected validation quantile q={quantile} ({100*quantile:.4g}th percentile), separately "
+              "for static and moving windows. Held-out clean exceedance is measured below; it need not match the "
+              "validation tail probability. Without attacked data the two cannot be ranked on detection. The AE is used online "
               "because it runs in numpy inside the latency budget; the isolation forest is scored offline only.", "",
+              table(threshold_rows, ["class", "ae_threshold", "iforest_threshold", "validation_windows"], {}), "",
               table(dcmp, ["windows", "n", "ae_exceedance", "iforest_exceedance", "spearman_ae_vs_iforest"],
                     {"ae_exceedance": pct, "iforest_exceedance": pct, "spearman_ae_vs_iforest": f2, "n": str}), ""]
     lines += ["## Latency", "",
               f"Per-cycle processing (all layers including AE inference), over {lat['n']} cycles of all evaluated segments: "
               f"p50 {lat['p50_ms']:.3f} ms, **p99 {lat['p99_ms']:.3f} ms**, max {lat['max_ms']:.3f} ms "
-              f"(budget: p99 < {cfg['latency']['p99_budget_ms']} ms). Measured in worker processes running in parallel on this machine.", ""]
+              f"(budget: p99 < {cfg['latency']['p99_budget_ms']} ms). Measured with "
+              f"{workers if workers is not None else cfg['eval']['workers']} worker(s) on this machine.", ""]
+    lines += [f"Detector CPU p99 {lat['detector_p99_ms']:.3f} ms; frame grouping/decoding CPU p99 "
+              f"{lat['assembly_cpu_p99_ms']:.3f} ms. Total processing above includes both. Timestamp-based "
+              "assembly delay is separate and is reported by run_attack_eval.py; source I/O/capture waiting "
+              "and offline IF scoring are excluded from processing.", ""]
     lines += ["## Operating point (calibrated on validation by scripts/calibrate.py)", "",
               "Soft kinematic and AE thresholds are quantiles of clean data; the quantile is the smallest candidate with "
               "validation alerts/min < 1 (all layers, after fusion). The test split played no part. Val minutes are short, so "
@@ -229,7 +261,7 @@ def write_report(cfg, df, p_val, p_test, p_loso, drs, lat, dcmp, opdf):
               f"- Target: under {target} false alert per minute on clean held-out data after persistence filtering.",
               f"- Time-block test: {tpm:.2f} alerts/min -> {'MET' if tpm < target else 'NOT MET'}.",
               f"- LOSO: {lpm:.2f} alerts/min -> {'MET' if lpm < target else 'NOT MET'}.", ""]
-    (RESULTS / "clean_eval.md").write_text("\n".join(lines))
+    (output / "clean_eval.md").write_text("\n".join(lines), encoding="utf-8")
 
 
 if __name__ == "__main__":

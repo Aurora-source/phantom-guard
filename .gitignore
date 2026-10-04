@@ -1,6 +1,8 @@
 # Data: raw recordings are read-only inputs and are not versioned (see docs/decisions.md 2026-10-03)
 data/raw/
 data/processed/
+# User-supplied source recordings in this worktree
+dataset/
 # Generated run outputs that are large or per-machine
 runs/
 models/

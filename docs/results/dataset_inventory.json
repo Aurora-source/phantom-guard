@@ -1,0 +1,154 @@
+[
+  {
+    "file": "emptyRoom.csv",
+    "sha256": "13fb666d6525e90f42bf823c7a938ee96d5819f5b541a834edda631bf6be2ebc",
+    "bytes": 13523660,
+    "rows": 105377,
+    "cycles": 4378,
+    "columns": [
+      "source_file",
+      "cycle_num",
+      "scan_counter",
+      "meas_counter",
+      "sync_timestamp",
+      "sync_status",
+      "obj_count_header",
+      "obj_count_actual",
+      "slot",
+      "obj_timestamp",
+      "raw_len",
+      "raw_hex",
+      "x_m",
+      "y_m",
+      "range_m",
+      "azimuth_deg",
+      "vx_mps",
+      "vy_mps",
+      "speed_mps",
+      "is_moving",
+      "dyn_prop",
+      "rcs_dbsm"
+    ],
+    "source_file_values": [
+      "live"
+    ],
+    "raw_lengths": [
+      "8"
+    ],
+    "local_raw_copy_matches": true
+  },
+  {
+    "file": "multiplePeopleChaotic.csv",
+    "sha256": "2e08ed3c26c9cb64a5039878b1ef371fc2138ad0aa717efddc2eca1bea952f52",
+    "bytes": 16709635,
+    "rows": 130342,
+    "cycles": 5597,
+    "columns": [
+      "source_file",
+      "cycle_num",
+      "scan_counter",
+      "meas_counter",
+      "sync_timestamp",
+      "sync_status",
+      "obj_count_header",
+      "obj_count_actual",
+      "slot",
+      "obj_timestamp",
+      "raw_len",
+      "raw_hex",
+      "x_m",
+      "y_m",
+      "range_m",
+      "azimuth_deg",
+      "vx_mps",
+      "vy_mps",
+      "speed_mps",
+      "is_moving",
+      "dyn_prop",
+      "rcs_dbsm"
+    ],
+    "source_file_values": [
+      "live"
+    ],
+    "raw_lengths": [
+      "8"
+    ],
+    "local_raw_copy_matches": true
+  },
+  {
+    "file": "onePersonMovingFrontAndBack.csv",
+    "sha256": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e",
+    "bytes": 11969541,
+    "rows": 93424,
+    "cycles": 4127,
+    "columns": [
+      "source_file",
+      "cycle_num",
+      "scan_counter",
+      "meas_counter",
+      "sync_timestamp",
+      "sync_status",
+      "obj_count_header",
+      "obj_count_actual",
+      "slot",
+      "obj_timestamp",
+      "raw_len",
+      "raw_hex",
+      "x_m",
+      "y_m",
+      "range_m",
+      "azimuth_deg",
+      "vx_mps",
+      "vy_mps",
+      "speed_mps",
+      "is_moving",
+      "dyn_prop",
+      "rcs_dbsm"
+    ],
+    "source_file_values": [
+      "live"
+    ],
+    "raw_lengths": [
+      "8"
+    ],
+    "local_raw_copy_matches": true
+  },
+  {
+    "file": "onePersonMovingSideToSide.csv",
+    "sha256": "04f105a1e412abfe4ce0153d8f2787a9b1ee79aba04a0a362b1d44ad4c2a6340",
+    "bytes": 14556505,
+    "rows": 113581,
+    "cycles": 4993,
+    "columns": [
+      "source_file",
+      "cycle_num",
+      "scan_counter",
+      "meas_counter",
+      "sync_timestamp",
+      "sync_status",
+      "obj_count_header",
+      "obj_count_actual",
+      "slot",
+      "obj_timestamp",
+      "raw_len",
+      "raw_hex",
+      "x_m",
+      "y_m",
+      "range_m",
+      "azimuth_deg",
+      "vx_mps",
+      "vy_mps",
+      "speed_mps",
+      "is_moving",
+      "dyn_prop",
+      "rcs_dbsm"
+    ],
+    "source_file_values": [
+      "live"
+    ],
+    "raw_lengths": [
+      "8"
+    ],
+    "local_raw_copy_matches": true
+  }
+]

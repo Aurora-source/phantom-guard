@@ -1,6 +1,6 @@
 """Layer 2: physics / kinematics, per track (slot-linked), in-ROI objects only.
 
-Value-level checks (RCS grid and global RCS range) apply to every object.
+Protocol checks remain global; all physics checks, including value-level RCS, use the ROI.
 """
 
 from __future__ import annotations
@@ -26,6 +26,7 @@ class KinematicChecker:
         g = lambda k: bval(baseline, k)
         self.w = cfg["kinematic"]["window_cycles"]
         self.wr = cfg["kinematic"]["rcs_window_cycles"]
+        self.roi = cfg["roi"]["max_range"]
         self.rcs_integer = g("rcs_integer")
         self.rcs_lo, self.rcs_hi = g("rcs_lo"), g("rcs_hi")
         self.speed_max = g("speed_max")
@@ -56,7 +57,7 @@ class KinematicChecker:
             v.scores["birth_nll"] = float(self.birth_nll[i])
             if tr.born_by_jump:
                 v.add("JUMP")
-        if len(pts) >= 2:
+        if len(pts) >= 2 and pts[-2].rng <= self.roi:
             a, b = pts[-2], pts[-1]
             dt = b.t_s - a.t_s
             if dt > 0:
@@ -66,25 +67,30 @@ class KinematicChecker:
                     v.add("ACCEL")
         if len(pts) >= self.w:
             win = list(pts)[-self.w:]
-            t = np.fromiter((p.t_s for p in win), float, self.w)
-            r = np.fromiter((p.rng for p in win), float, self.w)
-            vr = np.fromiter((p.vr for p in win), float, self.w)
-            res = abs(lsq_rate(t, r) - self.rr_scale * vr.mean())
-            v.scores["rr_resid"] = res
-            if res > self.rr_hard:
-                v.add("RR_RESID")
-            T = t[-1] - t[0]
-            if T > 0:
-                ps = math.hypot(win[-1].x - win[0].x, win[-1].y - win[0].y) / T
-                v.scores["pos_speed"] = ps
-                if ps > self.pos_speed_hard:
-                    v.add("POS_SPEED")
+            if all(p.rng <= self.roi for p in win):
+                t = np.fromiter((p.t_s for p in win), float, self.w)
+                r = np.fromiter((p.rng for p in win), float, self.w)
+                vr = np.fromiter((p.vr for p in win), float, self.w)
+                # The training envelope uses the same LSQ calculation on quantised frames.
+                # It therefore includes 0.2-position quantisation and held sensor values.
+                res = abs(lsq_rate(t, r) - self.rr_scale * vr.mean())
+                v.scores["rr_resid"] = res
+                if res > self.rr_hard:
+                    v.add("RR_RESID")
+                T = t[-1] - t[0]
+                if T > 0:
+                    ps = math.hypot(win[-1].x - win[0].x, win[-1].y - win[0].y) / T
+                    v.scores["pos_speed"] = ps
+                    if ps > self.pos_speed_hard:
+                        v.add("POS_SPEED")
         if len(pts) >= self.wr:
-            rc = np.fromiter((p.rcs for p in list(pts)[-self.wr:]), float, self.wr)
-            sd = float(rc.std())
-            v.scores["rcs_std"] = sd
-            if sd > self.rcs_std_hard:
-                v.add("RCS_STD")
+            win = list(pts)[-self.wr:]
+            if all(p.rng <= self.roi for p in win):
+                rc = np.fromiter((p.rcs for p in win), float, self.wr)
+                sd = float(rc.std())
+                v.scores["rcs_std"] = sd
+                if sd > self.rcs_std_hard:
+                    v.add("RCS_STD")
         if rcs_out_of_band(o.range, o.rcs, self.rcs_band):
             v.add("RCS_BAND")
 

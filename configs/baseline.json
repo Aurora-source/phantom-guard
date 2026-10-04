@@ -58,18 +58,22 @@
     "value": 7.552870090714466
   },
   "ae_threshold_moving": {
-    "n_windows": 1485,
-    "rule": "q0.9999 of VALIDATION clean AE reconstruction error (moving windows, window=10 cycles)",
+    "n_windows": 1479,
+    "quantile": 0.9999,
+    "rule": "q0.9999 of VALIDATION clean AE reconstruction error score (moving windows, window=10 cycles)",
     "split": "val",
-    "train_exceedance": 0.01683191145953424,
-    "value": 11.490059147655902
+    "train_exceedance": 0.014148681055155876,
+    "train_windows": 4170,
+    "value": 12.391257845763064
   },
   "ae_threshold_static": {
-    "n_windows": 34803,
-    "rule": "q0.9999 of VALIDATION clean AE reconstruction error (static windows, window=10 cycles)",
+    "n_windows": 33699,
+    "quantile": 0.9999,
+    "rule": "q0.9999 of VALIDATION clean AE reconstruction error score (static windows, window=10 cycles)",
     "split": "val",
-    "train_exceedance": 0.0008030403481086532,
-    "value": 2.4288770529395736
+    "train_exceedance": 0.0007524018983678666,
+    "train_windows": 103668,
+    "value": 2.5394326878376674
   },
   "arrival_hi": {
     "rule": "max(train arrival offsets) + 2 ticks",
@@ -102,7 +106,7 @@
         54,
         138,
         162,
-        249
+        255
       ],
       "edges": [
         0.0,
@@ -166,6 +170,11 @@
     "split": "train",
     "val_exceedance": 0.0,
     "value": 302
+  },
+  "cadence_median": {
+    "rule": "median(train header gaps after capture warm-up)",
+    "split": "train",
+    "value": 332.0
   },
   "colocation_min": {
     "frac_zero": 0.0,
@@ -244,14 +253,294 @@
     ]
   },
   "iforest_threshold_moving": {
-    "rule": "q0.999 of VALIDATION clean isolation-forest anomaly score (moving windows, window=10 cycles)",
+    "n_windows": 1479,
+    "quantile": 0.9999,
+    "rule": "q0.9999 of VALIDATION clean isolation-forest anomaly score (moving windows, window=10 cycles)",
     "split": "val",
-    "value": 0.6559375143985815
+    "value": 0.689135215808091
   },
   "iforest_threshold_static": {
-    "rule": "q0.999 of VALIDATION clean isolation-forest anomaly score (static windows, window=10 cycles)",
+    "n_windows": 33699,
+    "quantile": 0.9999,
+    "rule": "q0.9999 of VALIDATION clean isolation-forest anomaly score (static windows, window=10 cycles)",
     "split": "val",
-    "value": 0.5360696218038854
+    "value": 0.5670340557153015
+  },
+  "learned_artifacts": {
+    "ae": {
+      "artifact_id": "f264e65b56ced6cf60e30a9292f04809d0258e8ac11d9a69c442a0a6d47b76a6",
+      "baseline_signature": "40ffb109eb8d969a532ec57e7daf272b009392fde825978a13121fbbb61d40be",
+      "contract": {
+        "features": [
+          "dx",
+          "dy",
+          "vx",
+          "vy",
+          "radial_velocity",
+          "rcs",
+          "range"
+        ],
+        "max_gap_cycles": 1,
+        "moving_threshold": 0.3,
+        "reassign_jump_default": 1.0,
+        "roi_max_range": 15.0,
+        "tick_seconds": 0.0001,
+        "window_cycles": 10,
+        "window_policy": "consecutive_cycles_all_points_in_roi"
+      },
+      "kind": "ae",
+      "normalization_split": "train",
+      "schema_version": 1,
+      "seed": 11,
+      "segments": {
+        "train": [
+          {
+            "file": "emptyRoom.csv",
+            "hi": 2626,
+            "lo": 0
+          },
+          {
+            "file": "onePersonMovingFrontAndBack.csv",
+            "hi": 2476,
+            "lo": 0
+          },
+          {
+            "file": "onePersonMovingSideToSide.csv",
+            "hi": 2995,
+            "lo": 0
+          },
+          {
+            "file": "multiplePeopleChaotic.csv",
+            "hi": 3358,
+            "lo": 0
+          }
+        ],
+        "val": [
+          {
+            "file": "emptyRoom.csv",
+            "hi": 3502,
+            "lo": 2626
+          },
+          {
+            "file": "onePersonMovingFrontAndBack.csv",
+            "hi": 3301,
+            "lo": 2476
+          },
+          {
+            "file": "onePersonMovingSideToSide.csv",
+            "hi": 3994,
+            "lo": 2995
+          },
+          {
+            "file": "multiplePeopleChaotic.csv",
+            "hi": 4477,
+            "lo": 3358
+          }
+        ]
+      },
+      "selection_rule": "AE fixed for NumPy CPU inference; IF is an offline comparison; no test selection",
+      "source_sha256": {
+        "emptyRoom.csv": "13fb666d6525e90f42bf823c7a938ee96d5819f5b541a834edda631bf6be2ebc",
+        "multiplePeopleChaotic.csv": "2e08ed3c26c9cb64a5039878b1ef371fc2138ad0aa717efddc2eca1bea952f52",
+        "onePersonMovingFrontAndBack.csv": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e",
+        "onePersonMovingSideToSide.csv": "04f105a1e412abfe4ce0153d8f2787a9b1ee79aba04a0a362b1d44ad4c2a6340"
+      },
+      "tag": "timeblock",
+      "threshold_split": "val",
+      "train_moving_windows": 4170,
+      "train_windows": 107838,
+      "training": {
+        "batch_size": 512,
+        "epochs_completed": 30,
+        "epochs_configured": 30,
+        "hidden": 32,
+        "latent": 6,
+        "learning_rate": 0.001,
+        "max_train_seconds": 300,
+        "stopping_reason": "configured_epochs_complete",
+        "train_seconds": 7.909224271774292
+      },
+      "val_moving_windows": 1479,
+      "val_windows": 35178
+    },
+    "iforest": {
+      "artifact_id": "c804cd658e4119cbb28d1466bc2dc82bcf3808fe1242431eaddfbf3bb532f13c",
+      "baseline_signature": "40ffb109eb8d969a532ec57e7daf272b009392fde825978a13121fbbb61d40be",
+      "bootstrap": false,
+      "contamination": "auto",
+      "contract": {
+        "features": [
+          "dx",
+          "dy",
+          "vx",
+          "vy",
+          "radial_velocity",
+          "rcs",
+          "range"
+        ],
+        "max_gap_cycles": 1,
+        "moving_threshold": 0.3,
+        "reassign_jump_default": 1.0,
+        "roi_max_range": 15.0,
+        "tick_seconds": 0.0001,
+        "window_cycles": 10,
+        "window_policy": "consecutive_cycles_all_points_in_roi"
+      },
+      "fit_windows": 50000,
+      "kind": "iforest",
+      "max_features": 1.0,
+      "max_samples": 256,
+      "normalization_split": "train",
+      "schema_version": 1,
+      "seed": 11,
+      "segments": {
+        "train": [
+          {
+            "file": "emptyRoom.csv",
+            "hi": 2626,
+            "lo": 0
+          },
+          {
+            "file": "onePersonMovingFrontAndBack.csv",
+            "hi": 2476,
+            "lo": 0
+          },
+          {
+            "file": "onePersonMovingSideToSide.csv",
+            "hi": 2995,
+            "lo": 0
+          },
+          {
+            "file": "multiplePeopleChaotic.csv",
+            "hi": 3358,
+            "lo": 0
+          }
+        ],
+        "val": [
+          {
+            "file": "emptyRoom.csv",
+            "hi": 3502,
+            "lo": 2626
+          },
+          {
+            "file": "onePersonMovingFrontAndBack.csv",
+            "hi": 3301,
+            "lo": 2476
+          },
+          {
+            "file": "onePersonMovingSideToSide.csv",
+            "hi": 3994,
+            "lo": 2995
+          },
+          {
+            "file": "multiplePeopleChaotic.csv",
+            "hi": 4477,
+            "lo": 3358
+          }
+        ]
+      },
+      "selection_rule": "AE fixed for NumPy CPU inference; IF is an offline comparison; no test selection",
+      "source_sha256": {
+        "emptyRoom.csv": "13fb666d6525e90f42bf823c7a938ee96d5819f5b541a834edda631bf6be2ebc",
+        "multiplePeopleChaotic.csv": "2e08ed3c26c9cb64a5039878b1ef371fc2138ad0aa717efddc2eca1bea952f52",
+        "onePersonMovingFrontAndBack.csv": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e",
+        "onePersonMovingSideToSide.csv": "04f105a1e412abfe4ce0153d8f2787a9b1ee79aba04a0a362b1d44ad4c2a6340"
+      },
+      "tag": "timeblock",
+      "threshold_split": "val",
+      "train_moving_windows": 4170,
+      "train_windows": 107838,
+      "trees": 200,
+      "val_moving_windows": 1479,
+      "val_windows": 35178
+    },
+    "replay": {
+      "artifact_id": "04a0b4acc672704d327a78dfade7b70ada2bf64d5d62b2777f39e8e79dc3ca02",
+      "baseline_signature": "40ffb109eb8d969a532ec57e7daf272b009392fde825978a13121fbbb61d40be",
+      "contract": {
+        "max_gap_cycles": 1,
+        "moving_threshold": 0.3,
+        "reassign_jump_default": 1.0,
+        "replay": {
+          "disp_quant": 0.2,
+          "history_cycles": 20000,
+          "k_gram": 12,
+          "min_complexity": 4,
+          "vel_quant": 0.25
+        },
+        "roi_max_range": 15.0,
+        "tick_seconds": 0.0001,
+        "window_policy": "consecutive_cycles_all_points_in_roi"
+      },
+      "kind": "replay",
+      "normalization_split": "train",
+      "schema_version": 1,
+      "seed": 11,
+      "segments": {
+        "train": [
+          {
+            "file": "emptyRoom.csv",
+            "hi": 2626,
+            "lo": 0
+          },
+          {
+            "file": "onePersonMovingFrontAndBack.csv",
+            "hi": 2476,
+            "lo": 0
+          },
+          {
+            "file": "onePersonMovingSideToSide.csv",
+            "hi": 2995,
+            "lo": 0
+          },
+          {
+            "file": "multiplePeopleChaotic.csv",
+            "hi": 3358,
+            "lo": 0
+          }
+        ],
+        "val": [
+          {
+            "file": "emptyRoom.csv",
+            "hi": 3502,
+            "lo": 2626
+          },
+          {
+            "file": "onePersonMovingFrontAndBack.csv",
+            "hi": 3301,
+            "lo": 2476
+          },
+          {
+            "file": "onePersonMovingSideToSide.csv",
+            "hi": 3994,
+            "lo": 2995
+          },
+          {
+            "file": "multiplePeopleChaotic.csv",
+            "hi": 4477,
+            "lo": 3358
+          }
+        ]
+      },
+      "selection_rule": "AE fixed for NumPy CPU inference; IF is an offline comparison; no test selection",
+      "source_sha256": {
+        "emptyRoom.csv": "13fb666d6525e90f42bf823c7a938ee96d5819f5b541a834edda631bf6be2ebc",
+        "multiplePeopleChaotic.csv": "2e08ed3c26c9cb64a5039878b1ef371fc2138ad0aa717efddc2eca1bea952f52",
+        "onePersonMovingFrontAndBack.csv": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e",
+        "onePersonMovingSideToSide.csv": "04f105a1e412abfe4ce0153d8f2787a9b1ee79aba04a0a362b1d44ad4c2a6340"
+      },
+      "tag": "timeblock",
+      "threshold_split": "val",
+      "train_moving_windows": 4170,
+      "train_windows": 107838,
+      "val_moving_windows": 1479,
+      "val_windows": 35178
+    }
+  },
+  "learned_selection": {
+    "comparison_windows": "identical eligible windows and train-only normalization",
+    "model": "ae",
+    "rule": "AE fixed for NumPy CPU inference; IF is an offline comparison; no test selection"
   },
   "moving_speed_samples": {
     "rule": "101 quantiles of moving in-ROI reported speed (attacker sampling)",
@@ -457,7 +746,7 @@
     "rule": "q0.9999 of window displacement / time (in-ROI)",
     "split": "train",
     "val_exceedance": 0.0,
-    "value": 4.104517619208985
+    "value": 4.244238074948386
   },
   "range_order_tol": {
     "rule": "max(train range-order violation, prev_range - range) + 0.1 (half a 0.2 position step)",
@@ -607,7 +896,7 @@
     "rule": "q0.9999 of rolling RCS std over 15 cycles (in-ROI)",
     "split": "train",
     "val_exceedance": 0.0,
-    "value": 1.3678612565607287
+    "value": 1.3759474079618923
   },
   "rcs_std_samples": {
     "rule": "101 quantiles of rolling RCS std (attacker sampling)",
@@ -691,7 +980,7 @@
       0.34,
       0.34,
       0.34,
-      0.4,
+      0.365,
       0.4,
       0.4,
       0.4,
@@ -719,7 +1008,7 @@
   "rcs_std_soft": {
     "rule": "q0.99 of rolling RCS std",
     "split": "train",
-    "value": 0.5728506353195029
+    "value": 0.573488351136175
   },
   "reassign_jump": {
     "frac_above": 8.110112151265177e-05,
@@ -732,18 +1021,18 @@
   "replay_library_size": {
     "rule": "fingerprints of moving in-ROI train tracks",
     "split": "train",
-    "value": 4034
+    "value": 3806
   },
   "rr_resid_hard": {
     "rule": "q0.9999 of |range-rate(LSQ over 15 cycles) - rr_scale * mean reported radial v| (in-ROI windows)",
     "split": "train",
     "val_exceedance": 0.0,
-    "value": 1.055060122276063
+    "value": 1.0662658344803115
   },
   "rr_resid_soft": {
     "rule": "q0.99 of the same residual",
     "split": "train",
-    "value": 0.45356359438128224
+    "value": 0.4528163835382096
   },
   "rr_scale": {
     "corr": 0.9263789075969155,
@@ -879,24 +1168,38 @@
     ]
   },
   "soft_quantile": {
+    "iforest_rule": "same selected validation quantile as AE; not used to select operating point",
     "rule": "smallest candidate quantile with validation alerts/min < 1.0; candidates [0.999, 0.9995, 0.9999, 0.99995, 1.0]",
+    "selection_model": "ae",
     "split": "val",
     "table": [
       {
+        "ae_threshold_moving": 11.99461681586656,
+        "ae_threshold_static": 2.121105323195467,
+        "iforest_threshold_moving": 0.6755000837028137,
+        "iforest_threshold_static": 0.5488360442179016,
         "quantile": 0.999,
-        "val_alert_events": 30,
-        "val_alerts_per_minute": 14.21,
-        "val_fp_flagged": 0.002518152150592274,
+        "val_alert_events": 29,
+        "val_alerts_per_minute": 13.737,
+        "val_fp_flagged": 0.002484275664261436,
         "val_minutes": 2.111
       },
       {
+        "ae_threshold_moving": 12.138397399645422,
+        "ae_threshold_static": 2.261261866159273,
+        "iforest_threshold_moving": 0.6828788072767019,
+        "iforest_threshold_static": 0.5561307833833665,
         "quantile": 0.9995,
-        "val_alert_events": 13,
-        "val_alerts_per_minute": 6.158,
-        "val_fp_flagged": 0.0008807886446017819,
+        "val_alert_events": 12,
+        "val_alerts_per_minute": 5.684,
+        "val_fp_flagged": 0.0008356199961606649,
         "val_minutes": 2.111
       },
       {
+        "ae_threshold_moving": 12.391257845763064,
+        "ae_threshold_static": 2.5394326878376674,
+        "iforest_threshold_moving": 0.689135215808091,
+        "iforest_threshold_static": 0.5670340557153015,
         "quantile": 0.9999,
         "val_alert_events": 1,
         "val_alerts_per_minute": 0.474,
@@ -904,6 +1207,10 @@
         "val_minutes": 2.111
       },
       {
+        "ae_threshold_moving": 12.422865401527721,
+        "ae_threshold_static": 2.6567397412993827,
+        "iforest_threshold_moving": 0.6899172668745135,
+        "iforest_threshold_static": 0.5791333296134886,
         "quantile": 0.99995,
         "val_alert_events": 1,
         "val_alerts_per_minute": 0.474,
@@ -911,6 +1218,10 @@
         "val_minutes": 2.111
       },
       {
+        "ae_threshold_moving": 12.454472957292475,
+        "ae_threshold_static": 2.7032513873637427,
+        "iforest_threshold_moving": 0.6906993179409383,
+        "iforest_threshold_static": 0.5853618834280881,
         "quantile": 1.0,
         "val_alert_events": 1,
         "val_alerts_per_minute": 0.474,

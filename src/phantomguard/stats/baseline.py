@@ -203,25 +203,35 @@ def track_features(st: SegmentStats, cfg: dict) -> TrackFeatures:
     sp, acc, accm, rra, mva, rrs, vrs, psp, rstd, br, bs, life, hold, pch, vch = ([] for _ in range(15))
     n_mov = n_roi = 0
     for tid, p in st.tracks.items():
-        if len(p) == 0 or np.median(p[:, P_R]) > roi:
+        if len(p) == 0:
+            continue
+        inside = p[:, P_R] <= roi
+        if not inside.any():
             continue
         n_roi += 1
-        moving = track_is_moving(p, cfg)
+        moving = track_is_moving(p[inside], cfg)
         n_mov += moving
-        br.append(p[0, P_R])
-        bs.append(math.hypot(p[0, P_VX], p[0, P_VY]))
-        life.append(len(p))
+        # Only a true linked-track birth in ROI enters the birth distribution. Entering
+        # the ROI later does not invent a new birth or reuse outside-ROI statistics.
+        if inside[0]:
+            br.append(p[0, P_R])
+            bs.append(math.hypot(p[0, P_VX], p[0, P_VY]))
+        life.append(int(inside.sum()))
         spd = np.hypot(p[:, P_VX], p[:, P_VY])
         if moving:
-            sp.append(spd[spd >= thr])
+            sp.append(spd[inside & (spd >= thr)])
         if len(p) >= 2:
             dt = np.diff(p[:, P_T])
             dv = np.hypot(np.diff(p[:, P_VX]), np.diff(p[:, P_VY]))
             a = dv / np.where(dt > 0, dt, np.nan)
-            acc.append(a)
+            steps_inside = inside[:-1] & inside[1:]
+            acc.append(a[steps_inside])
             if moving:
-                accm.append(a)
+                accm.append(a[steps_inside])
         rr, mv, rs = window_residuals(p, w)
+        whole_window_inside = (np.lib.stride_tricks.sliding_window_view(inside, w).all(axis=1)
+                               if len(p) >= w else np.empty(0, dtype=bool))
+        rr, mv = rr[whole_window_inside], mv[whole_window_inside]
         rra.append(rr)
         mva.append(mv)
         if moving:
@@ -229,14 +239,18 @@ def track_features(st: SegmentStats, cfg: dict) -> TrackFeatures:
             vrs.append(mv)
             if len(p) >= 5:
                 d = np.diff(p[:, [P_X, P_Y, P_VX, P_VY]], axis=0)
-                hold.append(float((np.abs(d).sum(1) == 0).mean()))
-                pch.append(float((np.abs(d[:, :2]).sum(1) > 0).mean()))
-                vch.append(float((np.abs(d[:, 2:]).sum(1) > 0).mean()))
+                d = d[inside[:-1] & inside[1:]]
+                if len(d):
+                    hold.append(float((np.abs(d).sum(1) == 0).mean()))
+                    pch.append(float((np.abs(d[:, :2]).sum(1) > 0).mean()))
+                    vch.append(float((np.abs(d[:, 2:]).sum(1) > 0).mean()))
         if len(p) >= w:
             d = np.hypot(p[w - 1:, P_X] - p[:-w + 1, P_X], p[w - 1:, P_Y] - p[:-w + 1, P_Y])
             T = p[w - 1:, P_T] - p[:-w + 1, P_T]
-            psp.append(d / np.where(T > 0, T, np.nan))
-        rstd.append(rolling_std(p[:, P_RCS], wr))
+            psp.append((d / np.where(T > 0, T, np.nan))[whole_window_inside])
+        rcs_inside = (np.lib.stride_tricks.sliding_window_view(inside, wr).all(axis=1)
+                      if len(p) >= wr else np.empty(0, dtype=bool))
+        rstd.append(rolling_std(p[:, P_RCS], wr)[rcs_inside])
     cat = lambda xs: np.concatenate(xs) if xs else np.empty(0)
     return TrackFeatures(cat(sp), cat(acc), cat(accm), cat(rra), cat(mva), (cat(rrs), cat(vrs)), cat(psp),
                          cat(rstd), np.array(br), np.array(bs), np.array(life), n_mov, n_roi,
@@ -248,7 +262,8 @@ def fit_rr_scale(tf: TrackFeatures, min_abs_v: float = 0.5) -> tuple[float, floa
     rr, vr = tf.rr_fit
     m = np.abs(vr) >= min_abs_v
     if m.sum() < 20:
-        return 1.0, float("nan"), int(m.sum())
+        raise ValueError(f"cannot learn rr_scale: need at least 20 moving windows with |radial v| >= "
+                         f"{min_abs_v}, found {int(m.sum())}; check training segments and ROI")
     k = float(np.sum(rr[m] * vr[m]) / np.sum(vr[m] ** 2))
     return k, float(np.corrcoef(rr[m], vr[m])[0, 1]), int(m.sum())
 
@@ -280,6 +295,7 @@ def derive_thresholds(st: SegmentStats, tf: TrackFeatures, cfg: dict, kq: float 
     b = {}
     b["cadence_lo"] = entry(int(gaps.min()) - m, f"min(train header gaps after {cfg['protocol']['cadence_warmup_cycles']}-cycle warm-up) - {m} ticks")
     b["cadence_hi"] = entry(int(gaps.max()) + m, f"max(train header gaps) + {m} ticks")
+    b["cadence_median"] = entry(float(np.median(gaps)), "median(train header gaps after capture warm-up)")
     b["counter_step"] = entry(1, "every train counter step is +1 (mod 65536)",
                               observed=sorted(set(int(s) for s in st.counter_steps)))
     b["arrival_lo"] = entry(max(0, int(offs.min()) - m), f"min(train arrival offsets) - {m} ticks")

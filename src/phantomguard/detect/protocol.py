@@ -43,21 +43,29 @@ class ProtocolChecker:
                 cr.append("STATUS")
             if self._prev_counter is not None and (h.meas_counter - self._prev_counter) % 65536 != self.counter_step:
                 cr.append("COUNTER")
-            if self._prev_t is not None and self._headers >= self.warmup:
+        if cycle.header_t is not None:
+            # _headers counts preceding headers: gaps 1..warmup are skipped exactly.
+            if self._prev_t is not None and self._headers > self.warmup:
                 gap = cycle.header_t - self._prev_t
                 if not self.cadence[0] <= gap <= self.cadence[1]:
                     cr.append("CADENCE")
-            self._prev_t, self._prev_counter = cycle.header_t, h.meas_counter
+            self._prev_t = cycle.header_t
+            # A malformed header has an unknown counter, so the next counter cannot be
+            # compared against it. The malformed header already raises its own hard reason.
+            self._prev_counter = h.meas_counter if h is not None else None
             self._headers += 1
         for o in cycle.other:
             cr.append(o.reason)
         if cycle.malformed_objects:
             cr.append("FRAME_LEN")
         # object level
-        seen: dict[int, int] = {}
+        by_frame = {v.frame_index: v for v in verdicts}
+        seen: dict[int, ObjVerdict] = {}
         prev_t = None
         prev_range = None
-        for i, (ob, v) in enumerate(zip(cycle.objects, verdicts)):
+        observations = sorted(cycle.objects + cycle.malformed_objects, key=lambda ob: ob.position)
+        for i, ob in enumerate(observations):
+            v = by_frame[ob.frame_index]
             o = ob.obj
             if ob.offset is not None and not self.arrival[0] <= ob.offset <= self.arrival[1]:
                 v.add("ARRIVAL")
@@ -67,15 +75,18 @@ class ProtocolChecker:
             elif not self.burst[0] <= ob.t - prev_t <= self.burst[1]:
                 v.add("BURST_GAP")
             prev_t = ob.t
-            if prev_range is not None and prev_range - o.range > self.order_tol:
+            if o is not None and prev_range is not None and prev_range - o.range > self.order_tol:
                 v.add("RANGE_ORDER")
-            prev_range = o.range
-            if o.slot in seen:
+            prev_range = o.range if o is not None else None
+            slot = o.slot if o is not None else (ob.data[0] if ob.data else None)
+            if slot is None:
+                continue
+            if slot in seen:
                 v.add("DUP_SLOT")
-                verdicts[seen[o.slot]].add("DUP_SLOT")
-            seen[o.slot] = i
-            if o.slot > self.slot_max:
+                seen[slot].add("DUP_SLOT")
+            seen[slot] = v
+            if slot > self.slot_max:
                 v.add("SLOT_RANGE")
-            if o.dyn_prop not in self.ok_dyn or o.reserved not in self.ok_res:
+            if o is not None and (o.dyn_prop not in self.ok_dyn or o.reserved not in self.ok_res):
                 v.add("FIXED_FIELD")
         return list(dict.fromkeys(cr))

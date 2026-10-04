@@ -1,422 +1,358 @@
 #!/usr/bin/env python3
-"""Evaluate the detector against the synthetic frame generator and write the results matrix.
+"""Reproducible held-out attack evaluation, with explicit unavailable/unsupported cells.
 
-For every (scenario T1-T4) x (level A0-A4), fabricated frames are mixed into the **held-out test**
-segments (time-block split), several seeds each, and the detector is run on the mixed stream. Labels
-(which frames are fabricated) are joined with the detector's per-object verdicts only here, never
-inside the detector.
-
-Outputs (all generated) to docs/results/:
-- summary.md: the headline detection matrix, per-layer attribution, time-to-detect, static vs
-  moving, AUROC of the learned score, the levels that evade every layer, and the deck-claims check.
-- attack_matrix.csv, attack_layers.csv, attack_ttd.csv.
-
-Detection is reported two ways: per fabricated object-cycle (flagged by a layer) and per instance
-(did the detector ever raise a persistent alert on that fabricated track, and after how many cycles).
+Missing Phase 2 still permits independent fresh clean evaluation and generates a
+blocked attack matrix/summary. Exit 2 means required real attack validation is
+blocked; it is never labelled a successful attack benchmark.
 """
 
 from __future__ import annotations
 
-import zlib
-from collections import defaultdict
+import argparse
+import csv
+import json
+import hashlib
+import time
+import os
+from collections import Counter
 from concurrent.futures import ProcessPoolExecutor
-from dataclasses import dataclass, field
+from dataclasses import asdict
+from pathlib import Path
+
+# Each worker handles tiny online matrices plus offline batches. Unbounded BLAS
+# threads multiply workspace allocations across spawned Windows processes.
+for _thread_setting in ("OPENBLAS_NUM_THREADS", "OMP_NUM_THREADS", "MKL_NUM_THREADS"):
+    os.environ.setdefault(_thread_setting, "1")
 
 import numpy as np
-import pandas as pd
 
-from phantomguard.attack.injector import MixedSource, label_map
-from phantomguard.attack.levels import LEVELS
-from phantomguard.attack.pools import build_pools
-from phantomguard.attack.scenarios import make_context, plan_run
-from phantomguard.config import REPO_ROOT, load_baseline, load_config, raw_path
-from phantomguard.detect.common import LAYERS, REASONS, layer_of
-from phantomguard.detect.fusion import Fusion
+from phantomguard.config import BASELINE_PATH, REPO_ROOT, effective_cfg, load_baseline, load_config, raw_path
+from phantomguard.detect.autoencoder import load_iforest, score_iforest
+from phantomguard.detect.common import LAYERS
 from phantomguard.detect.pipeline import MODELS_DIR, Detector, load_artifacts
-from phantomguard.eval.metrics import PREVIOUS_FUSION, LiteCycle, LiteVerdict, with_fusion
-from phantomguard.eval.splits import time_block_segments
-from phantomguard.io.replay import ReplaySource
+from phantomguard.eval.attack_adapter import (ATTACK_TYPES, LEVEL_NAMES, REPLAY_PROVENANCE, AttackUnavailable,
+                                             UnsupportedAttack, attack_source, check_available, support_reason)
+from phantomguard.eval.metrics import assembly_stats, attack_metrics, latency_stats, lite, parse_labels, score
+from phantomguard.eval.report import provenance, write_report
+from phantomguard.eval.splits import Segment, loso_folds, time_block_segments
+from phantomguard.io.replay import ReplaySource, load_recorded_cycles
 
-RESULTS = REPO_ROOT / "docs" / "results"
-TYPES = ["T1", "T2", "T3", "T4"]
-LEVEL_NAMES = ["A0", "A1", "A2", "A3", "A4"]
-
-
-@dataclass
-class CellResult:
-    atype: str
-    level: str
-    fab_objcyc: int = 0
-    fab_roi: int = 0
-    fab_moving: int = 0
-    flagged_all: int = 0
-    flagged_moving: int = 0
-    flagged_static: int = 0
-    layer_hits: dict = field(default_factory=lambda: defaultdict(int))        # layer -> fab objcyc with a reason
-    without_layer: dict = field(default_factory=lambda: defaultdict(int))     # layer -> fab objcyc still flagged if layer removed
-    only_layer: dict = field(default_factory=lambda: defaultdict(int))        # layer -> fab objcyc flagged ONLY by this layer
-    reason_hits: dict = field(default_factory=lambda: defaultdict(int))       # reason code -> count
-    instances: int = 0
-    instances_detected: int = 0
-    inst_moving: int = 0
-    inst_moving_detected: int = 0
-    inst_static: int = 0
-    inst_static_detected: int = 0
-    ttd: list = field(default_factory=list)                                   # cycles to first alert (detected only)
-    prev_detected: int = 0                                                    # instances detected at PREVIOUS_FUSION
-    ae_fab: list = field(default_factory=list)
-    ae_clean: list = field(default_factory=list)
-
-    def merge(self, o: "CellResult") -> None:
-        for k, v in self.__dict__.items():
-            ov = getattr(o, k)
-            if isinstance(v, int):
-                setattr(self, k, v + ov)
-            elif isinstance(v, list):
-                v.extend(ov)
-            elif isinstance(v, defaultdict):
-                for kk, vv in ov.items():
-                    v[kk] += vv
+SUBSETS = {**{layer: (layer,) for layer in LAYERS}, "all": LAYERS,
+           **{f"all-minus-{layer}": tuple(x for x in LAYERS if x != layer) for layer in LAYERS}}
 
 
 def job_seed(seed: int, file: str) -> int:
-    """Per-(seed, file) generator seed. Uses crc32, not hash(): str hashes are randomised per process,
-    which made earlier runs irreproducible."""
-    return seed * 1009 + zlib.crc32(file.encode()) % 997
+    """Compatibility with the accepted evaluator's deterministic per-recording seed API."""
+    import zlib
+    return int(np.random.SeedSequence([seed, zlib.crc32(file.encode())]).generate_state(1)[0])
 
 
-def run_job(job):
-    atype, level, seed, file, lo, hi = job
-    cfg = load_config()
-    b = load_baseline()
-    ae, lib = load_artifacts("timeblock")
-    segs = time_block_segments(cfg)
-    known = build_pools(cfg, segs["train"])
-    unseen = build_pools(cfg, [s for s in segs["val"] if s.file != file])
-    rng = np.random.default_rng(job_seed(seed, file))
-    ctx = make_context(cfg, b, level, rng, known, unseen)
-    base = ReplaySource(raw_path(cfg, file), (lo, hi))
-    instances = plan_run(ctx, atype, base.cycles, lo, hi)
-    src = MixedSource(base, ctx, instances, tag=f"{atype}-{level}")
-    frames = list(src)
-    lm = label_map(src)
-    det = Detector(cfg, b, ae, lib)
-
-    res = CellResult(atype, level)
-    # per-instance tracking
-    first_present = {}
-    first_alert = {}
-    inst_moving = {}
-    aid_to = {inst.attack_id: inst for inst in instances}
-    thr = cfg["motion"]["moving_threshold_mps"]
-    replay_log = []  # (LiteCycle, frame indices) to re-apply the previous fusion offline
-    for k, cyc in enumerate(det.run(iter(frames))):
-        replay_log.append((LiteCycle(cyc.header_t, list(cyc.cycle_reasons),
-                                     [LiteVerdict(v.track_id, v.in_roi, v.moving, list(v.reasons)) for v in cyc.objects]),
-                           [v.frame_index for v in cyc.objects]))
-        for v in cyc.objects:
-            if v.frame_index not in lm:
-                if ae is not None and "ae" in v.scores and v.in_roi:
-                    res.ae_clean.append(v.scores["ae"])
-                continue
-            lb = lm[v.frame_index]
-            aid = lb.attack_id
-            res.fab_objcyc += 1
-            moving = v.moving
-            res.fab_roi += v.in_roi
-            res.fab_moving += moving
-            reasons = v.reasons
-            if v.flagged:  # as fused by the detector (learned-only object-cycles do not count alone)
-                res.flagged_all += 1
-                (res.__dict__.__setitem__("flagged_moving", res.flagged_moving + 1) if moving
-                 else res.__dict__.__setitem__("flagged_static", res.flagged_static + 1))
-            seen_layers = set()
-            for rc in reasons:
-                res.reason_hits[rc] += 1
-                seen_layers.add(layer_of(rc))
-            for lay in seen_layers:
-                res.layer_hits[lay] += 1
-            if seen_layers:
-                for lay in LAYERS:
-                    if seen_layers - {lay}:
-                        res.without_layer[lay] += 1
-                    if seen_layers == {lay}:
-                        res.only_layer[lay] += 1
-            if ae is not None and "ae" in v.scores and v.in_roi:
-                res.ae_fab.append(v.scores["ae"])
-            if aid not in first_present:
-                first_present[aid] = k
-                inst_moving[aid] = bool(aid_to[aid].note.startswith(("moving", "drift", "replay")))
-            if v.alert and aid not in first_alert:
-                first_alert[aid] = k
-    prev_fus = Fusion(with_fusion(cfg, PREVIOUS_FUSION), LAYERS)
-    prev_hit = set()
-    for lc, fis in replay_log:
-        prev_fus.apply(lc)
-        for lv, fi in zip(lc.objects, fis):
-            if lv.alert and fi in lm:
-                prev_hit.add(lm[fi].attack_id)
-    for aid, inst in aid_to.items():
-        if aid not in first_present:
-            continue
-        res.instances += 1
-        res.prev_detected += aid in prev_hit
-        mov = inst_moving[aid]
-        res.inst_moving += mov
-        res.inst_static += (not mov)
-        if aid in first_alert:
-            res.instances_detected += 1
-            res.inst_moving_detected += mov
-            res.inst_static_detected += (not mov)
-            res.ttd.append(first_alert[aid] - first_present[aid])
-    return res
+def split_contexts(cfg: dict, selection: str, part: str) -> list[dict]:
+    contexts = []
+    if selection in {"all", "timeblock"}:
+        tb = time_block_segments(cfg)
+        contexts.append({"split": "timeblock", "fold": "timeblock", "tag": "timeblock", "part": part,
+                         "baseline_path": BASELINE_PATH, "train": tb["train"], "val": tb["val"], "test": tb[part]})
+    if selection in {"all", "loso"}:
+        for held, fold in loso_folds(cfg).items():
+            tag = f"loso_{Path(held).stem}"
+            contexts.append({"split": "loso", "fold": held, "tag": tag, "part": part,
+                             "baseline_path": REPO_ROOT / cfg["data"]["processed_dir"] / f"baseline_{tag}.json",
+                             "train": fold["train"], "val": fold["val"], "test": fold[part]})
+    return contexts
 
 
-def auroc(pos: np.ndarray, neg: np.ndarray) -> float:
-    if len(pos) == 0 or len(neg) == 0:
-        return float("nan")
-    a = np.concatenate([pos, neg])
-    order = a.argsort()
-    ranks = np.empty(len(a))
-    ranks[order] = np.arange(1, len(a) + 1)
-    r_pos = ranks[: len(pos)].sum()
-    return float((r_pos - len(pos) * (len(pos) + 1) / 2) / (len(pos) * len(neg)))
+def job_identity(context: dict, segment: Segment) -> dict:
+    return {"split": context["split"], "part": context["part"], "fold": context["fold"],
+            "file": segment.file, "segment_lo": segment.lo, "segment_hi": segment.hi, "tag": context["tag"]}
 
 
-def layer_detects(cell: CellResult, layer: str) -> float:
-    return cell.layer_hits.get(layer, 0) / cell.fab_objcyc if cell.fab_objcyc else 0.0
+def attack_jobs(cfg: dict, context: dict, segment: Segment) -> list[dict]:
+    jobs = []
+    for attack_type in ATTACK_TYPES:
+        for level in LEVEL_NAMES:
+            motions = ("static", "moving") if attack_type in {"T1", "T2"} else ("moving",)
+            provenances = REPLAY_PROVENANCE if attack_type == "T3" else ("not_applicable",)
+            variants = ("exact", "translated") if attack_type == "T3" else ("not_applicable",)
+            for motion in motions:
+                for prov in provenances:
+                    for variant in variants:
+                        for seed in cfg["attack"]["seeds"]:
+                            for run in range(cfg["eval"]["runs_per_cell"]):
+                                effective = int(np.random.SeedSequence([int(seed), run]).generate_state(1)[0])
+                                jobs.append({**job_identity(context, segment), "attack_type": attack_type,
+                                             "level": level, "motion_case": motion, "replay_provenance": prov,
+                                             "replay_variant": variant, "configured_seed": int(seed), "run": run,
+                                             "effective_seed": effective})
+    return jobs
 
 
-def main():
-    cfg = load_config()
-    if not (MODELS_DIR / "ae_timeblock.npz").exists():
-        raise SystemExit("models missing: run learn_baseline.py --loso, train.py --loso, calibrate.py --loso first")
-    test = time_block_segments(cfg)["test"]
-    jobs = [(t, lv, seed, s.file, s.lo, s.hi)
-            for t in TYPES for lv in LEVEL_NAMES for seed in cfg["attack"]["seeds"] for s in test]
-    print(f"running {len(jobs)} jobs ({len(TYPES)}x{len(LEVEL_NAMES)} cells x {len(cfg['attack']['seeds'])} seeds x {len(test)} files)")
-    cells: dict[tuple, CellResult] = {(t, lv): CellResult(t, lv) for t in TYPES for lv in LEVEL_NAMES}
-    with ProcessPoolExecutor(cfg["eval"]["workers"]) as ex:
-        for r in ex.map(run_job, jobs):
-            cells[(r.atype, r.level)].merge(r)
-    write_outputs(cfg, cells)
-    print((RESULTS / "summary.md").read_text())
+def detect_stream(cfg: dict, baseline: dict, tag: str, source):
+    ae, library = load_artifacts(tag, strict=True, cfg=cfg, baseline=baseline)
+    iso = load_iforest(tag, cfg=cfg, baseline=baseline, required=True)
+    detector = Detector(cfg, baseline, ae, library, capture_windows=True)
+    results = list(detector.run(source))
+    if not results:
+        raise ValueError("evaluation stream emitted no cycles")
+    # Identical captured online features/ordering; sklearn is scored once outside latency.
+    entries = [(cycle, fi, window) for cycle in results for fi, window in cycle.learned_windows.items()]
+    if entries:
+        scores = score_iforest(iso, [entry[2][0] for entry in entries])
+        by_index = {v.frame_index: v for cycle in results for v in cycle.objects}
+        for (_, fi, (_, moving)), value in zip(entries, scores):
+            by_index[fi].scores["iforest"] = float(value)
+            by_index[fi].score_status["iforest"] = "ok"
+    cycles = [lite(result) for result in results]
+    for result in cycles:
+        for verdict in result.objects:
+            if "iforest" not in verdict.score_status:
+                verdict.score_status["iforest"] = verdict.score_status.get("ae", "unavailable")
+    return cycles
 
 
-def pct(x):
-    return f"{100 * x:.0f}%" if x == x else "n/a"
+def stream_counts(cycles, source: ReplaySource, identity: dict) -> dict:
+    outcomes = Counter(f"{model}:{status}" for c in cycles for v in c.objects
+                       for model, status in v.score_status.items())
+    frame_reasons = Counter(reason for c in cycles for f in c.frames for reason in f.reasons)
+    return {**identity, "status": "ok", "load_report_scope": "full recording; segment counts separately below",
+            **source.report.as_dict(), "emitted_frames": sum(len(c.frames) for c in cycles),
+            "decoded_objects": sum(f.kind == "object" for c in cycles for f in c.frames),
+            "malformed_object_attempts": sum(f.kind == "malformed" for c in cycles for f in c.frames),
+            "emitted_bad_id_frames": frame_reasons["BAD_ID"],
+            "emitted_short_headers": frame_reasons["SHORT_HEADER"],
+            "emitted_missing_header_cycles": sum("NO_HEADER" in c.cycle_reasons for c in cycles),
+            "emitted_count_mismatch_cycles": sum("COUNT_MISMATCH" in c.cycle_reasons for c in cycles),
+            "emitted_duplicate_slot_object_frames": frame_reasons["DUP_SLOT"],
+            "emitted_range_order_object_frames": frame_reasons["RANGE_ORDER"],
+            "emitted_burst_gap_object_frames": frame_reasons["BURST_GAP"],
+            "out_of_roi_objects": sum(not v.in_roi for c in cycles for v in c.objects
+                                      if any(f.frame_index == v.frame_index and f.kind == "object" for f in c.frames)),
+            "score_outcomes": json.dumps(dict(outcomes), sort_keys=True),
+            "layer_status": json.dumps(cycles[0].layer_status, sort_keys=True)}
 
 
-def write_outputs(cfg, cells):
-    RESULTS.mkdir(parents=True, exist_ok=True)
-    # instance-level detection matrix (did a persistent alert ever fire on the fabricated track)
-    mat = []
-    for t in TYPES:
-        row = {"type": t}
-        for lv in LEVEL_NAMES:
-            c = cells[(t, lv)]
-            row[lv] = c.instances_detected / c.instances if c.instances else float("nan")
-        mat.append(row)
-    dmat = pd.DataFrame(mat)
-    dmat.to_csv(RESULTS / "attack_matrix.csv", index=False)
-
-    # per-layer attribution (fraction of fabricated object-cycles each layer flags), pooled over types
-    lay_rows = []
-    for lv in LEVEL_NAMES:
-        agg = CellResult("ALL", lv)
-        for t in TYPES:
-            agg.merge(cells[(t, lv)])
-        row = {"level": lv, "fab_obj_cycles": agg.fab_objcyc, "any_layer": layer_detects(agg, "protocol") * 0 +
-               (agg.flagged_all / agg.fab_objcyc if agg.fab_objcyc else 0.0)}
-        for lay in LAYERS:
-            row[lay] = layer_detects(agg, lay)
-        row["alert_rate_instances"] = (sum(cells[(t, lv)].instances_detected for t in TYPES) /
-                                       max(sum(cells[(t, lv)].instances for t in TYPES), 1))
-        row["auroc_ae"] = auroc(np.array(agg.ae_fab), np.array(agg.ae_clean))
-        lay_rows.append(row)
-    dlay = pd.DataFrame(lay_rows)
-    dlay.to_csv(RESULTS / "attack_layers.csv", index=False)
-
-    # time-to-detect + static/moving
-    ttd_rows = []
-    for t in TYPES:
-        for lv in LEVEL_NAMES:
-            c = cells[(t, lv)]
-            ttd_rows.append({"type": t, "level": lv, "instances": c.instances,
-                             "detected": c.instances_detected,
-                             "median_ttd_cycles": float(np.median(c.ttd)) if c.ttd else float("nan"),
-                             "moving_det": f"{c.inst_moving_detected}/{c.inst_moving}",
-                             "static_det": f"{c.inst_static_detected}/{c.inst_static}"})
-    dttd = pd.DataFrame(ttd_rows)
-    dttd.to_csv(RESULTS / "attack_ttd.csv", index=False)
-
-    write_summary(cfg, cells, dmat, dlay, dttd)
+def run_clean(payload):
+    cfg, context, segment = payload
+    identity = job_identity(context, segment)
+    try:
+        baseline = load_baseline(context["baseline_path"])
+        scoring_cfg = effective_cfg(cfg, baseline)
+        source = ReplaySource(raw_path(cfg, segment.file), (segment.lo, segment.hi))
+        cycles = detect_stream(cfg, baseline, context["tag"], source)
+        timing = {**latency_stats(cycles), **assembly_stats(cycles, cfg),
+                  "p99_budget_ms": cfg["latency"]["p99_budget_ms"],
+                  "measurement_workers": context.get("measurement_workers", 1)}
+        timing["latency_budget_met"] = timing["p99_ms"] < timing["p99_budget_ms"]
+        rows = []
+        for name, layers in SUBSETS.items():
+            metrics = score(cycles, scoring_cfg, layers)
+            rows.append({**identity, "layers": name, "status": "ok", **metrics.row(),
+                         "minutes_exact": metrics.minutes, "flagged_count": metrics.flagged,
+                         "roi_object_cycles": metrics.roi_obj_cycles,
+                         "roi_moving_object_cycles": metrics.roi_moving_obj_cycles,
+                         "out_of_roi_object_cycles": metrics.obj_cycles-metrics.roi_obj_cycles, **timing})
+        return rows, stream_counts(cycles, source, identity)
+    except (FileNotFoundError, ValueError, RuntimeError) as exc:
+        row = {**identity, "layers": "all", "status": "blocked_artifacts_or_data", "reason": str(exc)}
+        return [row], row
 
 
-def md_table(df, fmts=None):
-    fmts = fmts or {}
-    cols = list(df.columns)
-    out = "| " + " | ".join(cols) + " |\n|" + "---|" * len(cols) + "\n"
-    for _, r in df.iterrows():
-        out += "| " + " | ".join(fmts.get(c, str)(r[c]) for c in cols) + " |\n"
-    return out
+def run_attack(payload):
+    """Content-addressed checkpoint; changing code/data/artifacts selects a new cache."""
+    job, directory = payload[3], Path(payload[5])
+    digest = hashlib.sha256(json.dumps(job, sort_keys=True).encode()).hexdigest()[:20]
+    path = directory / f"{digest}_result.json"
+    if path.exists():
+        return json.loads(path.read_text(encoding="utf-8"))
+    result = _run_attack(payload)
+    # Retry integration failures; successful and explicitly unsupported outcomes persist.
+    if not any(str(r.get("status", "")).startswith("blocked") for r in result[0]):
+        directory.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(result, allow_nan=False) + "\n", encoding="utf-8")
+    return result
 
 
-def write_summary(cfg, cells, dmat, dlay, dttd):
-    thr = cfg["motion"]["moving_threshold_mps"]
-    pf = {lv: pct for lv in LEVEL_NAMES}
-    lines = ["# Attack evaluation (synthetic fabricated-frame generator)", "",
-             "Generated by `scripts/run_attack_eval.py`. Fabricated frames are mixed into the **held-out test**",
-             "segments and the detector is run on the mixed stream; labels are joined with verdicts only in the",
-             f"evaluator. {len(cfg['attack']['seeds'])} seeds per cell, all four files. The generator is a test",
-             "fixture on recorded CSVs (no bus, no live system); every fabricated value is sampled from real-data",
-             "distributions, so a fabricated frame differs from a real one only by the property under test.", "",
-             "## Headline: instance detection rate (a persistent alert ever fired on the fabricated track)", "",
-             "Rows are scenarios, columns are generator capability levels (A0 naive -> A4 data-aware).", "",
-             md_table(dmat, pf), "",
-             "## Operating point trade-off (instance detection, calibrated vs previous)", "",
-             "Same detector output, fusion re-applied offline. *calibrated* = M/N from `fusion_mn` in baseline.json with",
-             f"the autoencoder corroborating only; *previous* = {PREVIOUS_FUSION['m']} of {PREVIOUS_FUSION['n']} with the",
-             "autoencoder allowed to alert alone. The clean-data side of this trade-off is in clean_eval.md.", "",
-             md_table(pd.DataFrame([{"type": t, **{lv: (f"{pct(cells[(t, lv)].instances_detected / cells[(t, lv)].instances)} / "
-                                                         f"{pct(cells[(t, lv)].prev_detected / cells[(t, lv)].instances)}")
-                                                   if cells[(t, lv)].instances else "n/a" for lv in LEVEL_NAMES}}
-                                    for t in TYPES])), "",
-             "## Per-layer attribution: fraction of fabricated object-cycles each layer flags (pooled over T1-T4)", "",
-             "`any` is the full detector (any enabled layer); `alert_rate_instances` is the share of fabricated",
-             "tracks that ever alert; `auroc_ae` is the AUROC of the autoencoder error separating fabricated from",
-             "real in-ROI object-windows.", "",
-             md_table(dlay[["level", "fab_obj_cycles", "any_layer", "protocol", "kinematic", "replay", "learned",
-                            "alert_rate_instances", "auroc_ae"]].rename(columns={"any_layer": "any"}),
-                      {"any": pct, "protocol": pct, "kinematic": pct, "replay": pct, "learned": pct,
-                       "alert_rate_instances": pct, "auroc_ae": lambda x: f"{x:.2f}" if x == x else "n/a",
-                       "fab_obj_cycles": lambda x: str(int(x))}), ""]
-
-    # detection ablation: object-cycle detection with all layers vs with one layer removed
-    abl_rows = []
-    for lv in LEVEL_NAMES:
-        agg = CellResult("ALL", lv)
-        for t in TYPES:
-            agg.merge(cells[(t, lv)])
-        n = agg.fab_objcyc or 1
-        row = {"level": lv, "all_layers": agg.flagged_all / n}
-        for lay in LAYERS:
-            row[f"-{lay}"] = agg.without_layer.get(lay, 0) / n
-            row[f"only_{lay}"] = agg.only_layer.get(lay, 0) / n
-        abl_rows.append(row)
-    dabl = pd.DataFrame(abl_rows)
-    dabl.to_csv(RESULTS / "attack_ablation.csv", index=False)
-    pcols = ["level", "all_layers", "-protocol", "-kinematic", "-replay", "-learned"]
-    lines += ["## Detection ablation (fabricated object-cycles flagged, one layer removed; pooled over T1-T4)", "",
-              "A big drop from `all_layers` when a layer is removed means that layer is load-bearing at that level.",
-              "`only_<layer>` (in attack_ablation.csv) counts object-cycles **only** that layer catches.", "",
-              md_table(dabl[pcols], {c: pct for c in pcols[1:]}), ""]
-
-    # per-scenario dominant signal at the two hardest levels
-    dom_rows = []
-    for t in TYPES:
-        for lv in ("A3", "A4"):
-            c = cells[(t, lv)]
-            top = sorted(c.reason_hits.items(), key=lambda kv: -kv[1])[:3]
-            dom_rows.append({"type": t, "level": lv,
-                             "inst_detected": f"{c.instances_detected}/{c.instances}",
-                             "top_reasons": ", ".join(f"{k} {100*v/max(c.fab_objcyc,1):.0f}%" for k, v in top) or "-"})
-    lines += ["## Dominant catching signal at A3/A4 (per scenario)", "",
-              md_table(pd.DataFrame(dom_rows)), ""]
-
-    # time-to-detect matrix (median cycles)
-    piv = dttd.pivot(index="type", columns="level", values="median_ttd_cycles").reset_index()
-    lines += ["## Time-to-detect (median cycles from first appearance to first alert; blank = not detected)", "",
-              md_table(piv, {lv: (lambda x: f"{x:.0f}" if x == x else "-") for lv in LEVEL_NAMES}), ""]
-
-    # static vs moving on T1 (phantoms)
-    lines += ["## Static vs moving phantoms (T1): detected instances / total", ""]
-    sm = dttd[dttd.type == "T1"][["level", "moving_det", "static_det"]]
-    lines += [md_table(sm), "",
-              "Static phantoms are expected to be the hardest (CLAUDE.md): a still object at a plausible position",
-              "with a plausible RCS has no motion to contradict and no trajectory to replay-match.", ""]
-
-    # evasion statement
-    evaders = []
-    for lv in LEVEL_NAMES:
-        agg = CellResult("ALL", lv)
-        for t in TYPES:
-            agg.merge(cells[(t, lv)])
-        rate = agg.instances_detected / agg.instances if agg.instances else 0.0
-        if rate < 0.999:
-            evaders.append((lv, rate))
-    lines += ["## What evades", ""]
-    for t in TYPES:
-        for lv in LEVEL_NAMES:
-            c = cells[(t, lv)]
-            if c.instances and c.instances_detected < c.instances:
-                missed = c.instances - c.instances_detected
-                lines.append(f"- {t}/{lv}: {missed}/{c.instances} instances raised no alert "
-                             f"({c.inst_static - c.inst_static_detected} static, {c.inst_moving - c.inst_moving_detected} moving).")
-    if not any(cells[(t, lv)].instances_detected < cells[(t, lv)].instances for t in TYPES for lv in LEVEL_NAMES):
-        lines.append("- Every instance of every scenario and level raised at least one alert.")
-    lines += ["", "Object-cycle level: per-object detection falls steadily as the generator gets more realistic; see the",
-              "per-layer table. The learned autoencoder and the co-location / RCS-band kinematic checks carry A3-A4,",
-              "where the protocol layer no longer fires.", ""]
-
-    lines += deck_claims(cfg, cells, dlay)
-    lines += ["", "## Caveats", "",
-              "- Detection here is **against this generator**. It samples from the same real distributions the detector",
-              "  learned from, so it is a strong test of the modelled flaws, not proof against an unmodelled one.",
-              "- The clean-data false-alarm rate (the cost of these detections) is in `clean_eval.md`: the <1 alert/min",
-              "  target is not met on held-out data, so these detection rates come at a higher false-alarm rate than the goal.",
-              "- Thresholds and the operating point were set on train/validation only; the test segments were used only here."]
-    (RESULTS / "summary.md").write_text("\n".join(lines) + "\n")
+def _run_attack(payload):
+    cfg, context, segment, job, provider, label_dir = payload
+    reason = support_reason(job["attack_type"], job["level"], job["motion_case"])
+    if reason:
+        return [{**job, "status": "unsupported", "reason": reason}], [], None
+    try:
+        baseline = load_baseline(context["baseline_path"])
+        scoring_cfg = effective_cfg(cfg, baseline)
+        source = ReplaySource(raw_path(cfg, segment.file), (segment.lo, segment.hi))
+        from hashlib import sha256
+        digest = sha256(json.dumps(job, sort_keys=True).encode()).hexdigest()[:20]
+        labels_path = Path(label_dir) / f"{digest}_labels.csv"
+        unseen = []
+        provenance_scope = "not_applicable"
+        if job["attack_type"] == "T3":
+            provenance_scope = job["replay_provenance"]
+            if job["replay_provenance"] == "unseen":
+                # Time-block recordings all contributed training portions. The owner
+                # permits unseen *portions* of another file; do not call them unseen files.
+                candidates = time_block_segments(cfg)["test"]
+                unseen = [s for s in candidates if s.file != segment.file]
+                provenance_scope = "held_out_segments_of_seen_recordings"
+        if context["split"] == "loso":
+            # Held recording stays unseen even when evaluating validation tails of
+            # the other three files. Never substitute the validation victim as unseen.
+            unseen = loso_folds(cfg)[context["fold"]]["test"]
+            if job["attack_type"] == "T3" and job["replay_provenance"] == "unseen":
+                provenance_scope = "wholly_unseen_recording"
+        attacked = attack_source(source, cfg, baseline, attack_type=job["attack_type"], level=job["level"],
+                                 seed=job["effective_seed"], run_index=job["run"], train_segments=context["train"],
+                                 replay_provenance=job["replay_provenance"] if job["attack_type"] == "T3" else "training",
+                                 unseen_segments=unseen, labels_path=labels_path, motion_case=job["motion_case"],
+                                 replay_variant=job["replay_variant"] if job["attack_type"] == "T3" else "exact",
+                                 provider=provider)
+        cycles = detect_stream(cfg, baseline, context["tag"], attacked)
+        if not labels_path.is_file():
+            raise ValueError(f"attacker did not write sidecar {labels_path}")
+        with labels_path.open(newline="", encoding="utf-8") as stream:
+            labels = parse_labels(csv.DictReader(stream))
+        lifecycle_path = labels_path.with_suffix(".instances.json")
+        lifecycle = json.loads(lifecycle_path.read_text(encoding="utf-8")) if lifecycle_path.exists() else None
+        if any(label.is_attack and (label.attack_type != job["attack_type"] or label.level != job["level"])
+               for label in labels):
+            raise ValueError("sidecar metadata differs from requested attack cell")
+        rows, instance_rows, score_cache = [], [], {}
+        timing = {**latency_stats(cycles), **assembly_stats(cycles, cfg),
+                  "p99_budget_ms": cfg["latency"]["p99_budget_ms"],
+                  "measurement_workers": context.get("measurement_workers", 1)}
+        timing["latency_budget_met"] = timing["p99_ms"] < timing["p99_budget_ms"]
+        for name, layers in SUBSETS.items():
+            metrics, instances = attack_metrics(cycles, labels, scoring_cfg, layers,
+                                                 copy_records=False, score_cache=score_cache)
+            if lifecycle is not None:
+                planned = lifecycle["planned_instances"]
+                metrics.update(requested_instances=lifecycle["requested_instances"], scheduled_instances=len(planned),
+                               scheduled_unobserved_instances=sum(not i["emitted"] for i in planned),
+                               unscheduled_no_material_instances=lifecycle["requested_instances"]-len(planned))
+                by_id = {str(i["attack_id"]): i for i in planned}
+                for instance in instances:
+                    schedule = by_id.get(instance["attack_id"])
+                    if schedule:
+                        instance["right_censored"] = schedule["truncated_by_eof"]
+                metrics["right_censored_instances"] = sum(i["right_censored"] for i in instances)
+            status = "ok" if metrics["attack_instances"] else "no_eligible_attack"
+            rows.append({**job, "layers": name, "status": status, **metrics,
+                         "labels_path": str(labels_path), "replay_provenance_scope": provenance_scope, **timing})
+            instance_rows.extend({**job, "layers": name, **instance} for instance in instances)
+        return rows, instance_rows, stream_counts(cycles, source, job)
+    except UnsupportedAttack as exc:
+        return [{**job, "status": "unsupported_provider", "reason": str(exc)}], [], None
+    except (FileNotFoundError, ValueError, RuntimeError, TypeError) as exc:
+        return [{**job, "status": "blocked_integration", "reason": str(exc)}], [], None
 
 
-def deck_claims(cfg, cells, dlay):
-    def level_layer(level, layer):
-        agg = CellResult("ALL", level)
-        for t in TYPES:
-            agg.merge(cells[(t, level)])
-        return layer_detects(agg, layer)
-
-    def auroc_level(level):
-        row = dlay[dlay.level == level]
-        return float(row["auroc_ae"].iloc[0]) if len(row) else float("nan")
-
-    L = ["## Deck (slide 4) claims checked", "",
-         "| claim | supported? | evidence |", "|---|---|---|"]
-    # kinematic plausibility
-    k_a2 = level_layer("A2", "kinematic")
-    k_a3 = level_layer("A3", "kinematic")
-    L.append(f"| kinematic plausibility | partial | catches naive motion (A2 flags {pct(k_a2)} of fabricated "
-             f"object-cycles) but only {pct(k_a3)} at A3, where motion is velocity-consistent; carried then by "
-             "co-location and the RCS band, not range-rate |")
-    # timing signature
-    p_a1 = level_layer("A1", "protocol")
-    p_a2 = level_layer("A2", "protocol")
-    p_a3 = level_layer("A3", "protocol")
-    L.append(f"| timing signature | yes (<=A2) | protocol timing/order flags {pct(p_a1)} (A1) and {pct(p_a2)} (A2) of "
-             f"fabricated object-cycles; at A3 the burst order is replicated and it drops to {pct(p_a3)} |")
-    # RCS vs range consistency
-    r_a3 = cells[("T1", "A3")]
-    r_a4 = cells[("T1", "A4")]
-    band_a3 = r_a3.reason_hits.get("RCS_BAND", 0) / r_a3.fab_objcyc if r_a3.fab_objcyc else 0
-    band_a4 = r_a4.reason_hits.get("RCS_BAND", 0) / r_a4.fab_objcyc if r_a4.fab_objcyc else 0
-    L.append(f"| RCS-vs-range consistency | yes | the range-conditional RCS band flags {pct(band_a3)} of A3 T1 "
-             f"object-cycles (RCS from the marginal) but only {pct(band_a4)} of A4 T1 (RCS sampled per range), which "
-             "is exactly the modelled difference |")
-    # learned autoencoder
-    au3, au4 = auroc_level("A3"), auroc_level("A4")
-    lrn3 = level_layer("A3", "learned")
-    lrn4 = level_layer("A4", "learned")
-    verdict = "weak" if (au4 != au4 or au4 < 0.6) else ("modest" if au4 < 0.75 else "yes")
-    role = ("corroborating only (a learned-only flag never alerts on its own)"
-            if not cfg["fusion"].get("learned_alone", True) else "alerts on its own")
-    L.append(f"| learned-normal autoencoder | {verdict} | AUROC {au3:.2f} (A3) / {au4:.2f} (A4), where 0.5 is chance; it "
-             f"flags {pct(lrn3)} (A3) and {pct(lrn4)} (A4) of fabricated object-cycles. Used as {role}. "
-             "At A4 the realistic forgeries are carried by co-location, not by the autoencoder |")
-    # no labelled attack data
-    L.append("| no labelled attack data needed | yes | every threshold is learned from clean data only; the generator "
-             "and its labels are used solely to measure, never to train or tune the detector |")
-    return L
+def main(argv=None) -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--config", type=Path)
+    parser.add_argument("--output-dir", type=Path, default=REPO_ROOT / "docs" / "results")
+    parser.add_argument("--provider", help="module:function adapter for a contributor's Phase 2 API")
+    parser.add_argument("--split", choices=("all", "timeblock", "loso"), default="all")
+    parser.add_argument("--part", choices=("test", "val"), default="test")
+    parser.add_argument("--workers", type=int)
+    parser.add_argument("--preflight", action="store_true", help="generate availability/provenance without detector runs")
+    args = parser.parse_args(argv)
+    cfg = load_config(args.config)
+    workers = args.workers if args.workers is not None else cfg["eval"]["workers"]
+    if workers < 1 or cfg["eval"]["runs_per_cell"] < 1 or not cfg["attack"]["seeds"]:
+        parser.error("workers/runs must be positive and configured seeds must be nonempty")
+    blockers = []
+    missing = [str(raw_path(cfg, f)) for f in cfg["data"]["files"] if not raw_path(cfg, f).is_file()]
+    if missing:
+        blockers.append("Raw recordings unavailable: " + ", ".join(missing))
+    try:
+        provider_name = check_available(args.provider)
+        phase2 = True
+    except AttackUnavailable as exc:
+        blockers.append(str(exc))
+        provider_name, phase2 = None, False
+    contexts = split_contexts(cfg, args.split, args.part) if not missing else []
+    for context in contexts:
+        context["measurement_workers"] = workers
+    artifacts = [BASELINE_PATH]
+    for context in contexts:
+        artifacts.extend([Path(context["baseline_path"]), MODELS_DIR / f"ae_{context['tag']}.npz",
+                          MODELS_DIR / f"iforest_{context['tag']}.pkl", MODELS_DIR / f"replay_library_{context['tag']}.pkl"])
+    manifest = provenance(cfg, list(dict.fromkeys(artifacts)))
+    manifest.update({"requested_split": args.split, "requested_part": args.part, "workers": workers,
+                     "seeds": cfg["attack"]["seeds"], "runs_per_cell": cfg["eval"]["runs_per_cell"],
+                     "effective_seed_rule": "numpy SeedSequence([configured_seed, run_index]).generate_state(1)[0]",
+                     "phase2_provider": provider_name, "preflight_only": args.preflight,
+                     "split_identities": [{k: ([asdict(s) for s in v] if k in {"train", "val", "test"}
+                                               else str(v) if isinstance(v, Path) else v)
+                                           for k, v in context.items()} for context in contexts], "calibration": {}})
+    for context in contexts:
+        try:
+            baseline = load_baseline(context["baseline_path"])
+            manifest["calibration"][context["tag"]] = {k: v for k, v in baseline.items()
+                                                        if k.startswith(("ae_", "iforest_", "learned_"))
+                                                        or k in {"soft_quantile", "rr_scale", "fusion_mn", "_meta"}}
+        except FileNotFoundError as exc:
+            blockers.append(str(exc))
+    runs, instances, clean, exclusions, clean_payloads, attack_payloads = [], [], [], [], [], []
+    cache_contract = {k: manifest[k] for k in ("configuration_sha256", "recordings", "artifacts", "implementation_sha256")}
+    cache_id = hashlib.sha256(json.dumps(cache_contract, sort_keys=True).encode()).hexdigest()[:20]
+    label_dir = REPO_ROOT / "runs" / "attack_eval" / cache_id
+    manifest["checkpoint_contract_sha256"] = cache_id
+    for context in contexts:
+        for segment in context["test"]:
+            if not args.preflight:
+                clean_payloads.append((cfg, context, segment))
+            for job in attack_jobs(cfg, context, segment):
+                unsupported = support_reason(job["attack_type"], job["level"], job["motion_case"])
+                if unsupported:
+                    runs.append({**job, "status": "unsupported", "reason": unsupported})
+                elif not phase2:
+                    runs.append({**job, "status": "blocked_phase2", "reason": blockers[0] if blockers else "missing provider"})
+                elif args.preflight:
+                    runs.append({**job, "status": "not_executed_preflight"})
+                else:
+                    attack_payloads.append((cfg, context, segment, job, args.provider, label_dir))
+    if missing:
+        runs.append({"status": "blocked_data", "reason": blockers[0]})
+    if workers == 1:
+        clean_results = map(run_clean, clean_payloads)
+        attack_results = map(run_attack, attack_payloads)
+        for rows, counts in clean_results:
+            clean.extend(rows)
+            exclusions.append(counts)
+        started = time.monotonic()
+        for index, (rows, inst, counts) in enumerate(attack_results, 1):
+            runs.extend(rows)
+            instances.extend(inst)
+            if counts:
+                exclusions.append(counts)
+            if index == 1 or index % 25 == 0:
+                print(f"Attack runs {index}/{len(attack_payloads)} ({time.monotonic()-started:.0f}s); "
+                      f"latest status {rows[0]['status']}", flush=True)
+    else:
+        with ProcessPoolExecutor(max_workers=workers) as pool:
+            for rows, counts in pool.map(run_clean, clean_payloads):
+                clean.extend(rows)
+                exclusions.append(counts)
+            started = time.monotonic()
+            for index, (rows, inst, counts) in enumerate(pool.map(run_attack, attack_payloads), 1):
+                runs.extend(rows)
+                instances.extend(inst)
+                if counts:
+                    exclusions.append(counts)
+                if index == 1 or index % 25 == 0:
+                    print(f"Attack runs {index}/{len(attack_payloads)} ({time.monotonic()-started:.0f}s); "
+                          f"latest status {rows[0]['status']}", flush=True)
+    failures = [r for r in clean+runs if str(r.get("status", "")).startswith("blocked")]
+    if any(r.get("status") == "blocked_artifacts_or_data" for r in clean):
+        blockers.append("Some clean segments could not run all detector layers; see per-run reasons.")
+    if any(r.get("status") == "blocked_integration" for r in runs):
+        blockers.append("Some attack runs failed integration or label validation; see per-run reasons.")
+    manifest["blockers"] = list(dict.fromkeys(blockers))
+    summary = write_report(args.output_dir, manifest, runs, instances, clean, exclusions)
+    print(f"Wrote {summary}; attack statuses={dict(Counter(r['status'] for r in runs))}")
+    return 2 if blockers or failures else 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())
