@@ -178,7 +178,9 @@ def main(argv: list[str] | None = None):
         if not results:
             raise ValueError("empty replay clip: selected segment/start contains no cycles")
         # Pacing is a display choice based on learned cadence; it cannot change detector verdicts.
-        period = (float(bval(b, "cadence_lo")) + float(bval(b, "cadence_hi"))) / 2 * cfg["units"]["tick_seconds"]
+        nominal = float(bval(b, "cadence_median")) if "cadence_median" in b else (
+            float(bval(b, "cadence_lo")) + float(bval(b, "cadence_hi"))) / 2
+        period = nominal * cfg["units"]["tick_seconds"]
         if period <= 0:
             raise ValueError("baseline cadence must define a positive display period")
     except (OSError, TypeError, ValueError, RuntimeError) as exc:

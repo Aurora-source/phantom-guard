@@ -10,6 +10,7 @@ import pytest
 from conftest import needs_data
 from phantomguard.attack.injector import AttackedSource, MixedSource
 from phantomguard.attack.scenarios import Instance, ObjPlan, create_attacker, make_context, plan_instance
+from phantomguard.attack.scenarios import plan_run
 from phantomguard.attack.pools import build_pools, stream_pools
 from phantomguard.config import load_baseline, load_config, raw_path
 from phantomguard.detect.pipeline import Detector
@@ -57,7 +58,8 @@ def test_real_source_complete_labels_and_exact_object_join(recorded, tmp_path, m
 
 @needs_data
 @pytest.mark.parametrize("provenance", ["training", "earlier_stream", "unseen"])
-def test_replay_provenance_is_explicit_and_earlier_sources_are_prefix_only(recorded, provenance, monkeypatch):
+@pytest.mark.parametrize("variant", ["exact", "translated"])
+def test_replay_provenance_is_explicit_and_earlier_sources_are_prefix_only(recorded, provenance, variant, monkeypatch):
     cfg, baseline, split, victim = recorded
     source = ReplaySource(raw_path(cfg, victim.file), (victim.lo, victim.hi))
     import phantomguard.attack.pools as pools
@@ -69,7 +71,7 @@ def test_replay_provenance_is_explicit_and_earlier_sources_are_prefix_only(recor
     attacker = create_attacker(cfg, baseline, attack_type="T3", level="A4", seed=22,
                               train_segments=split["train"], replay_provenance=provenance,
                               unseen_segments=[s for s in split["test"] if s.file != victim.file],
-                              motion_case="moving", replay_variant="exact")
+                              motion_case="moving", replay_variant=variant)
     instances = attacker.plan(source)
     if provenance == "earlier_stream":
         assert cuts and all(lo == victim.lo and hi < victim.hi for lo, hi in cuts)
@@ -77,6 +79,7 @@ def test_replay_provenance_is_explicit_and_earlier_sources_are_prefix_only(recor
     else:
         assert not cuts
     assert instances and all(len(i.objects[0].per_cycle) >= cfg["attack"]["T3"]["min_len"] for i in instances)
+    assert all(variant in i.note for i in instances)
 
 
 @needs_data
@@ -149,3 +152,21 @@ def test_naive_attacker_preserves_final_arrival_order_across_headers(recorded, t
                            labels_path=tmp_path / "labels.csv")
     frames = list(source)
     assert all(b.timestamp_ticks >= a.timestamp_ticks for a,b in zip(frames, frames[1:]))
+
+
+def test_scheduler_keeps_configured_clean_gap_and_never_overlaps_t4_overwrites(monkeypatch):
+    import phantomguard.attack.scenarios as scenarios
+    cfg = load_config()
+    cfg["attack"]["instances_per_run"] = 6
+    ctx = SimpleNamespace(cfg=cfg, rng=np.random.default_rng(11))
+    def instance(ctx, atype, aid, c0, cycles, lo):
+        # A live target can start later than the requested anchor.
+        start = c0+50
+        return Instance(aid, atype, "A2", start, start+79,
+                        [ObjPlan(1, True, {c:(3,0,0,0,20) for c in range(start,start+80)})])
+    monkeypatch.setattr(scenarios, "plan_instance", instance)
+    instances = plan_run(ctx, "T4", [], 0, 826)
+    assert instances
+    assert all(b.c0-a.c1-1 >= cfg["attack"]["min_gap_cycles"] for a,b in zip(instances,instances[1:]))
+    cycles = [c for i in instances for o in i.objects for c in o.per_cycle]
+    assert len(cycles) == len(set(cycles))

@@ -229,9 +229,9 @@ def plan_instance(ctx: GenContext, atype: str, attack_id: int, c0: int, base_cyc
         objs = []
         for _ in range(n):
             traj = _object_trajectory(ctx, c0, life, moving)
-            if traj:
+            if len(traj) >= ac["T1"]["life"][0]:
                 objs.append(ObjPlan(_pref_slot(ctx), False, traj))
-        return Instance(attack_id, atype, L.name, c0, c0 + life - 1, objs, f"{'moving' if moving else 'static'} x{n}") if objs else None
+        return Instance(attack_id, atype, L.name, c0, c0 + life - 1, objs, f"{'moving' if moving else 'static'} x{len(objs)}") if objs else None
     if atype == "T2":
         n = int(ctx.rng.integers(ac["T2"]["count"][0], ac["T2"]["count"][1] + 1))
         life = int(ctx.rng.integers(ac["T2"]["life"][0], ac["T2"]["life"][1] + 1))
@@ -244,7 +244,7 @@ def plan_instance(ctx: GenContext, atype: str, attack_id: int, c0: int, base_cyc
             traj = _object_trajectory(ctx, start, ln, moving=moving)
             if traj:
                 objs.append(ObjPlan(_pref_slot(ctx), False, traj))
-        return Instance(attack_id, atype, L.name, c0, c0 + life - 1, objs, f"flood x{n}") if objs else None
+        return Instance(attack_id, atype, L.name, c0, c0 + life - 1, objs, f"flood x{len(objs)}") if len(objs) >= ac["T2"]["count"][0] else None
     if atype == "T3":
         if ctx.replay_provenance == "earlier_stream":
             from phantomguard.attack.pools import stream_pools
@@ -265,8 +265,10 @@ def plan_instance(ctx: GenContext, atype: str, attack_id: int, c0: int, base_cyc
         dx = dy = 0.0
         if translate:  # shift while keeping the copy inside the scene
             for _ in range(20):
-                dx, dy = float(ctx.rng.uniform(-4, 4)), float(ctx.rng.uniform(-4, 4))
-                if ctx.in_scene(seg[0, P_X] + dx, seg[0, P_Y] + dy) and ctx.in_scene(seg[-1, P_X] + dx, seg[-1, P_Y] + dy):
+                tx, ty = ctx.sample_pos_roi()
+                dx = round((tx-seg[0, P_X])/FIELDS["x"].scale)*FIELDS["x"].scale
+                dy = round((ty-seg[0, P_Y])/FIELDS["y"].scale)*FIELDS["y"].scale
+                if (dx or dy) and all(ctx.in_scene(p[P_X]+dx, p[P_Y]+dy) for p in seg):
                     break
             else:
                 return None  # never call an exact copy a translated replay
@@ -274,7 +276,7 @@ def plan_instance(ctx: GenContext, atype: str, attack_id: int, c0: int, base_cyc
         if len(traj) < ac["T3"]["min_len"]:
             return None
         return Instance(attack_id, atype, L.name, c0, max(traj), [ObjPlan(_pref_slot(ctx), False, traj)],
-                        f"replay {'translated' if (dx or dy) else 'exact'} len{len(seg)}")
+                        f"replay {'translated' if (dx or dy) else 'exact'} len{len(traj)}")
     if atype == "T4":
         picked = _pick_live_moving_track(base_cycles, lo, c0, ctx.cfg)
         if picked is None:
@@ -353,12 +355,18 @@ def plan_run(ctx: GenContext, atype: str, base_cycles, lo: int, hi: int) -> list
         return instances
     step = span // (n + 1)
     aid = 0
+    cursor = lo + gap
     for i in range(n):
+        if cursor >= hi - gap:
+            break
         c0 = lo + step * (i + 1) + int(ctx.rng.integers(-gap // 2, gap // 2 + 1))
-        c0 = max(lo + gap, min(c0, hi - gap))
+        c0 = max(cursor, min(c0, hi - gap))
         inst = plan_instance(ctx, atype, aid, c0, base_cycles, lo)
         if inst is not None:
+            active = [c for obj in inst.objects for c in obj.per_cycle]
+            inst.c0, inst.c1 = min(active), max(active)
             instances.append(inst)
+            cursor = inst.c1 + gap + 1
             aid += 1
     return instances
 
@@ -372,7 +380,7 @@ class Attacker:
 
     def plan(self, source):
         lo, hi = source.cycle_range
-        return plan_run(self.context, self.attack_type, source.cycles, lo, hi)
+        return plan_run(self.context, self.attack_type, source.cycles[:hi], lo, hi)
 
 
 def create_attacker(cfg, baseline, *, attack_type, level, seed, train_segments,

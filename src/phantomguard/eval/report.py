@@ -143,6 +143,37 @@ def aggregate_runs(runs: list[dict], instances: list[dict], keys: tuple[str, ...
     return output
 
 
+def deck_evidence(runs: list[dict], clean: list[dict]) -> list[dict]:
+    """Describe measured claim evidence without selecting a model or operating point."""
+    out = []
+    for claim, layer in (("Timing signature", "protocol"), ("Kinematic plausibility", "kinematic"),
+                         ("Replay fingerprints", "replay"), ("Learned normal", "learned")):
+        rows = [r for r in runs if r.get("status") == "ok" and r.get("layers") == layer]
+        rates = []
+        for level in ("A0", "A1", "A2", "A3", "A4"):
+            lr = [r for r in rows if r["level"] == level]
+            n = sum(r["attack_instances"] for r in lr)
+            if n:
+                rates.append(f"{level}: {sum(r['identified_instances'] for r in lr)/n:.1%}")
+        evidence = "measured sensitivity, including misses" if rows else "attack sensitivity unmeasured"
+        if layer == "learned" and rows:
+            values = [r["ae_auroc"] for r in rows if r.get("ae_auroc") is not None]
+            evidence = (f"mean valid per-run AE AUROC {statistics.mean(values):.3f}; " if values else "AUROC unavailable; ")
+            evidence += "corroborating policy adds no incremental boolean alerts"
+        row = {"claim": claim, "evidence": evidence, "direct_instance_identification_by_level": "; ".join(rates) or "unmeasured"}
+        for split in ("timeblock", "loso"):
+            cr = [r for r in clean if r.get("status") == "ok" and r.get("layers") == layer
+                  and r.get("split") == split and r.get("part") == "test"]
+            minutes = sum(r["minutes_exact"] for r in cr)
+            row[f"clean_{split}_alerts_per_minute"] = sum(r["alert_events"] for r in cr)/minutes if minutes else None
+        out.append(row)
+    out += [{"claim": "RCS versus range", "evidence": "population/same-person evidence in rcs_vs_range.md; per-track evidence underpowered",
+             "direct_instance_identification_by_level": "RCS sensitivity not isolated from other physics checks"},
+            {"claim": "No labelled attack data needed", "evidence": "training/calibration provenance and leakage regression tests; labels used only for measurement",
+             "direct_instance_identification_by_level": "not a sensitivity claim"}]
+    return out
+
+
 def write_report(output: Path, manifest: dict, runs: list[dict], instances: list[dict],
                  clean: list[dict], exclusions: list[dict]) -> Path:
     output.mkdir(parents=True, exist_ok=True)
@@ -179,8 +210,9 @@ def write_report(output: Path, manifest: dict, runs: list[dict], instances: list
             alerts = sum(r["alert_events"] for r in rows)
             pooled.append({"split": split, "object_cycles": n, "minutes": minutes,
                            "false_alerts_per_minute": alerts / minutes if minutes else None,
-                           "flagged_per_object_cycle": sum(r["flagged_count"] for r in rows) / n if n else None})
-    lines += [_table(pooled, ("split", "object_cycles", "minutes", "false_alerts_per_minute", "flagged_per_object_cycle"))
+                           "flagged_per_object_cycle": sum(r["flagged_count"] for r in rows) / n if n else None,
+                           "under_1_target_met": alerts/minutes < 1.0 if minutes else False})
+    lines += [_table(pooled, ("split", "object_cycles", "minutes", "false_alerts_per_minute", "flagged_per_object_cycle", "under_1_target_met"))
               if pooled else "Fresh clean rates are unmeasured; blocked checks are not passes.", "",
               "Historical clean results were 4.73 alerts/minute for time-block test and 5.87 for LOSO. "
               "They are historical observations, not targets. The decisions log discloses that test had already been "
@@ -246,6 +278,8 @@ def write_report(output: Path, manifest: dict, runs: list[dict], instances: list
               "The accepted upstream `learned_alone: false` policy makes AE corroborating evidence; standalone "
               "learned alert counts follow that policy, while AUROC measures its raw score. No new attack/test "
               "result selects a model.", "",
+              _table(deck_evidence(runs, clean), ("claim", "evidence", "clean_timeblock_alerts_per_minute",
+                                                 "clean_loso_alerts_per_minute", "direct_instance_identification_by_level")), "",
               "- Kinematic plausibility: windowed radial range rate uses learned `rr_scale` and quantisation-aware "
               "training envelopes. Coordinate units and tick duration remain assumptions. Attack sensitivity is "
               "supported only by successfully completed real provider runs above.",
