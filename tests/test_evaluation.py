@@ -63,6 +63,30 @@ def test_direct_object_detection_and_comparable_auroc():
     assert instances[0]["identified"]
 
 
+def test_reused_run_scores_and_mutable_ablation_match_independent_scoring():
+    cycles, labels = fixture_cycles(object_reasons=("DUP_SLOT",))
+    cfg, cache = load_config(), {}
+    original = [v.alert for c in cycles for v in c.objects]
+    for layers in (("protocol",), ("learned",), ("kinematic",), ("protocol", "learned")):
+        expected = attack_metrics(cycles, labels, cfg, layers)
+        assert [v.alert for c in cycles for v in c.objects] == original
+        actual = attack_metrics(cycles, labels, cfg, layers, copy_records=False, score_cache=cache)
+        assert actual == expected
+        original = [v.alert for c in cycles for v in c.objects]
+
+
+def test_generated_matrix_pools_denominators_instead_of_averaging_rates():
+    from phantomguard.eval.report import aggregate_runs
+    rows = [dict(status="ok", split="timeblock", attack_instances=n, detected_instances=d,
+                 identified_instances=d, forged_object_frames=n, identified_object_frames=d,
+                 undetected_instances=n-d, right_censored_instances=0, p99_ms=1,
+                 latency_budget_met=True, ae_auroc=.7) for n,d in ((1,1),(9,0))]
+    aggregate = aggregate_runs(rows, [], ("split",))[0]
+    assert aggregate["attack_instance_detection_rate"] == .1
+    assert aggregate["object_detection_rate"] == .1
+    assert aggregate["ae_mean_run_auroc"] == .7
+
+
 def test_forged_header_does_not_create_a_forged_object_denominator():
     cycles, labels = fixture_cycles(cycle_reasons=("COUNT_MISMATCH",))
     labels = [AttackLabel(0, True, "h", "T2", "A2")] + [AttackLabel(i, False) for i in (1, 2, 3)]

@@ -11,6 +11,8 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import hashlib
+import time
 from collections import Counter
 from concurrent.futures import ProcessPoolExecutor
 from dataclasses import asdict
@@ -18,7 +20,7 @@ from pathlib import Path
 
 import numpy as np
 
-from phantomguard.config import BASELINE_PATH, REPO_ROOT, load_baseline, load_config, raw_path
+from phantomguard.config import BASELINE_PATH, REPO_ROOT, effective_cfg, load_baseline, load_config, raw_path
 from phantomguard.detect.autoencoder import load_iforest, score_iforest
 from phantomguard.detect.common import LAYERS
 from phantomguard.detect.pipeline import MODELS_DIR, Detector, load_artifacts
@@ -31,6 +33,12 @@ from phantomguard.io.replay import ReplaySource, load_recorded_cycles
 
 SUBSETS = {**{layer: (layer,) for layer in LAYERS}, "all": LAYERS,
            **{f"all-minus-{layer}": tuple(x for x in LAYERS if x != layer) for layer in LAYERS}}
+
+
+def job_seed(seed: int, file: str) -> int:
+    """Compatibility with the accepted evaluator's deterministic per-recording seed API."""
+    import zlib
+    return int(np.random.SeedSequence([seed, zlib.crc32(file.encode())]).generate_state(1)[0])
 
 
 def split_contexts(cfg: dict, selection: str, part: str) -> list[dict]:
@@ -122,14 +130,16 @@ def run_clean(payload):
     identity = job_identity(context, segment)
     try:
         baseline = load_baseline(context["baseline_path"])
+        scoring_cfg = effective_cfg(cfg, baseline)
         source = ReplaySource(raw_path(cfg, segment.file), (segment.lo, segment.hi))
         cycles = detect_stream(cfg, baseline, context["tag"], source)
         timing = {**latency_stats(cycles), **assembly_stats(cycles, cfg),
-                  "p99_budget_ms": cfg["latency"]["p99_budget_ms"]}
+                  "p99_budget_ms": cfg["latency"]["p99_budget_ms"],
+                  "measurement_workers": context.get("measurement_workers", 1)}
         timing["latency_budget_met"] = timing["p99_ms"] < timing["p99_budget_ms"]
         rows = []
         for name, layers in SUBSETS.items():
-            metrics = score(cycles, cfg, layers)
+            metrics = score(cycles, scoring_cfg, layers)
             rows.append({**identity, "layers": name, "status": "ok", **metrics.row(),
                          "minutes_exact": metrics.minutes, "flagged_count": metrics.flagged,
                          "roi_object_cycles": metrics.roi_obj_cycles,
@@ -142,12 +152,28 @@ def run_clean(payload):
 
 
 def run_attack(payload):
+    """Content-addressed checkpoint; changing code/data/artifacts selects a new cache."""
+    job, directory = payload[3], Path(payload[5])
+    digest = hashlib.sha256(json.dumps(job, sort_keys=True).encode()).hexdigest()[:20]
+    path = directory / f"{digest}_result.json"
+    if path.exists():
+        return json.loads(path.read_text(encoding="utf-8"))
+    result = _run_attack(payload)
+    # Retry integration failures; successful and explicitly unsupported outcomes persist.
+    if not any(str(r.get("status", "")).startswith("blocked") for r in result[0]):
+        directory.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(result, allow_nan=False) + "\n", encoding="utf-8")
+    return result
+
+
+def _run_attack(payload):
     cfg, context, segment, job, provider, label_dir = payload
     reason = support_reason(job["attack_type"], job["level"], job["motion_case"])
     if reason:
         return [{**job, "status": "unsupported", "reason": reason}], [], None
     try:
         baseline = load_baseline(context["baseline_path"])
+        scoring_cfg = effective_cfg(cfg, baseline)
         source = ReplaySource(raw_path(cfg, segment.file), (segment.lo, segment.hi))
         from hashlib import sha256
         digest = sha256(json.dumps(job, sort_keys=True).encode()).hexdigest()[:20]
@@ -179,15 +205,30 @@ def run_attack(payload):
             raise ValueError(f"attacker did not write sidecar {labels_path}")
         with labels_path.open(newline="", encoding="utf-8") as stream:
             labels = parse_labels(csv.DictReader(stream))
+        lifecycle_path = labels_path.with_suffix(".instances.json")
+        lifecycle = json.loads(lifecycle_path.read_text(encoding="utf-8")) if lifecycle_path.exists() else None
         if any(label.is_attack and (label.attack_type != job["attack_type"] or label.level != job["level"])
                for label in labels):
             raise ValueError("sidecar metadata differs from requested attack cell")
-        rows, instance_rows = [], []
+        rows, instance_rows, score_cache = [], [], {}
         timing = {**latency_stats(cycles), **assembly_stats(cycles, cfg),
-                  "p99_budget_ms": cfg["latency"]["p99_budget_ms"]}
+                  "p99_budget_ms": cfg["latency"]["p99_budget_ms"],
+                  "measurement_workers": context.get("measurement_workers", 1)}
         timing["latency_budget_met"] = timing["p99_ms"] < timing["p99_budget_ms"]
         for name, layers in SUBSETS.items():
-            metrics, instances = attack_metrics(cycles, labels, cfg, layers)
+            metrics, instances = attack_metrics(cycles, labels, scoring_cfg, layers,
+                                                 copy_records=False, score_cache=score_cache)
+            if lifecycle is not None:
+                planned = lifecycle["planned_instances"]
+                metrics.update(requested_instances=lifecycle["requested_instances"], scheduled_instances=len(planned),
+                               scheduled_unobserved_instances=sum(not i["emitted"] for i in planned),
+                               unscheduled_no_material_instances=lifecycle["requested_instances"]-len(planned))
+                by_id = {str(i["attack_id"]): i for i in planned}
+                for instance in instances:
+                    schedule = by_id.get(instance["attack_id"])
+                    if schedule:
+                        instance["right_censored"] = schedule["truncated_by_eof"]
+                metrics["right_censored_instances"] = sum(i["right_censored"] for i in instances)
             status = "ok" if metrics["attack_instances"] else "no_eligible_attack"
             rows.append({**job, "layers": name, "status": status, **metrics,
                          "labels_path": str(labels_path), "replay_provenance_scope": provenance_scope, **timing})
@@ -224,6 +265,8 @@ def main(argv=None) -> int:
         blockers.append(str(exc))
         provider_name, phase2 = None, False
     contexts = split_contexts(cfg, args.split, args.part) if not missing else []
+    for context in contexts:
+        context["measurement_workers"] = workers
     artifacts = [BASELINE_PATH]
     for context in contexts:
         artifacts.extend([Path(context["baseline_path"]), MODELS_DIR / f"ae_{context['tag']}.npz",
@@ -241,11 +284,14 @@ def main(argv=None) -> int:
             baseline = load_baseline(context["baseline_path"])
             manifest["calibration"][context["tag"]] = {k: v for k, v in baseline.items()
                                                         if k.startswith(("ae_", "iforest_", "learned_"))
-                                                        or k in {"soft_quantile", "rr_scale", "_meta"}}
+                                                        or k in {"soft_quantile", "rr_scale", "fusion_mn", "_meta"}}
         except FileNotFoundError as exc:
             blockers.append(str(exc))
     runs, instances, clean, exclusions, clean_payloads, attack_payloads = [], [], [], [], [], []
-    label_dir = REPO_ROOT / "runs" / "attack_eval"
+    cache_contract = {k: manifest[k] for k in ("configuration_sha256", "recordings", "artifacts", "implementation_sha256")}
+    cache_id = hashlib.sha256(json.dumps(cache_contract, sort_keys=True).encode()).hexdigest()[:20]
+    label_dir = REPO_ROOT / "runs" / "attack_eval" / cache_id
+    manifest["checkpoint_contract_sha256"] = cache_id
     for context in contexts:
         for segment in context["test"]:
             if not args.preflight:
@@ -268,21 +314,29 @@ def main(argv=None) -> int:
         for rows, counts in clean_results:
             clean.extend(rows)
             exclusions.append(counts)
-        for rows, inst, counts in attack_results:
+        started = time.monotonic()
+        for index, (rows, inst, counts) in enumerate(attack_results, 1):
             runs.extend(rows)
             instances.extend(inst)
             if counts:
                 exclusions.append(counts)
+            if index == 1 or index % 25 == 0:
+                print(f"Attack runs {index}/{len(attack_payloads)} ({time.monotonic()-started:.0f}s); "
+                      f"latest status {rows[0]['status']}", flush=True)
     else:
         with ProcessPoolExecutor(max_workers=workers) as pool:
             for rows, counts in pool.map(run_clean, clean_payloads):
                 clean.extend(rows)
                 exclusions.append(counts)
-            for rows, inst, counts in pool.map(run_attack, attack_payloads):
+            started = time.monotonic()
+            for index, (rows, inst, counts) in enumerate(pool.map(run_attack, attack_payloads), 1):
                 runs.extend(rows)
                 instances.extend(inst)
                 if counts:
                     exclusions.append(counts)
+                if index == 1 or index % 25 == 0:
+                    print(f"Attack runs {index}/{len(attack_payloads)} ({time.monotonic()-started:.0f}s); "
+                          f"latest status {rows[0]['status']}", flush=True)
     failures = [r for r in clean+runs if str(r.get("status", "")).startswith("blocked")]
     if any(r.get("status") == "blocked_artifacts_or_data" for r in clean):
         blockers.append("Some clean segments could not run all detector layers; see per-run reasons.")

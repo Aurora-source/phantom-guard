@@ -167,6 +167,20 @@ def test_clean_cli_uses_strict_artifacts_and_exports(demo, local_replay, tmp_pat
     assert any(p.name.endswith("clean_start0_cycles2.gif") for p in out.iterdir())
 
 
+def test_interactive_cli_renders_cycles_and_paces_by_relative_time(demo, local_replay, monkeypatch):
+    import matplotlib.pyplot as plt
+    path, _, _, _, consumed = local_replay
+    pauses = []
+    monkeypatch.setattr(plt, "pause", pauses.append)
+    monkeypatch.setattr(plt, "show", lambda: None)
+    try:
+        demo.main(["--file", str(path)])
+        assert len(consumed) == 4
+        assert len(pauses) == 2 and all(0 < gap <= .034 for gap in pauses)
+    finally:
+        plt.close("all")
+
+
 def test_attack_cli_integrates_source_without_label_leakage(demo, local_replay, monkeypatch, tmp_path):
     path, cfg, baseline, _, consumed = local_replay
     adapter_calls = []

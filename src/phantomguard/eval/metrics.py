@@ -7,7 +7,7 @@ from one detector run.
 from __future__ import annotations
 
 from collections import Counter
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from copy import deepcopy
 from typing import Iterable
 
@@ -226,8 +226,11 @@ def align_labels(cycles: list[LiteCycle], labels: list[AttackLabel]) -> dict[int
     return {label.frame_index: label for label in labels}
 
 
-def apply_layers(cycles: list[LiteCycle], cfg: dict, layers: tuple[str, ...]) -> list[LiteCycle]:
-    out = deepcopy(cycles)
+def apply_layers(cycles: list[LiteCycle], cfg: dict, layers: tuple[str, ...], *, copy_records: bool = True) -> list[LiteCycle]:
+    # Fusion mutates only verdict flags and cycle_alert. Geometry/frame records and
+    # anomaly scores are read-only here; copying their complete trees per ablation
+    # needlessly multiplies memory and runtime on whole-recording LOSO folds.
+    out = [replace(c, objects=[replace(v) for v in c.objects]) for c in cycles] if copy_records else cycles
     fus = Fusion(cfg, layers)
     for cycle in out:
         fus.apply(cycle)
@@ -235,7 +238,8 @@ def apply_layers(cycles: list[LiteCycle], cfg: dict, layers: tuple[str, ...]) ->
 
 
 def attack_metrics(cycles: list[LiteCycle], labels: list[AttackLabel], cfg: dict,
-                   layers: tuple[str, ...]) -> tuple[dict, list[dict]]:
+                   layers: tuple[str, ...], *, copy_records: bool = True,
+                   score_cache: dict | None = None) -> tuple[dict, list[dict]]:
     """Cycle detection and direct forged-frame identification have separate denominators.
 
     An instance is observable from its first to last labelled cycle, inclusive. Any
@@ -245,7 +249,7 @@ def attack_metrics(cycles: list[LiteCycle], labels: list[AttackLabel], cfg: dict
     the rate denominator. Those touching EOF are additionally marked right-censored.
     """
     aligned = align_labels(cycles, labels)
-    scored = apply_layers(cycles, cfg, layers)
+    scored = apply_layers(cycles, cfg, layers, copy_records=copy_records)
     fi_cycle = {f.frame_index: c for c in scored for f in c.frames}
     fi_frame = {f.frame_index: f for c in scored for f in c.frames}
     verdicts = {v.frame_index: v for c in scored for v in c.objects}
@@ -304,6 +308,11 @@ def attack_metrics(cycles: list[LiteCycle], labels: list[AttackLabel], cfg: dict
         vs = [v for v in attacked_objects if v.in_roi and v.moving == (cls == "moving")]
         row[f"{cls}_forged_roi_objects"] = len(vs)
         row[f"{cls}_object_detection_rate"] = float(np.mean([v.alert for v in vs])) if vs else None
+    # Learned scores/labels are identical for every ablation of one emitted run.
+    # The cache belongs to that run only; never reuse it across scenarios/splits.
+    if score_cache:
+        row.update(score_cache)
+        return row, instances
     for model in ("ae", "iforest"):
         vs = [v for v in valid_scores if model in v.scores and np.isfinite(v.scores[model])]
         y = [aligned[v.frame_index].is_attack for v in vs]
@@ -326,4 +335,6 @@ def attack_metrics(cycles: list[LiteCycle], labels: list[AttackLabel], cfg: dict
                 from sklearn.metrics import roc_auc_score
                 row[f"{model}_{cls}_auroc"] = float(roc_auc_score(cy, [v.scores[model] for v in cv]))
                 row[f"{model}_{cls}_auroc_status"] = "ok"
+    if score_cache is not None:
+        score_cache.update({k: v for k, v in row.items() if k.startswith(("ae_", "iforest_"))})
     return row, instances
