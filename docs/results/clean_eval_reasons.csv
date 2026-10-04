@@ -27,7 +27,7 @@ loso,test,onePersonMovingSideToSide.csv,RR_RESID,1,8.804289449819951e-06
 loso,test,multiplePeopleChaotic.csv,ACCEL,3,2.3016372312838533e-05
 loso,test,multiplePeopleChaotic.csv,ARRIVAL,13,9.973761335563364e-05
 loso,test,multiplePeopleChaotic.csv,JUMP,2,1.5344248208559023e-05
-loso,test,multiplePeopleChaotic.csv,LEARNED,65,0.0004986880667781682
+loso,test,multiplePeopleChaotic.csv,LEARNED,55,0.0004219668257353731
 loso,test,multiplePeopleChaotic.csv,RCS_BAND,165,0.0012659004772061194
 loso,test,multiplePeopleChaotic.csv,REPLAY,13,9.973761335563364e-05
 loso,test,multiplePeopleChaotic.csv,RR_RESID,3,2.3016372312838533e-05

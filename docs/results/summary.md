@@ -19,14 +19,14 @@ CPU processing (each segment separately; these p99 values are not pooled):
 
 | split | file | p99_ms | p99_budget_ms | latency_budget_met | assembly_p99_ms |
 |---|---|---|---|---|---|
-| timeblock | emptyRoom.csv | 2.373 | 10 | True | 33.5 |
-| timeblock | onePersonMovingFrontAndBack.csv | 2.257 | 10 | True | 33.6 |
-| timeblock | onePersonMovingSideToSide.csv | 2.427 | 10 | True | 33.5 |
-| timeblock | multiplePeopleChaotic.csv | 2.693 | 10 | True | 33.6 |
-| loso | emptyRoom.csv | 2.411 | 10 | True | 33.5 |
-| loso | onePersonMovingFrontAndBack.csv | 2.318 | 10 | True | 33.6 |
-| loso | onePersonMovingSideToSide.csv | 2.566 | 10 | True | 33.5 |
-| loso | multiplePeopleChaotic.csv | 2.425 | 10 | True | 33.6 |
+| timeblock | emptyRoom.csv | 1.664 | 10 | True | 33.5 |
+| timeblock | onePersonMovingFrontAndBack.csv | 1.791 | 10 | True | 33.6 |
+| timeblock | onePersonMovingSideToSide.csv | 3.458 | 10 | True | 33.5 |
+| timeblock | multiplePeopleChaotic.csv | 3.552 | 10 | True | 33.6 |
+| loso | emptyRoom.csv | 1.68 | 10 | True | 33.5 |
+| loso | onePersonMovingFrontAndBack.csv | 1.725 | 10 | True | 33.6 |
+| loso | onePersonMovingSideToSide.csv | 3.657 | 10 | True | 33.5 |
+| loso | multiplePeopleChaotic.csv | 2.301 | 10 | True | 33.6 |
 
 ## Attack type × level × layer
 
@@ -59,24 +59,24 @@ CPU processing (each segment separately; these p99 values are not pooled):
 | loso | T1 | A2 | learned | 432 | 0 | 0 | unmeasured | unmeasured | unmeasured |
 | loso | T1 | A2 | protocol | 432 | 1 | 0.7675 | 0 | unmeasured | unmeasured |
 | loso | T1 | A2 | replay | 432 | 0 | 0 | unmeasured | unmeasured | unmeasured |
-| loso | T1 | A3 | all | 425 | 0.6776 | 0.3265 | 4 | 0.6986 | 0.714 |
-| loso | T1 | A3 | all-minus-kinematic | 425 | 0.02118 | 0.001091 | 31 | 0.6986 | 0.714 |
-| loso | T1 | A3 | all-minus-learned | 425 | 0.6776 | 0.3265 | 4 | 0.6986 | 0.714 |
-| loso | T1 | A3 | all-minus-protocol | 425 | 0.6776 | 0.3265 | 4 | 0.6986 | 0.714 |
-| loso | T1 | A3 | all-minus-replay | 425 | 0.6706 | 0.3255 | 4 | 0.6986 | 0.714 |
-| loso | T1 | A3 | kinematic | 425 | 0.6706 | 0.3255 | 4 | 0.6986 | 0.714 |
-| loso | T1 | A3 | learned | 425 | 0 | 0 | unmeasured | 0.6986 | 0.714 |
-| loso | T1 | A3 | protocol | 425 | 0.009412 | 0 | 27 | 0.6986 | 0.714 |
-| loso | T1 | A3 | replay | 425 | 0.01176 | 0.001091 | 63 | 0.6986 | 0.714 |
-| loso | T1 | A4 | all | 432 | 0.7778 | 0.3121 | 11.5 | 0.5693 | 0.6512 |
-| loso | T1 | A4 | all-minus-kinematic | 432 | 0.4398 | 0.07322 | 16 | 0.5693 | 0.6512 |
-| loso | T1 | A4 | all-minus-learned | 432 | 0.7778 | 0.3121 | 11.5 | 0.5693 | 0.6512 |
-| loso | T1 | A4 | all-minus-protocol | 432 | 0.7778 | 0.3121 | 11.5 | 0.5693 | 0.6512 |
-| loso | T1 | A4 | all-minus-replay | 432 | 0.5046 | 0.2399 | 4 | 0.5693 | 0.6512 |
-| loso | T1 | A4 | kinematic | 432 | 0.5046 | 0.2399 | 4 | 0.5693 | 0.6512 |
-| loso | T1 | A4 | learned | 432 | 0 | 0 | unmeasured | 0.5693 | 0.6512 |
-| loso | T1 | A4 | protocol | 432 | 0.00463 | 0 | 19.5 | 0.5693 | 0.6512 |
-| loso | T1 | A4 | replay | 432 | 0.4375 | 0.07322 | 16 | 0.5693 | 0.6512 |
+| loso | T1 | A3 | all | 425 | 0.6776 | 0.3265 | 4 | 0.701 | 0.714 |
+| loso | T1 | A3 | all-minus-kinematic | 425 | 0.02118 | 0.001091 | 31 | 0.701 | 0.714 |
+| loso | T1 | A3 | all-minus-learned | 425 | 0.6776 | 0.3265 | 4 | 0.701 | 0.714 |
+| loso | T1 | A3 | all-minus-protocol | 425 | 0.6776 | 0.3265 | 4 | 0.701 | 0.714 |
+| loso | T1 | A3 | all-minus-replay | 425 | 0.6706 | 0.3255 | 4 | 0.701 | 0.714 |
+| loso | T1 | A3 | kinematic | 425 | 0.6706 | 0.3255 | 4 | 0.701 | 0.714 |
+| loso | T1 | A3 | learned | 425 | 0 | 0 | unmeasured | 0.701 | 0.714 |
+| loso | T1 | A3 | protocol | 425 | 0.009412 | 0 | 27 | 0.701 | 0.714 |
+| loso | T1 | A3 | replay | 425 | 0.01176 | 0.001091 | 63 | 0.701 | 0.714 |
+| loso | T1 | A4 | all | 432 | 0.7778 | 0.3121 | 11.5 | 0.57 | 0.6512 |
+| loso | T1 | A4 | all-minus-kinematic | 432 | 0.4398 | 0.07322 | 16 | 0.57 | 0.6512 |
+| loso | T1 | A4 | all-minus-learned | 432 | 0.7778 | 0.3121 | 11.5 | 0.57 | 0.6512 |
+| loso | T1 | A4 | all-minus-protocol | 432 | 0.7778 | 0.3121 | 11.5 | 0.57 | 0.6512 |
+| loso | T1 | A4 | all-minus-replay | 432 | 0.5046 | 0.2399 | 4 | 0.57 | 0.6512 |
+| loso | T1 | A4 | kinematic | 432 | 0.5046 | 0.2399 | 4 | 0.57 | 0.6512 |
+| loso | T1 | A4 | learned | 432 | 0 | 0 | unmeasured | 0.57 | 0.6512 |
+| loso | T1 | A4 | protocol | 432 | 0.00463 | 0 | 19.5 | 0.57 | 0.6512 |
+| loso | T1 | A4 | replay | 432 | 0.4375 | 0.07322 | 16 | 0.57 | 0.6512 |
 | loso | T2 | A0 | all | 432 | 1 | 0.9991 | 0 | unmeasured | unmeasured |
 | loso | T2 | A0 | all-minus-kinematic | 432 | 1 | 0.9991 | 0 | unmeasured | unmeasured |
 | loso | T2 | A0 | all-minus-learned | 432 | 1 | 0.9991 | 0 | unmeasured | unmeasured |
@@ -104,87 +104,87 @@ CPU processing (each segment separately; these p99 values are not pooled):
 | loso | T2 | A2 | learned | 360 | 0 | 0 | unmeasured | 0.9981 | 0.9803 |
 | loso | T2 | A2 | protocol | 360 | 1 | 0.6973 | 0 | 0.9981 | 0.9803 |
 | loso | T2 | A2 | replay | 360 | 0 | 0 | unmeasured | 0.9981 | 0.9803 |
-| loso | T2 | A3 | all | 395 | 0.9975 | 0.352 | 4 | 0.7006 | 0.7187 |
-| loso | T2 | A3 | all-minus-kinematic | 395 | 0.8608 | 0.0002548 | 9 | 0.7006 | 0.7187 |
-| loso | T2 | A3 | all-minus-learned | 395 | 0.9975 | 0.352 | 4 | 0.7006 | 0.7187 |
-| loso | T2 | A3 | all-minus-protocol | 395 | 0.9924 | 0.3519 | 4 | 0.7006 | 0.7187 |
-| loso | T2 | A3 | all-minus-replay | 395 | 0.9975 | 0.3519 | 4 | 0.7006 | 0.7187 |
-| loso | T2 | A3 | kinematic | 395 | 0.9924 | 0.3518 | 4 | 0.7006 | 0.7187 |
-| loso | T2 | A3 | learned | 395 | 0 | 0 | unmeasured | 0.7006 | 0.7187 |
-| loso | T2 | A3 | protocol | 395 | 0.8608 | 0.0001831 | 9 | 0.7006 | 0.7187 |
-| loso | T2 | A3 | replay | 395 | 0.005063 | 7.167e-05 | 20.5 | 0.7006 | 0.7187 |
-| loso | T2 | A4 | all | 396 | 0.9924 | 0.3265 | 4 | 0.5974 | 0.6652 |
-| loso | T2 | A4 | all-minus-kinematic | 396 | 0.9268 | 0.06475 | 9 | 0.5974 | 0.6652 |
-| loso | T2 | A4 | all-minus-learned | 396 | 0.9924 | 0.3265 | 4 | 0.5974 | 0.6652 |
-| loso | T2 | A4 | all-minus-protocol | 396 | 0.9874 | 0.3263 | 5 | 0.5974 | 0.6652 |
-| loso | T2 | A4 | all-minus-replay | 396 | 0.9899 | 0.2654 | 4 | 0.5974 | 0.6652 |
-| loso | T2 | A4 | kinematic | 396 | 0.9823 | 0.2651 | 5 | 0.5974 | 0.6652 |
-| loso | T2 | A4 | learned | 396 | 0 | 0 | unmeasured | 0.5974 | 0.6652 |
-| loso | T2 | A4 | protocol | 396 | 0.8308 | 0.0002355 | 8 | 0.5974 | 0.6652 |
-| loso | T2 | A4 | replay | 396 | 0.4141 | 0.06449 | 16 | 0.5974 | 0.6652 |
-| loso | T3 | A3 | all | 1041 | 0.8453 | 0.4122 | 15 | 0.8998 | 0.9558 |
-| loso | T3 | A3 | all-minus-kinematic | 1041 | 0.6475 | 0.1933 | 16 | 0.8998 | 0.9558 |
-| loso | T3 | A3 | all-minus-learned | 1041 | 0.8453 | 0.4122 | 15 | 0.8998 | 0.9558 |
-| loso | T3 | A3 | all-minus-protocol | 1041 | 0.8453 | 0.4122 | 15 | 0.8998 | 0.9558 |
-| loso | T3 | A3 | all-minus-replay | 1041 | 0.4534 | 0.248 | 4 | 0.8998 | 0.9558 |
-| loso | T3 | A3 | kinematic | 1041 | 0.4534 | 0.248 | 4 | 0.8998 | 0.9558 |
-| loso | T3 | A3 | learned | 1041 | 0 | 0 | unmeasured | 0.8998 | 0.9558 |
-| loso | T3 | A3 | protocol | 1041 | 0 | 0 | unmeasured | 0.8998 | 0.9558 |
-| loso | T3 | A3 | replay | 1041 | 0.6475 | 0.1933 | 16 | 0.8998 | 0.9558 |
-| loso | T3 | A4 | all | 1041 | 0.8453 | 0.4122 | 15 | 0.8998 | 0.9558 |
-| loso | T3 | A4 | all-minus-kinematic | 1041 | 0.6475 | 0.1933 | 16 | 0.8998 | 0.9558 |
-| loso | T3 | A4 | all-minus-learned | 1041 | 0.8453 | 0.4122 | 15 | 0.8998 | 0.9558 |
-| loso | T3 | A4 | all-minus-protocol | 1041 | 0.8453 | 0.4122 | 15 | 0.8998 | 0.9558 |
-| loso | T3 | A4 | all-minus-replay | 1041 | 0.4534 | 0.248 | 4 | 0.8998 | 0.9558 |
-| loso | T3 | A4 | kinematic | 1041 | 0.4534 | 0.248 | 4 | 0.8998 | 0.9558 |
-| loso | T3 | A4 | learned | 1041 | 0 | 0 | unmeasured | 0.8998 | 0.9558 |
-| loso | T3 | A4 | protocol | 1041 | 0 | 0 | unmeasured | 0.8998 | 0.9558 |
-| loso | T3 | A4 | replay | 1041 | 0.6475 | 0.1933 | 16 | 0.8998 | 0.9558 |
-| loso | T4 | A0 | all | 100 | 1 | 1 | 0 | 0.9267 | 0.9502 |
-| loso | T4 | A0 | all-minus-kinematic | 100 | 1 | 1 | 0 | 0.9267 | 0.9502 |
-| loso | T4 | A0 | all-minus-learned | 100 | 1 | 1 | 0 | 0.9267 | 0.9502 |
-| loso | T4 | A0 | all-minus-protocol | 100 | 0.11 | 0 | 17 | 0.9267 | 0.9502 |
-| loso | T4 | A0 | all-minus-replay | 100 | 1 | 1 | 0 | 0.9267 | 0.9502 |
-| loso | T4 | A0 | kinematic | 100 | 0.11 | 0 | 17 | 0.9267 | 0.9502 |
-| loso | T4 | A0 | learned | 100 | 0 | 0 | unmeasured | 0.9267 | 0.9502 |
-| loso | T4 | A0 | protocol | 100 | 1 | 1 | 0 | 0.9267 | 0.9502 |
-| loso | T4 | A0 | replay | 100 | 0 | 0 | unmeasured | 0.9267 | 0.9502 |
-| loso | T4 | A1 | all | 100 | 1 | 1 | 0 | 0.9553 | 0.9663 |
-| loso | T4 | A1 | all-minus-kinematic | 100 | 1 | 1 | 0 | 0.9553 | 0.9663 |
-| loso | T4 | A1 | all-minus-learned | 100 | 1 | 1 | 0 | 0.9553 | 0.9663 |
-| loso | T4 | A1 | all-minus-protocol | 100 | 0.11 | 0 | 17 | 0.9553 | 0.9663 |
-| loso | T4 | A1 | all-minus-replay | 100 | 1 | 1 | 0 | 0.9553 | 0.9663 |
-| loso | T4 | A1 | kinematic | 100 | 0.11 | 0 | 17 | 0.9553 | 0.9663 |
-| loso | T4 | A1 | learned | 100 | 0 | 0 | unmeasured | 0.9553 | 0.9663 |
-| loso | T4 | A1 | protocol | 100 | 1 | 1 | 0 | 0.9553 | 0.9663 |
-| loso | T4 | A1 | replay | 100 | 0 | 0 | unmeasured | 0.9553 | 0.9663 |
-| loso | T4 | A2 | all | 100 | 0.53 | 0.2317 | 16 | 0.9405 | 0.9638 |
-| loso | T4 | A2 | all-minus-kinematic | 100 | 0.44 | 0.09726 | 27 | 0.9405 | 0.9638 |
-| loso | T4 | A2 | all-minus-learned | 100 | 0.53 | 0.2317 | 16 | 0.9405 | 0.9638 |
-| loso | T4 | A2 | all-minus-protocol | 100 | 0.43 | 0.2045 | 14 | 0.9405 | 0.9638 |
-| loso | T4 | A2 | all-minus-replay | 100 | 0.53 | 0.2317 | 16 | 0.9405 | 0.9638 |
-| loso | T4 | A2 | kinematic | 100 | 0.43 | 0.2045 | 14 | 0.9405 | 0.9638 |
-| loso | T4 | A2 | learned | 100 | 0 | 0 | unmeasured | 0.9405 | 0.9638 |
-| loso | T4 | A2 | protocol | 100 | 0.44 | 0.09726 | 27 | 0.9405 | 0.9638 |
-| loso | T4 | A2 | replay | 100 | 0 | 0 | unmeasured | 0.9405 | 0.9638 |
-| loso | T4 | A3 | all | 100 | 0.43 | 0.2045 | 14 | 0.9405 | 0.9638 |
-| loso | T4 | A3 | all-minus-kinematic | 100 | 0 | 0 | unmeasured | 0.9405 | 0.9638 |
-| loso | T4 | A3 | all-minus-learned | 100 | 0.43 | 0.2045 | 14 | 0.9405 | 0.9638 |
-| loso | T4 | A3 | all-minus-protocol | 100 | 0.43 | 0.2045 | 14 | 0.9405 | 0.9638 |
-| loso | T4 | A3 | all-minus-replay | 100 | 0.43 | 0.2045 | 14 | 0.9405 | 0.9638 |
-| loso | T4 | A3 | kinematic | 100 | 0.43 | 0.2045 | 14 | 0.9405 | 0.9638 |
-| loso | T4 | A3 | learned | 100 | 0 | 0 | unmeasured | 0.9405 | 0.9638 |
-| loso | T4 | A3 | protocol | 100 | 0 | 0 | unmeasured | 0.9405 | 0.9638 |
-| loso | T4 | A3 | replay | 100 | 0 | 0 | unmeasured | 0.9405 | 0.9638 |
-| loso | T4 | A4 | all | 100 | 0.43 | 0.2045 | 14 | 0.9405 | 0.9638 |
-| loso | T4 | A4 | all-minus-kinematic | 100 | 0 | 0 | unmeasured | 0.9405 | 0.9638 |
-| loso | T4 | A4 | all-minus-learned | 100 | 0.43 | 0.2045 | 14 | 0.9405 | 0.9638 |
-| loso | T4 | A4 | all-minus-protocol | 100 | 0.43 | 0.2045 | 14 | 0.9405 | 0.9638 |
-| loso | T4 | A4 | all-minus-replay | 100 | 0.43 | 0.2045 | 14 | 0.9405 | 0.9638 |
-| loso | T4 | A4 | kinematic | 100 | 0.43 | 0.2045 | 14 | 0.9405 | 0.9638 |
-| loso | T4 | A4 | learned | 100 | 0 | 0 | unmeasured | 0.9405 | 0.9638 |
-| loso | T4 | A4 | protocol | 100 | 0 | 0 | unmeasured | 0.9405 | 0.9638 |
-| loso | T4 | A4 | replay | 100 | 0 | 0 | unmeasured | 0.9405 | 0.9638 |
+| loso | T2 | A3 | all | 395 | 0.9975 | 0.352 | 4 | 0.7021 | 0.7187 |
+| loso | T2 | A3 | all-minus-kinematic | 395 | 0.8608 | 0.0002548 | 9 | 0.7021 | 0.7187 |
+| loso | T2 | A3 | all-minus-learned | 395 | 0.9975 | 0.352 | 4 | 0.7021 | 0.7187 |
+| loso | T2 | A3 | all-minus-protocol | 395 | 0.9924 | 0.3519 | 4 | 0.7021 | 0.7187 |
+| loso | T2 | A3 | all-minus-replay | 395 | 0.9975 | 0.3519 | 4 | 0.7021 | 0.7187 |
+| loso | T2 | A3 | kinematic | 395 | 0.9924 | 0.3518 | 4 | 0.7021 | 0.7187 |
+| loso | T2 | A3 | learned | 395 | 0 | 0 | unmeasured | 0.7021 | 0.7187 |
+| loso | T2 | A3 | protocol | 395 | 0.8608 | 0.0001831 | 9 | 0.7021 | 0.7187 |
+| loso | T2 | A3 | replay | 395 | 0.005063 | 7.167e-05 | 20.5 | 0.7021 | 0.7187 |
+| loso | T2 | A4 | all | 396 | 0.9924 | 0.3265 | 4 | 0.5977 | 0.6652 |
+| loso | T2 | A4 | all-minus-kinematic | 396 | 0.9268 | 0.06475 | 9 | 0.5977 | 0.6652 |
+| loso | T2 | A4 | all-minus-learned | 396 | 0.9924 | 0.3265 | 4 | 0.5977 | 0.6652 |
+| loso | T2 | A4 | all-minus-protocol | 396 | 0.9874 | 0.3263 | 5 | 0.5977 | 0.6652 |
+| loso | T2 | A4 | all-minus-replay | 396 | 0.9899 | 0.2654 | 4 | 0.5977 | 0.6652 |
+| loso | T2 | A4 | kinematic | 396 | 0.9823 | 0.2651 | 5 | 0.5977 | 0.6652 |
+| loso | T2 | A4 | learned | 396 | 0 | 0 | unmeasured | 0.5977 | 0.6652 |
+| loso | T2 | A4 | protocol | 396 | 0.8308 | 0.0002355 | 8 | 0.5977 | 0.6652 |
+| loso | T2 | A4 | replay | 396 | 0.4141 | 0.06449 | 16 | 0.5977 | 0.6652 |
+| loso | T3 | A3 | all | 1041 | 0.8453 | 0.4122 | 15 | 0.9012 | 0.9558 |
+| loso | T3 | A3 | all-minus-kinematic | 1041 | 0.6475 | 0.1933 | 16 | 0.9012 | 0.9558 |
+| loso | T3 | A3 | all-minus-learned | 1041 | 0.8453 | 0.4122 | 15 | 0.9012 | 0.9558 |
+| loso | T3 | A3 | all-minus-protocol | 1041 | 0.8453 | 0.4122 | 15 | 0.9012 | 0.9558 |
+| loso | T3 | A3 | all-minus-replay | 1041 | 0.4534 | 0.248 | 4 | 0.9012 | 0.9558 |
+| loso | T3 | A3 | kinematic | 1041 | 0.4534 | 0.248 | 4 | 0.9012 | 0.9558 |
+| loso | T3 | A3 | learned | 1041 | 0 | 0 | unmeasured | 0.9012 | 0.9558 |
+| loso | T3 | A3 | protocol | 1041 | 0 | 0 | unmeasured | 0.9012 | 0.9558 |
+| loso | T3 | A3 | replay | 1041 | 0.6475 | 0.1933 | 16 | 0.9012 | 0.9558 |
+| loso | T3 | A4 | all | 1041 | 0.8453 | 0.4122 | 15 | 0.9012 | 0.9558 |
+| loso | T3 | A4 | all-minus-kinematic | 1041 | 0.6475 | 0.1933 | 16 | 0.9012 | 0.9558 |
+| loso | T3 | A4 | all-minus-learned | 1041 | 0.8453 | 0.4122 | 15 | 0.9012 | 0.9558 |
+| loso | T3 | A4 | all-minus-protocol | 1041 | 0.8453 | 0.4122 | 15 | 0.9012 | 0.9558 |
+| loso | T3 | A4 | all-minus-replay | 1041 | 0.4534 | 0.248 | 4 | 0.9012 | 0.9558 |
+| loso | T3 | A4 | kinematic | 1041 | 0.4534 | 0.248 | 4 | 0.9012 | 0.9558 |
+| loso | T3 | A4 | learned | 1041 | 0 | 0 | unmeasured | 0.9012 | 0.9558 |
+| loso | T3 | A4 | protocol | 1041 | 0 | 0 | unmeasured | 0.9012 | 0.9558 |
+| loso | T3 | A4 | replay | 1041 | 0.6475 | 0.1933 | 16 | 0.9012 | 0.9558 |
+| loso | T4 | A0 | all | 100 | 1 | 1 | 0 | 0.9268 | 0.9502 |
+| loso | T4 | A0 | all-minus-kinematic | 100 | 1 | 1 | 0 | 0.9268 | 0.9502 |
+| loso | T4 | A0 | all-minus-learned | 100 | 1 | 1 | 0 | 0.9268 | 0.9502 |
+| loso | T4 | A0 | all-minus-protocol | 100 | 0.11 | 0 | 17 | 0.9268 | 0.9502 |
+| loso | T4 | A0 | all-minus-replay | 100 | 1 | 1 | 0 | 0.9268 | 0.9502 |
+| loso | T4 | A0 | kinematic | 100 | 0.11 | 0 | 17 | 0.9268 | 0.9502 |
+| loso | T4 | A0 | learned | 100 | 0 | 0 | unmeasured | 0.9268 | 0.9502 |
+| loso | T4 | A0 | protocol | 100 | 1 | 1 | 0 | 0.9268 | 0.9502 |
+| loso | T4 | A0 | replay | 100 | 0 | 0 | unmeasured | 0.9268 | 0.9502 |
+| loso | T4 | A1 | all | 100 | 1 | 1 | 0 | 0.9556 | 0.9663 |
+| loso | T4 | A1 | all-minus-kinematic | 100 | 1 | 1 | 0 | 0.9556 | 0.9663 |
+| loso | T4 | A1 | all-minus-learned | 100 | 1 | 1 | 0 | 0.9556 | 0.9663 |
+| loso | T4 | A1 | all-minus-protocol | 100 | 0.11 | 0 | 17 | 0.9556 | 0.9663 |
+| loso | T4 | A1 | all-minus-replay | 100 | 1 | 1 | 0 | 0.9556 | 0.9663 |
+| loso | T4 | A1 | kinematic | 100 | 0.11 | 0 | 17 | 0.9556 | 0.9663 |
+| loso | T4 | A1 | learned | 100 | 0 | 0 | unmeasured | 0.9556 | 0.9663 |
+| loso | T4 | A1 | protocol | 100 | 1 | 1 | 0 | 0.9556 | 0.9663 |
+| loso | T4 | A1 | replay | 100 | 0 | 0 | unmeasured | 0.9556 | 0.9663 |
+| loso | T4 | A2 | all | 100 | 0.53 | 0.2317 | 16 | 0.9421 | 0.9638 |
+| loso | T4 | A2 | all-minus-kinematic | 100 | 0.44 | 0.09726 | 27 | 0.9421 | 0.9638 |
+| loso | T4 | A2 | all-minus-learned | 100 | 0.53 | 0.2317 | 16 | 0.9421 | 0.9638 |
+| loso | T4 | A2 | all-minus-protocol | 100 | 0.43 | 0.2045 | 14 | 0.9421 | 0.9638 |
+| loso | T4 | A2 | all-minus-replay | 100 | 0.53 | 0.2317 | 16 | 0.9421 | 0.9638 |
+| loso | T4 | A2 | kinematic | 100 | 0.43 | 0.2045 | 14 | 0.9421 | 0.9638 |
+| loso | T4 | A2 | learned | 100 | 0 | 0 | unmeasured | 0.9421 | 0.9638 |
+| loso | T4 | A2 | protocol | 100 | 0.44 | 0.09726 | 27 | 0.9421 | 0.9638 |
+| loso | T4 | A2 | replay | 100 | 0 | 0 | unmeasured | 0.9421 | 0.9638 |
+| loso | T4 | A3 | all | 100 | 0.43 | 0.2045 | 14 | 0.9421 | 0.9638 |
+| loso | T4 | A3 | all-minus-kinematic | 100 | 0 | 0 | unmeasured | 0.9421 | 0.9638 |
+| loso | T4 | A3 | all-minus-learned | 100 | 0.43 | 0.2045 | 14 | 0.9421 | 0.9638 |
+| loso | T4 | A3 | all-minus-protocol | 100 | 0.43 | 0.2045 | 14 | 0.9421 | 0.9638 |
+| loso | T4 | A3 | all-minus-replay | 100 | 0.43 | 0.2045 | 14 | 0.9421 | 0.9638 |
+| loso | T4 | A3 | kinematic | 100 | 0.43 | 0.2045 | 14 | 0.9421 | 0.9638 |
+| loso | T4 | A3 | learned | 100 | 0 | 0 | unmeasured | 0.9421 | 0.9638 |
+| loso | T4 | A3 | protocol | 100 | 0 | 0 | unmeasured | 0.9421 | 0.9638 |
+| loso | T4 | A3 | replay | 100 | 0 | 0 | unmeasured | 0.9421 | 0.9638 |
+| loso | T4 | A4 | all | 100 | 0.43 | 0.2045 | 14 | 0.9421 | 0.9638 |
+| loso | T4 | A4 | all-minus-kinematic | 100 | 0 | 0 | unmeasured | 0.9421 | 0.9638 |
+| loso | T4 | A4 | all-minus-learned | 100 | 0.43 | 0.2045 | 14 | 0.9421 | 0.9638 |
+| loso | T4 | A4 | all-minus-protocol | 100 | 0.43 | 0.2045 | 14 | 0.9421 | 0.9638 |
+| loso | T4 | A4 | all-minus-replay | 100 | 0.43 | 0.2045 | 14 | 0.9421 | 0.9638 |
+| loso | T4 | A4 | kinematic | 100 | 0.43 | 0.2045 | 14 | 0.9421 | 0.9638 |
+| loso | T4 | A4 | learned | 100 | 0 | 0 | unmeasured | 0.9421 | 0.9638 |
+| loso | T4 | A4 | protocol | 100 | 0 | 0 | unmeasured | 0.9421 | 0.9638 |
+| loso | T4 | A4 | replay | 100 | 0 | 0 | unmeasured | 0.9421 | 0.9638 |
 | timeblock | T1 | A0 | all | 400 | 1 | 0.9997 | 0 | unmeasured | unmeasured |
 | timeblock | T1 | A0 | all-minus-kinematic | 400 | 1 | 0.9997 | 0 | unmeasured | unmeasured |
 | timeblock | T1 | A0 | all-minus-learned | 400 | 1 | 0.9997 | 0 | unmeasured | unmeasured |
@@ -212,24 +212,24 @@ CPU processing (each segment separately; these p99 values are not pooled):
 | timeblock | T1 | A2 | learned | 398 | 0 | 0 | unmeasured | 0.9983 | 0.8346 |
 | timeblock | T1 | A2 | protocol | 398 | 1 | 0.7681 | 0 | 0.9983 | 0.8346 |
 | timeblock | T1 | A2 | replay | 398 | 0 | 0 | unmeasured | 0.9983 | 0.8346 |
-| timeblock | T1 | A3 | all | 393 | 0.7379 | 0.4228 | 3 | 0.6822 | 0.6968 |
-| timeblock | T1 | A3 | all-minus-kinematic | 393 | 0.01781 | 0.002128 | 42 | 0.6822 | 0.6968 |
-| timeblock | T1 | A3 | all-minus-learned | 393 | 0.7379 | 0.4228 | 3 | 0.6822 | 0.6968 |
-| timeblock | T1 | A3 | all-minus-protocol | 393 | 0.7379 | 0.4228 | 3 | 0.6822 | 0.6968 |
-| timeblock | T1 | A3 | all-minus-replay | 393 | 0.7379 | 0.4227 | 3 | 0.6822 | 0.6968 |
-| timeblock | T1 | A3 | kinematic | 393 | 0.7379 | 0.4227 | 3 | 0.6822 | 0.6968 |
-| timeblock | T1 | A3 | learned | 393 | 0 | 0 | unmeasured | 0.6822 | 0.6968 |
-| timeblock | T1 | A3 | protocol | 393 | 0 | 0 | unmeasured | 0.6822 | 0.6968 |
-| timeblock | T1 | A3 | replay | 393 | 0.01781 | 0.002128 | 42 | 0.6822 | 0.6968 |
-| timeblock | T1 | A4 | all | 419 | 0.8162 | 0.449 | 3 | 0.5506 | 0.626 |
-| timeblock | T1 | A4 | all-minus-kinematic | 419 | 0.4487 | 0.0713 | 15 | 0.5506 | 0.626 |
-| timeblock | T1 | A4 | all-minus-learned | 419 | 0.8162 | 0.449 | 3 | 0.5506 | 0.626 |
-| timeblock | T1 | A4 | all-minus-protocol | 419 | 0.8162 | 0.449 | 3 | 0.5506 | 0.626 |
-| timeblock | T1 | A4 | all-minus-replay | 419 | 0.5943 | 0.3831 | 3 | 0.5506 | 0.626 |
-| timeblock | T1 | A4 | kinematic | 419 | 0.5943 | 0.3831 | 3 | 0.5506 | 0.626 |
-| timeblock | T1 | A4 | learned | 419 | 0 | 0 | unmeasured | 0.5506 | 0.626 |
-| timeblock | T1 | A4 | protocol | 419 | 0 | 0 | unmeasured | 0.5506 | 0.626 |
-| timeblock | T1 | A4 | replay | 419 | 0.4487 | 0.0713 | 15 | 0.5506 | 0.626 |
+| timeblock | T1 | A3 | all | 393 | 0.7379 | 0.4228 | 3 | 0.6823 | 0.6968 |
+| timeblock | T1 | A3 | all-minus-kinematic | 393 | 0.01781 | 0.002128 | 42 | 0.6823 | 0.6968 |
+| timeblock | T1 | A3 | all-minus-learned | 393 | 0.7379 | 0.4228 | 3 | 0.6823 | 0.6968 |
+| timeblock | T1 | A3 | all-minus-protocol | 393 | 0.7379 | 0.4228 | 3 | 0.6823 | 0.6968 |
+| timeblock | T1 | A3 | all-minus-replay | 393 | 0.7379 | 0.4227 | 3 | 0.6823 | 0.6968 |
+| timeblock | T1 | A3 | kinematic | 393 | 0.7379 | 0.4227 | 3 | 0.6823 | 0.6968 |
+| timeblock | T1 | A3 | learned | 393 | 0 | 0 | unmeasured | 0.6823 | 0.6968 |
+| timeblock | T1 | A3 | protocol | 393 | 0 | 0 | unmeasured | 0.6823 | 0.6968 |
+| timeblock | T1 | A3 | replay | 393 | 0.01781 | 0.002128 | 42 | 0.6823 | 0.6968 |
+| timeblock | T1 | A4 | all | 419 | 0.8162 | 0.449 | 3 | 0.5507 | 0.626 |
+| timeblock | T1 | A4 | all-minus-kinematic | 419 | 0.4487 | 0.0713 | 15 | 0.5507 | 0.626 |
+| timeblock | T1 | A4 | all-minus-learned | 419 | 0.8162 | 0.449 | 3 | 0.5507 | 0.626 |
+| timeblock | T1 | A4 | all-minus-protocol | 419 | 0.8162 | 0.449 | 3 | 0.5507 | 0.626 |
+| timeblock | T1 | A4 | all-minus-replay | 419 | 0.5943 | 0.3831 | 3 | 0.5507 | 0.626 |
+| timeblock | T1 | A4 | kinematic | 419 | 0.5943 | 0.3831 | 3 | 0.5507 | 0.626 |
+| timeblock | T1 | A4 | learned | 419 | 0 | 0 | unmeasured | 0.5507 | 0.626 |
+| timeblock | T1 | A4 | protocol | 419 | 0 | 0 | unmeasured | 0.5507 | 0.626 |
+| timeblock | T1 | A4 | replay | 419 | 0.4487 | 0.0713 | 15 | 0.5507 | 0.626 |
 | timeblock | T2 | A0 | all | 432 | 1 | 0.9991 | 0 | unmeasured | unmeasured |
 | timeblock | T2 | A0 | all-minus-kinematic | 432 | 1 | 0.9991 | 0 | unmeasured | unmeasured |
 | timeblock | T2 | A0 | all-minus-learned | 432 | 1 | 0.9991 | 0 | unmeasured | unmeasured |
@@ -366,7 +366,7 @@ AE is fixed for online deployment before attack testing; the isolation forest is
 | Timing signature | measured sensitivity, including misses | 0 | 1.042 | A0: 100.0%; A1: 100.0%; A2: 88.5%; A3: 0.2%; A4: 0.4% |
 | Kinematic plausibility | measured sensitivity, including misses | 1.42 | 2.178 | A0: 23.9%; A1: 4.4%; A2: 10.3%; A3: 61.6%; A4: 57.8% |
 | Replay fingerprints | measured sensitivity, including misses | 0 | 0.1894 | A0: 0.0%; A1: 0.0%; A2: 0.0%; A3: 30.0%; A4: 46.5% |
-| Learned normal | mean valid per-run AE AUROC 0.797; corroborating policy adds no incremental boolean alerts | 0 | 0 | A0: 0.0%; A1: 0.0%; A2: 0.0%; A3: 0.0%; A4: 0.0% |
+| Learned normal | mean valid per-run AE AUROC 0.798; corroborating policy adds no incremental boolean alerts | 0 | 0 | A0: 0.0%; A1: 0.0%; A2: 0.0%; A3: 0.0%; A4: 0.0% |
 | RCS versus range | population/same-person evidence in rcs_vs_range.md; per-track evidence underpowered | unmeasured | unmeasured | RCS sensitivity not isolated from other physics checks |
 | No labelled attack data needed | training/calibration provenance and leakage regression tests; labels used only for measurement | unmeasured | unmeasured | not a sensitivity claim |
 
