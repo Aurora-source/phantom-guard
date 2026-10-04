@@ -28,10 +28,26 @@ def sha256(path: Path) -> str | None:
     return digest.hexdigest()
 
 
+def portable_path(path: Path) -> str:
+    """Path as recorded in manifests: repo-relative POSIX when inside the checkout, else absolute POSIX.
+
+    Absolute, OS-specific paths (e.g. ``D:\\...``) made manifests and the checkpoint cache id depend on
+    the machine and the checkout location.
+    """
+    p = Path(path).resolve()
+    try:
+        return p.relative_to(REPO_ROOT).as_posix()
+    except ValueError:
+        return p.as_posix()
+
+
 def provenance(cfg: dict, artifacts: list[Path]) -> dict:
     def git(*args):
-        proc = subprocess.run(["rtk", "proxy", "git", *args], cwd=REPO_ROOT,
-                              capture_output=True, text=True, check=False)
+        # Plain git; missing git (or no repository) records None instead of crashing the report.
+        try:
+            proc = subprocess.run(["git", *args], cwd=REPO_ROOT, capture_output=True, text=True, check=False)
+        except OSError:
+            return None
         return proc.stdout.strip() if proc.returncode == 0 else None
     packages = {}
     for name in ("numpy", "scipy", "scikit-learn", "torch", "matplotlib", "pandas"):
@@ -47,10 +63,10 @@ def provenance(cfg: dict, artifacts: list[Path]) -> dict:
             "blas_environment": {k: os.environ.get(k) for k in
                                  ("OPENBLAS_NUM_THREADS", "OMP_NUM_THREADS", "MKL_NUM_THREADS")},
             "processing_timer": "perf_counter elapsed time for grouping/decoding and detector CPU work; source I/O excluded",
-            "recordings": [{"file": f, "path": str(raw_path(cfg, f)), "sha256": sha256(raw_path(cfg, f))}
+            "recordings": [{"file": f, "path": portable_path(raw_path(cfg, f)), "sha256": sha256(raw_path(cfg, f))}
                            for f in cfg["data"]["files"]],
-            "artifacts": [{"path": str(p), "sha256": sha256(p), "details": artifact_details(p)} for p in artifacts],
-            "implementation_sha256": {str(p.relative_to(REPO_ROOT)): sha256(p)
+            "artifacts": [{"path": portable_path(p), "sha256": sha256(p), "details": artifact_details(p)} for p in artifacts],
+            "implementation_sha256": {p.relative_to(REPO_ROOT).as_posix(): sha256(p)
                                       for directory in (REPO_ROOT / "src", REPO_ROOT / "scripts", REPO_ROOT / "tools")
                                       for p in sorted(directory.rglob("*.py"))},
             "model_selection": "AE fixed for NumPy online deployment before attack testing; IF is an offline comparator",
