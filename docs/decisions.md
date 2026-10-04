@@ -1,5 +1,94 @@
 # Decisions and data surprises
 
+## Final portable validation (2026-10-05)
+
+- Upstream PR #5 merged at `fc88afe` during validation. Merged it with both
+  histories preserved (`7eb3ec2`), retained its plain-git/relative-path tests and
+  one-argument reporter interface, and moved its Arch guidance into setup-arch.md
+  using the tested Python 3.11 pins. No contributor branch or original worktree changed.
+- Full fixed-code matrix at `7eb3ec2`: 2,411 eligible runs; 198 no-material,
+  55 stable-slot capacity exclusions, 1,296 unsupported T3/A0-A2 requests. Matching
+  checkpoints from twelve workers were resumed with twenty-four after resource
+  sampling (39% CPU and over 10 GiB free on 32 logical CPUs). Per-run concurrency
+  remains recorded. Interrupted/migrating runs are not successful validations.
+- Final code `91a79bb` fixes explicit `--root` provenance when no environment root
+  exists, canonical baseline/sidecar report references, and explicit UTF-8 text
+  ingestion/export. Detector, attacker, features, metrics and thresholds are
+  unchanged. Fresh clean CSVs and all 36 smoke layer results match the full matrix
+  exactly; generated evidence preserves its actual benchmark SHA and records the
+  metadata-only report conversion rather than pretending it ran at another SHA.
+- Final suites: 168 passed, zero skipped on Windows 11/Python 3.11.9 and native
+  Ubuntu 26.04.1 WSL/Python 3.11.16, including normal wheel installations in paths
+  with spaces. Root-only CLI from outside each checkout, import, doctor, PNG/GIF,
+  full clean evaluation, four-cell real attack smoke, browser reset/cancel/session
+  isolation and pinned Python 3.11.17 Debian container checks passed. One WSL PyPI
+  build request timed out; rebuilding the same pinned cached packages offline
+  resolved it. Initial missing-Torch, migration and harness failures remain failures
+  in history; successful retries are identified separately.
+- Clean results: 1.42/min time-block, 3.41/min LOSO. Ablations/reasons implicate
+  genuine RCS/envelope variability and repeated motion, plus cross-scenario
+  protocol/envelope generalization. No held-out threshold tuning follows. The
+  under-one performance criterion remains NOT MET. Worst completed attacked-run
+  processing p99 is 5.41 ms; separate single-worker clean p99 max is 1.98 ms.
+  Assembly p99 remains 33.5-33.6 ms under the assumed tick duration; eighteen
+  completed runs fully evade scene detection. All misses/denominators stay visible.
+- Local private bundle contains all four unchanged CSVs, fifteen artifacts, four
+  fold baselines, portable configuration and required real reports; no environment,
+  credentials or temporary jobs. Payload text metadata is LF while original input
+  bytes and model binaries are unchanged. Exact final checksum/restoration checks
+  and future server instructions are recorded in server-handoff.md. Actual home
+  server deployment, live hardware, Arch, public proxy integration and human
+  usability are not claimed.
+
+## Portable hosted prototype assignment (2026-10-04)
+
+- PR #4 was accepted at upstream `89b182ff5777fe11c1676443085b36a52df0e94c`.
+  Created sibling `phantom-guard-portable-hosted-prototype` on
+  `codex/portable-hosted-prototype` from that SHA. Original main checkout and
+  prior implementation worktree/datasets remain unchanged. Fork main was still
+  `1f5d2ee`; preserve it and publish a new feature branch. Contributor branch
+  `1175a2b` has an in-progress Arch README/report portability correction; inspected
+  read-only, not taken over. The accepted main has no newer detector policy.
+- Owner explicitly expands the old web-UI exclusion with a recorded-data browser
+  prototype. Live capture/hardware and actual home-server deployment remain out
+  of scope. Existing Frame/attacker/detector and label-sidecar contracts are retained.
+- One portable path mechanism anchors to an explicit absolute workspace or editable
+  checkout location, never cwd. CLI overrides environment then YAML/defaults.
+  Normal wheel installation includes decoder v2 and preparation/viewer commands;
+  compatibility tools/scripts delegate. No duplicated decoding formulas or
+  undocumented PYTHONPATH. Runtime excludes Torch/sklearn/pandas; offline extras
+  and CPU training locks are separate. Supported interpreter is explicitly 3.11.
+- `dataset` is an external import source, not another pipeline root. Byte-verified
+  immutable import targets `data/raw`; generated fold baselines stay in processed,
+  models in models, disposable outputs in runs and archives in ignored bundles.
+  Tracked READMEs make empty directories visible; initialization is idempotent.
+- Existing five trained/calibrated bundles pass strict feature/data/split/baseline
+  provenance checks; reuse them. No retraining, calibration or threshold/model
+  selection follows these new held-out evaluations. Fixed 60/20/20 splits cannot
+  be reconfigured into training data. Prior test-inspection disclosure remains.
+- Browser jobs use bounded spawned processes and fresh detector/RNG state. They
+  show causal test-segment verdicts; seeking displays immutable computed outputs.
+  Offline attack generation finalizes ordinary-frame sidecars separately. Browser
+  requests never read labels, train models or claim an attack evaluation rate.
+  Real published report filters retain recording/type/level/seed/run provenance.
+- Windows progress polling exposed a transient sharing violation when atomically
+  replacing JSON snapshots. Bounded retries preserve complete old/new snapshots;
+  the regression explicitly simulates this failure. Cancellation also handles a
+  job-creation request still in flight. Unsupported options have stable values,
+  are disabled in the UI and rejected independently by the API.
+- WSL initially failed mounting its VHD with E_ACCESSDENIED and Docker was stopped.
+  The owner repaired those services; subsequent ordinary calls run Ubuntu 26.04.1
+  WSL and Docker Desktop Linux. System Python is 3.14.4, so validation uses isolated
+  CPython 3.11 instead. Container runtime is pinned Debian/Python 3.11.17, not an
+  Ubuntu image. Native WSL and container checks are reported separately.
+- Initial accepted-source test attempt: 138 passed, one failed because the new
+  environment lacked Torch. CPU Torch installation resolves that dependency.
+  Intermediate migration/UI failures are fixed and are not counted as passing.
+  Latest full suite before the final split regression: 162 passed, no skips.
+  Fresh clean evaluation still gives 1.42/min time-block and 3.41/min LOSO;
+  under-one target is not met. Final clean-clone/evaluation/bundle evidence follows
+  in the generated portability report and server handoff, not invented here.
+
 Dated log of every judgement call and every place the data disagreed with CLAUDE.md.
 Newest entries are appended at the bottom of each day.
 
@@ -400,3 +489,31 @@ No bus, no live capture, no hardware (CLAUDE.md scope).
   the CPU-only PyTorch wheel index, a `uv` fallback when Arch's Python is newer than PyTorch's wheels, and
   case-sensitive recording names. Verified here: the full test suite, the data check one-liner, and
   `run_attack_eval.py --preflight` end to end.
+
+### Latest accepted baseline integration (2026-10-05)
+
+- Accepted upstream `f93f283` changes baseline metadata and generated reports,
+  without changing detector, attacker, features or split policy. Its referenced
+  trained weights are not supplied in Git and do not match any available local
+  bundle. The commit is merged with both histories preserved; source datasets,
+  the original checkout and the prior implementation worktree are unchanged.
+- Preserve the prior compatible artifacts and upstream baseline in ignored local
+  backups. Regenerate offline in the documented baseline -> train -> calibrate
+  order using the unchanged fixed training/validation policy. Re-evaluate this
+  coherent artifact set separately; the earlier full matrix is historical evidence
+  until the new sweep finishes. No held-out result selects weights or thresholds.
+- Canonicalize tracked generated CSV line endings to LF for reproducible restoration
+  on Windows and Linux. CSV field values are unchanged by this normalization.
+  Selected fresh reports live under `docs/results/portable`; root reports retain
+  the accepted upstream evidence and its original provenance.
+- The full regenerated-artifact sweep completed on `e530d8f` with no integration
+  blocker. Fresh clean rates remain 1.42/min and 3.41/min; no policy changed in
+  response. Final metrics, exclusions and evading runs are generated evidence.
+- Remaining CRLF source files in the development worktree differed from tracked
+  LF sources in normal clones. Every difference was verified to be newline-only.
+  Preserve the benchmark's original hashes and record canonical LF hashes in the
+  portability evidence; normalize working source files without altering code.
+- A viewer lookup preferred an existing caller-directory filename over configured
+  raw data. Recording names now resolve under raw data, explicit relative paths
+  under the workspace, and absolute paths remain explicit. Two fixture regressions
+  pass. Detector/attacker/feature/calibration/metric behavior is unchanged.

@@ -1,0 +1,1913 @@
+{
+  "schema": 1,
+  "tested_code_sha": "12e78353c7867ba8f8bbf246a0fa4eda35ec37dd",
+  "integrated_upstream": "f93f283b09649a0d0165bc14e11b202c4572eb37",
+  "initial_base": "89b182ff5777fe11c1676443085b36a52df0e94c",
+  "runtime": {
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "phantomguard": "0.2.0",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1",
+    "PyYAML": "6.0.3",
+    "waitress": "3.0.2",
+    "torch": "2.14.1+cpu",
+    "pandas": "3.0.6",
+    "scikit-learn": "1.9.1",
+    "matplotlib": "3.11.2"
+  },
+  "datasets": [
+    {
+      "file": "emptyRoom.csv",
+      "bytes": 13523660,
+      "sha256": "13fb666d6525e90f42bf823c7a938ee96d5819f5b541a834edda631bf6be2ebc",
+      "columns": [
+        "source_file",
+        "cycle_num",
+        "scan_counter",
+        "meas_counter",
+        "sync_timestamp",
+        "sync_status",
+        "obj_count_header",
+        "obj_count_actual",
+        "slot",
+        "obj_timestamp",
+        "raw_len",
+        "raw_hex",
+        "x_m",
+        "y_m",
+        "range_m",
+        "azimuth_deg",
+        "vx_mps",
+        "vy_mps",
+        "speed_mps",
+        "is_moving",
+        "dyn_prop",
+        "rcs_dbsm"
+      ]
+    },
+    {
+      "file": "onePersonMovingFrontAndBack.csv",
+      "bytes": 11969541,
+      "sha256": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e",
+      "columns": [
+        "source_file",
+        "cycle_num",
+        "scan_counter",
+        "meas_counter",
+        "sync_timestamp",
+        "sync_status",
+        "obj_count_header",
+        "obj_count_actual",
+        "slot",
+        "obj_timestamp",
+        "raw_len",
+        "raw_hex",
+        "x_m",
+        "y_m",
+        "range_m",
+        "azimuth_deg",
+        "vx_mps",
+        "vy_mps",
+        "speed_mps",
+        "is_moving",
+        "dyn_prop",
+        "rcs_dbsm"
+      ]
+    },
+    {
+      "file": "onePersonMovingSideToSide.csv",
+      "bytes": 14556505,
+      "sha256": "04f105a1e412abfe4ce0153d8f2787a9b1ee79aba04a0a362b1d44ad4c2a6340",
+      "columns": [
+        "source_file",
+        "cycle_num",
+        "scan_counter",
+        "meas_counter",
+        "sync_timestamp",
+        "sync_status",
+        "obj_count_header",
+        "obj_count_actual",
+        "slot",
+        "obj_timestamp",
+        "raw_len",
+        "raw_hex",
+        "x_m",
+        "y_m",
+        "range_m",
+        "azimuth_deg",
+        "vx_mps",
+        "vy_mps",
+        "speed_mps",
+        "is_moving",
+        "dyn_prop",
+        "rcs_dbsm"
+      ]
+    },
+    {
+      "file": "multiplePeopleChaotic.csv",
+      "bytes": 16709635,
+      "sha256": "2e08ed3c26c9cb64a5039878b1ef371fc2138ad0aa717efddc2eca1bea952f52",
+      "columns": [
+        "source_file",
+        "cycle_num",
+        "scan_counter",
+        "meas_counter",
+        "sync_timestamp",
+        "sync_status",
+        "obj_count_header",
+        "obj_count_actual",
+        "slot",
+        "obj_timestamp",
+        "raw_len",
+        "raw_hex",
+        "x_m",
+        "y_m",
+        "range_m",
+        "azimuth_deg",
+        "vx_mps",
+        "vy_mps",
+        "speed_mps",
+        "is_moving",
+        "dyn_prop",
+        "rcs_dbsm"
+      ]
+    }
+  ],
+  "artifacts": [
+    {
+      "tag": "timeblock",
+      "ae_artifact_id": "2ad682efc017e2cf96d856772b20db898edd6c1e253947b3df013a671f067115",
+      "library_fingerprints": 3806,
+      "baseline_sha256": "b7f592bad60c25bfa4825c528cbb69d05b76239a5d2f500b755d41c933f82faf",
+      "fusion_mn": [
+        4,
+        6
+      ]
+    },
+    {
+      "tag": "loso_emptyRoom",
+      "ae_artifact_id": "1d42d5146ea16e397a93b9d7e216f917efcfd14a189d55397cf7cb32d65ca5f1",
+      "library_fingerprints": 4698,
+      "baseline_sha256": "a3fbc493c28ecdb86e154692026ef55bf6bd9491c65e06774322e612cd95f719",
+      "fusion_mn": [
+        5,
+        8
+      ]
+    },
+    {
+      "tag": "loso_onePersonMovingFrontAndBack",
+      "ae_artifact_id": "667a9e9168bea46cfd0fd484cd18db05381923f8268bcd1330788736a8f3de90",
+      "library_fingerprints": 4348,
+      "baseline_sha256": "fab4521effeb4cb975d082836fa9918cddb0dee1cfdada54590724821bc94eb7",
+      "fusion_mn": [
+        4,
+        6
+      ]
+    },
+    {
+      "tag": "loso_onePersonMovingSideToSide",
+      "ae_artifact_id": "e8ac7fab1b8dd0295e1b23ee56c54da59d375ff7625c39703cd04e4237f24b27",
+      "library_fingerprints": 3847,
+      "baseline_sha256": "58d5ddd7db0f4c22970c37f440ddd9203bee3910f3a41d8fadcc66234e66d4f0",
+      "fusion_mn": [
+        5,
+        8
+      ]
+    },
+    {
+      "tag": "loso_multiplePeopleChaotic",
+      "ae_artifact_id": "dec99317352832942b7ae3720cba6a7fbaf6d9ffbf0e719f7ca15e059feb598b",
+      "library_fingerprints": 1208,
+      "baseline_sha256": "836a2cbc214b870d9634cfedee2699188d49aecdb4fa23fd1d9a8aff2d7a9f9c",
+      "fusion_mn": [
+        4,
+        6
+      ]
+    }
+  ],
+  "tests": {
+    "windows_worktree": {
+      "tests": "170",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "82.238",
+      "timestamp": "2026-10-05T01:12:57.637534+05:30"
+    },
+    "windows_normal_wheel": {
+      "tests": "170",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "86.712",
+      "timestamp": "2026-10-05T01:13:05.175553+05:30"
+    },
+    "ubuntu_26_04_1_wsl_normal_wheel": {
+      "tests": "170",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "57.585",
+      "timestamp": "2026-10-04T19:43:00.019850+00:00"
+    }
+  },
+  "browser": {
+    "windows": {
+      "ok": true,
+      "url": "http://127.0.0.1:8767",
+      "browser": "Chromium / Playwright 1.58.0",
+      "checks": [
+        "readiness",
+        "clean real replay",
+        "play/pause/step/seek",
+        "reset",
+        "T1/A2 real attack",
+        "unsupported T3/A2 disabled",
+        "generated report filters",
+        "independent browser session",
+        "cancel",
+        "mobile layout"
+      ],
+      "page_errors": [],
+      "screenshots": [
+        "browser-clean.png",
+        "browser-T1-A2.png",
+        "browser-mobile.png"
+      ]
+    },
+    "ubuntu_wsl": {
+      "ok": true,
+      "url": "http://127.0.0.1:8768",
+      "browser": "Chromium / Playwright 1.58.0",
+      "checks": [
+        "readiness",
+        "clean real replay",
+        "play/pause/step/seek",
+        "reset",
+        "T1/A2 real attack",
+        "unsupported T3/A2 disabled",
+        "generated report filters",
+        "independent browser session",
+        "cancel",
+        "mobile layout"
+      ],
+      "page_errors": [],
+      "screenshots": [
+        "browser-clean.png",
+        "browser-T1-A2.png",
+        "browser-mobile.png"
+      ]
+    },
+    "debian_container": {
+      "ok": true,
+      "url": "http://127.0.0.1:8766",
+      "browser": "Chromium / Playwright 1.58.0",
+      "checks": [
+        "readiness",
+        "clean real replay",
+        "play/pause/step/seek",
+        "reset",
+        "T1/A2 real attack",
+        "unsupported T3/A2 disabled",
+        "generated report filters",
+        "independent browser session",
+        "cancel",
+        "mobile layout"
+      ],
+      "page_errors": [],
+      "screenshots": [
+        "browser-clean.png",
+        "browser-T1-A2.png",
+        "browser-mobile.png"
+      ]
+    }
+  },
+  "browser_client": "Windows Chromium / Playwright; APIs: Windows, Ubuntu 26.04.1 WSL and Debian bookworm container",
+  "container": {
+    "ok": true,
+    "missing_models_health_status": 200,
+    "missing_models_readiness_status": 503,
+    "missing_models_errors": [
+      "timeblock: trained artifacts missing: /workspace/models/ae_timeblock.npz, /workspace/models/replay_library_timeblock.pkl; run scripts/train.py; next: restore matching bundle, or offline baseline --loso -> train --loso -> calibrate --loso"
+    ],
+    "normal_readiness": 200,
+    "image_id": "sha256:bc85916abf90f56b175f0ad6ba9c1e58ca76078b7a469ceac78c6435be69cc1d",
+    "read_only_root": true,
+    "read_only_input_mounts": true,
+    "memory_limit_bytes": 2147483648,
+    "cpu_limit": 2,
+    "pids_limit": 64,
+    "stats": {
+      "BlockIO": "19.9MB / 4.1kB",
+      "CPUPerc": "126.85%",
+      "Container": "phantomguard-p31-prototype-1",
+      "ID": "817b3db56201",
+      "MemPerc": "7.06%",
+      "MemUsage": "144.7MiB / 2GiB",
+      "Name": "phantomguard-p31-prototype-1",
+      "NetIO": "16.2kB / 84.4kB",
+      "PIDs": "14"
+    }
+  },
+  "container_api_attacks": {
+    "ok": true,
+    "url": "http://127.0.0.1:8766",
+    "results": [
+      {
+        "request": {
+          "recording": "onePersonMovingFrontAndBack.csv",
+          "attack": "T1",
+          "level": "A2",
+          "seed": 11,
+          "cycles": 600
+        },
+        "state": "complete",
+        "seconds": 9.78099999999904,
+        "provenance": {
+          "source": "recorded sensor replay",
+          "attack": "simulated CAN attack",
+          "part": "test",
+          "segment_lo": 3301,
+          "segment_hi": 4127,
+          "shown_cycles": 600,
+          "seed_rule": "browser uses the selected seed directly; matrix repetitions use SeedSequence",
+          "recording_sha256": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e",
+          "model_artifact_id": "2ad682efc017e2cf96d856772b20db898edd6c1e253947b3df013a671f067115",
+          "baseline_sha256": "b7f592bad60c25bfa4825c528cbb69d05b76239a5d2f500b755d41c933f82faf",
+          "configuration": {
+            "data": {
+              "raw_dir": "data/raw",
+              "processed_dir": "data/processed",
+              "files": [
+                "emptyRoom.csv",
+                "onePersonMovingFrontAndBack.csv",
+                "onePersonMovingSideToSide.csv",
+                "multiplePeopleChaotic.csv"
+              ]
+            },
+            "units": {
+              "tick_seconds": 0.0001
+            },
+            "protocol": {
+              "header_can_id": 1546,
+              "object_can_id": 1547,
+              "header_len": 5,
+              "object_len": 8,
+              "header_status_ok": 1,
+              "cadence_warmup_cycles": 2,
+              "count_margin": 3
+            },
+            "roi": {
+              "max_range": 15.0
+            },
+            "zones": {
+              "near_max_range": 4.0,
+              "mid_max_range": 15.0
+            },
+            "motion": {
+              "moving_threshold_mps": 0.3
+            },
+            "splits": {
+              "train_frac": 0.6,
+              "val_frac": 0.2
+            },
+            "baseline": {
+              "hard_quantile": 0.999,
+              "soft_quantile": 0.99,
+              "margin_ticks": 2
+            },
+            "tracks": {
+              "reassign_jump_default": 1.0,
+              "max_gap_cycles": 1,
+              "min_track_cycles_for_stats": 20
+            },
+            "kinematic": {
+              "window_cycles": 15,
+              "rcs_window_cycles": 15,
+              "min_moving_cycles": 10
+            },
+            "replay": {
+              "k_gram": 12,
+              "disp_quant": 0.2,
+              "vel_quant": 0.25,
+              "min_complexity": 4,
+              "history_cycles": 20000
+            },
+            "learned": {
+              "window_cycles": 10,
+              "hidden": 32,
+              "latent": 6,
+              "epochs": 30,
+              "batch_size": 512,
+              "lr": 0.001,
+              "max_train_seconds": 300,
+              "threshold_quantile": 0.999,
+              "iforest_trees": 200
+            },
+            "fusion": {
+              "m": 3,
+              "n": 5,
+              "mn_candidates": [
+                [
+                  3,
+                  5
+                ],
+                [
+                  4,
+                  6
+                ],
+                [
+                  5,
+                  8
+                ]
+              ],
+              "learned_alone": false
+            },
+            "attack": {
+              "seeds": [
+                11,
+                22,
+                33
+              ],
+              "instances_per_run": 6,
+              "min_gap_cycles": 60,
+              "T1": {
+                "count": [
+                  1,
+                  3
+                ],
+                "life": [
+                  20,
+                  150
+                ]
+              },
+              "T2": {
+                "count": [
+                  10,
+                  30
+                ],
+                "life": [
+                  10,
+                  60
+                ]
+              },
+              "T3": {
+                "min_len": 20,
+                "max_len": 80
+              },
+              "T4": {
+                "life": [
+                  20,
+                  80
+                ],
+                "drift_per_cycle": [
+                  0.02,
+                  0.08
+                ]
+              }
+            },
+            "eval": {
+              "runs_per_cell": 3,
+              "workers": 4
+            },
+            "latency": {
+              "p99_budget_ms": 10.0
+            }
+          },
+          "labels": "complete emitted-test-stream sidecar; never read for playback"
+        },
+        "shown_cycles": 600,
+        "cycle_alerts": 0,
+        "objects": 13689
+      },
+      {
+        "request": {
+          "recording": "onePersonMovingFrontAndBack.csv",
+          "attack": "T2",
+          "level": "A2",
+          "seed": 11,
+          "cycles": 600
+        },
+        "state": "complete",
+        "seconds": 9.609000000000378,
+        "provenance": {
+          "source": "recorded sensor replay",
+          "attack": "simulated CAN attack",
+          "part": "test",
+          "segment_lo": 3301,
+          "segment_hi": 4127,
+          "shown_cycles": 600,
+          "seed_rule": "browser uses the selected seed directly; matrix repetitions use SeedSequence",
+          "recording_sha256": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e",
+          "model_artifact_id": "2ad682efc017e2cf96d856772b20db898edd6c1e253947b3df013a671f067115",
+          "baseline_sha256": "b7f592bad60c25bfa4825c528cbb69d05b76239a5d2f500b755d41c933f82faf",
+          "configuration": {
+            "data": {
+              "raw_dir": "data/raw",
+              "processed_dir": "data/processed",
+              "files": [
+                "emptyRoom.csv",
+                "onePersonMovingFrontAndBack.csv",
+                "onePersonMovingSideToSide.csv",
+                "multiplePeopleChaotic.csv"
+              ]
+            },
+            "units": {
+              "tick_seconds": 0.0001
+            },
+            "protocol": {
+              "header_can_id": 1546,
+              "object_can_id": 1547,
+              "header_len": 5,
+              "object_len": 8,
+              "header_status_ok": 1,
+              "cadence_warmup_cycles": 2,
+              "count_margin": 3
+            },
+            "roi": {
+              "max_range": 15.0
+            },
+            "zones": {
+              "near_max_range": 4.0,
+              "mid_max_range": 15.0
+            },
+            "motion": {
+              "moving_threshold_mps": 0.3
+            },
+            "splits": {
+              "train_frac": 0.6,
+              "val_frac": 0.2
+            },
+            "baseline": {
+              "hard_quantile": 0.999,
+              "soft_quantile": 0.99,
+              "margin_ticks": 2
+            },
+            "tracks": {
+              "reassign_jump_default": 1.0,
+              "max_gap_cycles": 1,
+              "min_track_cycles_for_stats": 20
+            },
+            "kinematic": {
+              "window_cycles": 15,
+              "rcs_window_cycles": 15,
+              "min_moving_cycles": 10
+            },
+            "replay": {
+              "k_gram": 12,
+              "disp_quant": 0.2,
+              "vel_quant": 0.25,
+              "min_complexity": 4,
+              "history_cycles": 20000
+            },
+            "learned": {
+              "window_cycles": 10,
+              "hidden": 32,
+              "latent": 6,
+              "epochs": 30,
+              "batch_size": 512,
+              "lr": 0.001,
+              "max_train_seconds": 300,
+              "threshold_quantile": 0.999,
+              "iforest_trees": 200
+            },
+            "fusion": {
+              "m": 3,
+              "n": 5,
+              "mn_candidates": [
+                [
+                  3,
+                  5
+                ],
+                [
+                  4,
+                  6
+                ],
+                [
+                  5,
+                  8
+                ]
+              ],
+              "learned_alone": false
+            },
+            "attack": {
+              "seeds": [
+                11,
+                22,
+                33
+              ],
+              "instances_per_run": 6,
+              "min_gap_cycles": 60,
+              "T1": {
+                "count": [
+                  1,
+                  3
+                ],
+                "life": [
+                  20,
+                  150
+                ]
+              },
+              "T2": {
+                "count": [
+                  10,
+                  30
+                ],
+                "life": [
+                  10,
+                  60
+                ]
+              },
+              "T3": {
+                "min_len": 20,
+                "max_len": 80
+              },
+              "T4": {
+                "life": [
+                  20,
+                  80
+                ],
+                "drift_per_cycle": [
+                  0.02,
+                  0.08
+                ]
+              }
+            },
+            "eval": {
+              "runs_per_cell": 3,
+              "workers": 4
+            },
+            "latency": {
+              "p99_budget_ms": 10.0
+            }
+          },
+          "labels": "complete emitted-test-stream sidecar; never read for playback"
+        },
+        "shown_cycles": 600,
+        "cycle_alerts": 12,
+        "objects": 14170
+      },
+      {
+        "request": {
+          "recording": "onePersonMovingFrontAndBack.csv",
+          "attack": "T3",
+          "level": "A3",
+          "seed": 11,
+          "cycles": 600
+        },
+        "state": "complete",
+        "seconds": 9.32799999999952,
+        "provenance": {
+          "source": "recorded sensor replay",
+          "attack": "simulated CAN attack",
+          "part": "test",
+          "segment_lo": 3301,
+          "segment_hi": 4127,
+          "shown_cycles": 600,
+          "seed_rule": "browser uses the selected seed directly; matrix repetitions use SeedSequence",
+          "recording_sha256": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e",
+          "model_artifact_id": "2ad682efc017e2cf96d856772b20db898edd6c1e253947b3df013a671f067115",
+          "baseline_sha256": "b7f592bad60c25bfa4825c528cbb69d05b76239a5d2f500b755d41c933f82faf",
+          "configuration": {
+            "data": {
+              "raw_dir": "data/raw",
+              "processed_dir": "data/processed",
+              "files": [
+                "emptyRoom.csv",
+                "onePersonMovingFrontAndBack.csv",
+                "onePersonMovingSideToSide.csv",
+                "multiplePeopleChaotic.csv"
+              ]
+            },
+            "units": {
+              "tick_seconds": 0.0001
+            },
+            "protocol": {
+              "header_can_id": 1546,
+              "object_can_id": 1547,
+              "header_len": 5,
+              "object_len": 8,
+              "header_status_ok": 1,
+              "cadence_warmup_cycles": 2,
+              "count_margin": 3
+            },
+            "roi": {
+              "max_range": 15.0
+            },
+            "zones": {
+              "near_max_range": 4.0,
+              "mid_max_range": 15.0
+            },
+            "motion": {
+              "moving_threshold_mps": 0.3
+            },
+            "splits": {
+              "train_frac": 0.6,
+              "val_frac": 0.2
+            },
+            "baseline": {
+              "hard_quantile": 0.999,
+              "soft_quantile": 0.99,
+              "margin_ticks": 2
+            },
+            "tracks": {
+              "reassign_jump_default": 1.0,
+              "max_gap_cycles": 1,
+              "min_track_cycles_for_stats": 20
+            },
+            "kinematic": {
+              "window_cycles": 15,
+              "rcs_window_cycles": 15,
+              "min_moving_cycles": 10
+            },
+            "replay": {
+              "k_gram": 12,
+              "disp_quant": 0.2,
+              "vel_quant": 0.25,
+              "min_complexity": 4,
+              "history_cycles": 20000
+            },
+            "learned": {
+              "window_cycles": 10,
+              "hidden": 32,
+              "latent": 6,
+              "epochs": 30,
+              "batch_size": 512,
+              "lr": 0.001,
+              "max_train_seconds": 300,
+              "threshold_quantile": 0.999,
+              "iforest_trees": 200
+            },
+            "fusion": {
+              "m": 3,
+              "n": 5,
+              "mn_candidates": [
+                [
+                  3,
+                  5
+                ],
+                [
+                  4,
+                  6
+                ],
+                [
+                  5,
+                  8
+                ]
+              ],
+              "learned_alone": false
+            },
+            "attack": {
+              "seeds": [
+                11,
+                22,
+                33
+              ],
+              "instances_per_run": 6,
+              "min_gap_cycles": 60,
+              "T1": {
+                "count": [
+                  1,
+                  3
+                ],
+                "life": [
+                  20,
+                  150
+                ]
+              },
+              "T2": {
+                "count": [
+                  10,
+                  30
+                ],
+                "life": [
+                  10,
+                  60
+                ]
+              },
+              "T3": {
+                "min_len": 20,
+                "max_len": 80
+              },
+              "T4": {
+                "life": [
+                  20,
+                  80
+                ],
+                "drift_per_cycle": [
+                  0.02,
+                  0.08
+                ]
+              }
+            },
+            "eval": {
+              "runs_per_cell": 3,
+              "workers": 4
+            },
+            "latency": {
+              "p99_budget_ms": 10.0
+            }
+          },
+          "labels": "complete emitted-test-stream sidecar; never read for playback"
+        },
+        "shown_cycles": 600,
+        "cycle_alerts": 0,
+        "objects": 13372
+      },
+      {
+        "request": {
+          "recording": "onePersonMovingFrontAndBack.csv",
+          "attack": "T4",
+          "level": "A3",
+          "seed": 11,
+          "cycles": 600
+        },
+        "state": "complete",
+        "seconds": 9.5,
+        "provenance": {
+          "source": "recorded sensor replay",
+          "attack": "simulated CAN attack",
+          "part": "test",
+          "segment_lo": 3301,
+          "segment_hi": 4127,
+          "shown_cycles": 600,
+          "seed_rule": "browser uses the selected seed directly; matrix repetitions use SeedSequence",
+          "recording_sha256": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e",
+          "model_artifact_id": "2ad682efc017e2cf96d856772b20db898edd6c1e253947b3df013a671f067115",
+          "baseline_sha256": "b7f592bad60c25bfa4825c528cbb69d05b76239a5d2f500b755d41c933f82faf",
+          "configuration": {
+            "data": {
+              "raw_dir": "data/raw",
+              "processed_dir": "data/processed",
+              "files": [
+                "emptyRoom.csv",
+                "onePersonMovingFrontAndBack.csv",
+                "onePersonMovingSideToSide.csv",
+                "multiplePeopleChaotic.csv"
+              ]
+            },
+            "units": {
+              "tick_seconds": 0.0001
+            },
+            "protocol": {
+              "header_can_id": 1546,
+              "object_can_id": 1547,
+              "header_len": 5,
+              "object_len": 8,
+              "header_status_ok": 1,
+              "cadence_warmup_cycles": 2,
+              "count_margin": 3
+            },
+            "roi": {
+              "max_range": 15.0
+            },
+            "zones": {
+              "near_max_range": 4.0,
+              "mid_max_range": 15.0
+            },
+            "motion": {
+              "moving_threshold_mps": 0.3
+            },
+            "splits": {
+              "train_frac": 0.6,
+              "val_frac": 0.2
+            },
+            "baseline": {
+              "hard_quantile": 0.999,
+              "soft_quantile": 0.99,
+              "margin_ticks": 2
+            },
+            "tracks": {
+              "reassign_jump_default": 1.0,
+              "max_gap_cycles": 1,
+              "min_track_cycles_for_stats": 20
+            },
+            "kinematic": {
+              "window_cycles": 15,
+              "rcs_window_cycles": 15,
+              "min_moving_cycles": 10
+            },
+            "replay": {
+              "k_gram": 12,
+              "disp_quant": 0.2,
+              "vel_quant": 0.25,
+              "min_complexity": 4,
+              "history_cycles": 20000
+            },
+            "learned": {
+              "window_cycles": 10,
+              "hidden": 32,
+              "latent": 6,
+              "epochs": 30,
+              "batch_size": 512,
+              "lr": 0.001,
+              "max_train_seconds": 300,
+              "threshold_quantile": 0.999,
+              "iforest_trees": 200
+            },
+            "fusion": {
+              "m": 3,
+              "n": 5,
+              "mn_candidates": [
+                [
+                  3,
+                  5
+                ],
+                [
+                  4,
+                  6
+                ],
+                [
+                  5,
+                  8
+                ]
+              ],
+              "learned_alone": false
+            },
+            "attack": {
+              "seeds": [
+                11,
+                22,
+                33
+              ],
+              "instances_per_run": 6,
+              "min_gap_cycles": 60,
+              "T1": {
+                "count": [
+                  1,
+                  3
+                ],
+                "life": [
+                  20,
+                  150
+                ]
+              },
+              "T2": {
+                "count": [
+                  10,
+                  30
+                ],
+                "life": [
+                  10,
+                  60
+                ]
+              },
+              "T3": {
+                "min_len": 20,
+                "max_len": 80
+              },
+              "T4": {
+                "life": [
+                  20,
+                  80
+                ],
+                "drift_per_cycle": [
+                  0.02,
+                  0.08
+                ]
+              }
+            },
+            "eval": {
+              "runs_per_cell": 3,
+              "workers": 4
+            },
+            "latency": {
+              "p99_budget_ms": 10.0
+            }
+          },
+          "labels": "complete emitted-test-stream sidecar; never read for playback"
+        },
+        "shown_cycles": 600,
+        "cycle_alerts": 0,
+        "objects": 13218
+      }
+    ]
+  },
+  "commands": [
+    {
+      "argv": [
+        "-m",
+        "pytest",
+        "-q",
+        "--junitxml=D:\\Hacksprint\\phantom-guard-portable-hosted-prototype\\runs\\current-validation\\windows-tests.xml"
+      ],
+      "exit_code": 0,
+      "seconds": 56.61000000000058
+    },
+    {
+      "argv": [
+        "-m",
+        "phantomguard",
+        "clean-eval",
+        "--workers",
+        "1",
+        "--output-dir",
+        "D:\\Hacksprint\\phantom-guard-portable-hosted-prototype\\runs\\current-validation"
+      ],
+      "exit_code": 0,
+      "seconds": 47.375
+    },
+    {
+      "argv": [
+        "-m",
+        "phantomguard",
+        "attack-eval",
+        "--workers",
+        "24",
+        "--output-dir",
+        "D:\\Hacksprint\\phantom-guard-portable-hosted-prototype\\runs\\current-validation"
+      ],
+      "exit_code": 0,
+      "seconds": 1987.3279999999995
+    }
+  ],
+  "preparation": [
+    {
+      "argv": [
+        "D:\\Hacksprint\\phantom-guard-portable-hosted-prototype\\.venv\\Scripts\\python.exe",
+        "-m",
+        "phantomguard",
+        "baseline",
+        "--loso"
+      ],
+      "exit_code": 0,
+      "seconds": 29.686999999999898
+    },
+    {
+      "argv": [
+        "D:\\Hacksprint\\phantom-guard-portable-hosted-prototype\\.venv\\Scripts\\python.exe",
+        "-m",
+        "phantomguard",
+        "train",
+        "--loso"
+      ],
+      "exit_code": 0,
+      "seconds": 70.46900000000096
+    },
+    {
+      "argv": [
+        "D:\\Hacksprint\\phantom-guard-portable-hosted-prototype\\.venv\\Scripts\\python.exe",
+        "-m",
+        "phantomguard",
+        "calibrate",
+        "--loso"
+      ],
+      "exit_code": 0,
+      "seconds": 131.88999999999942
+    }
+  ],
+  "normal_wheel_windows_commands": [
+    {
+      "argv": [
+        "D:\\Hacksprint\\Phantom Guard clean Windows v2\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pip",
+        "install",
+        "--no-deps",
+        "--force-reinstall",
+        "."
+      ],
+      "seconds": 7.484999999998763,
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "D:\\Hacksprint\\Phantom Guard clean Windows v2\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "--junitxml=runs/windows-current-tests.xml"
+      ],
+      "seconds": 88.23400000000038,
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "D:\\Hacksprint\\Phantom Guard clean Windows v2\\.venv\\Scripts\\python.exe",
+        "-m",
+        "phantomguard",
+        "doctor",
+        "--full"
+      ],
+      "seconds": 1.5630000000001019,
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "D:\\Hacksprint\\Phantom Guard clean Windows v2\\.venv\\Scripts\\python.exe",
+        "-m",
+        "phantomguard",
+        "attack-eval",
+        "--root",
+        "D:\\Hacksprint\\Phantom Guard clean Windows v2",
+        "--smoke",
+        "--workers",
+        "1",
+        "--output-dir",
+        "runs/current-root-smoke"
+      ],
+      "seconds": 24.843000000000757,
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "D:\\Hacksprint\\Phantom Guard clean Windows v2\\.venv\\Scripts\\python.exe",
+        "-m",
+        "phantomguard",
+        "replay",
+        "--file",
+        "onePersonMovingFrontAndBack.csv",
+        "--cycles",
+        "150",
+        "--gif-cycles",
+        "40",
+        "--export",
+        "--output-dir",
+        "runs/current-replay/clean"
+      ],
+      "seconds": 5.57799999999952,
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "D:\\Hacksprint\\Phantom Guard clean Windows v2\\.venv\\Scripts\\python.exe",
+        "-m",
+        "phantomguard",
+        "replay",
+        "--file",
+        "onePersonMovingFrontAndBack.csv",
+        "--attack",
+        "T1",
+        "--level",
+        "A2",
+        "--seed",
+        "11",
+        "--cycles",
+        "150",
+        "--gif-cycles",
+        "40",
+        "--export",
+        "--output-dir",
+        "runs/current-replay/attack"
+      ],
+      "seconds": 10.5,
+      "exit_code": 0
+    }
+  ],
+  "single_worker_latency": {
+    "tested_code_sha": "e530d8f41dfd1fac75623907c1a5dc5f4b3ab2b7",
+    "workers": 1,
+    "seconds": 42.79600000000028,
+    "rows": [
+      {
+        "split": "timeblock",
+        "part": "test",
+        "fold": "timeblock",
+        "file": "emptyRoom.csv",
+        "segment_lo": 3502,
+        "segment_hi": 4378,
+        "tag": "timeblock",
+        "layers": "all",
+        "status": "ok",
+        "cycles": 876,
+        "minutes": 0.484,
+        "object_cycles": 20838,
+        "fp_rate_flagged": 0.0,
+        "fp_rate_flagged_roi_static": 0.0,
+        "fp_rate_flagged_roi_moving": 0.0,
+        "fp_rate_alerting": 0.0,
+        "alert_events": 0,
+        "alerts_per_minute": 0.0,
+        "minutes_exact": 0.48418833333333333,
+        "flagged_count": 0,
+        "roi_object_cycles": 8442,
+        "roi_moving_object_cycles": 0,
+        "out_of_roi_object_cycles": 12396,
+        "p50_ms": 1.015499996356084,
+        "p99_ms": 1.7438999984733528,
+        "max_ms": 65.08450000546873,
+        "n": 876,
+        "detector_p99_ms": 1.5538749998995627,
+        "assembly_cpu_p99_ms": 0.24244999985967297,
+        "assembly_n": 875,
+        "assembly_eof_unmeasured": 1,
+        "assembly_p50_ms": 33.2,
+        "assembly_p99_ms": 33.5,
+        "p99_budget_ms": 10.0,
+        "measurement_workers": 1,
+        "latency_budget_met": true
+      },
+      {
+        "split": "timeblock",
+        "part": "test",
+        "fold": "timeblock",
+        "file": "onePersonMovingFrontAndBack.csv",
+        "segment_lo": 3301,
+        "segment_hi": 4127,
+        "tag": "timeblock",
+        "layers": "all",
+        "status": "ok",
+        "cycles": 826,
+        "minutes": 0.457,
+        "object_cycles": 18355,
+        "fp_rate_flagged": 0.0014165077635521655,
+        "fp_rate_flagged_roi_static": 0.0009818360333824251,
+        "fp_rate_flagged_roi_moving": 0.03665987780040733,
+        "fp_rate_alerting": 0.001089621356578589,
+        "alert_events": 2,
+        "alerts_per_minute": 4.380713180105721,
+        "minutes_exact": 0.4565466666666667,
+        "flagged_count": 26,
+        "roi_object_cycles": 8639,
+        "roi_moving_object_cycles": 491,
+        "out_of_roi_object_cycles": 9716,
+        "p50_ms": 1.0349499989388278,
+        "p99_ms": 1.7230999997082108,
+        "max_ms": 66.88459999531915,
+        "n": 826,
+        "detector_p99_ms": 1.5471250003429304,
+        "assembly_cpu_p99_ms": 0.23165000402514124,
+        "assembly_n": 825,
+        "assembly_eof_unmeasured": 1,
+        "assembly_p50_ms": 33.2,
+        "assembly_p99_ms": 33.6,
+        "p99_budget_ms": 10.0,
+        "measurement_workers": 1,
+        "latency_budget_met": true
+      },
+      {
+        "split": "timeblock",
+        "part": "test",
+        "fold": "timeblock",
+        "file": "onePersonMovingSideToSide.csv",
+        "segment_lo": 3994,
+        "segment_hi": 4993,
+        "tag": "timeblock",
+        "layers": "all",
+        "status": "ok",
+        "cycles": 999,
+        "minutes": 0.552,
+        "object_cycles": 21862,
+        "fp_rate_flagged": 0.0,
+        "fp_rate_flagged_roi_static": 0.0,
+        "fp_rate_flagged_roi_moving": 0.0,
+        "fp_rate_alerting": 0.0,
+        "alert_events": 0,
+        "alerts_per_minute": 0.0,
+        "minutes_exact": 0.5522933333333333,
+        "flagged_count": 0,
+        "roi_object_cycles": 10773,
+        "roi_moving_object_cycles": 373,
+        "out_of_roi_object_cycles": 11089,
+        "p50_ms": 1.0448000011820113,
+        "p99_ms": 1.741018003631325,
+        "max_ms": 69.18209999821556,
+        "n": 999,
+        "detector_p99_ms": 1.5441599999030584,
+        "assembly_cpu_p99_ms": 0.2168100045673782,
+        "assembly_n": 998,
+        "assembly_eof_unmeasured": 1,
+        "assembly_p50_ms": 33.2,
+        "assembly_p99_ms": 33.5,
+        "p99_budget_ms": 10.0,
+        "measurement_workers": 1,
+        "latency_budget_met": true
+      },
+      {
+        "split": "timeblock",
+        "part": "test",
+        "fold": "timeblock",
+        "file": "multiplePeopleChaotic.csv",
+        "segment_lo": 4477,
+        "segment_hi": 5597,
+        "tag": "timeblock",
+        "layers": "all",
+        "status": "ok",
+        "cycles": 1120,
+        "minutes": 0.619,
+        "object_cycles": 27159,
+        "fp_rate_flagged": 0.00033138186236606647,
+        "fp_rate_flagged_roi_static": 8.028904054596547e-05,
+        "fp_rate_flagged_roi_moving": 0.009501187648456057,
+        "fp_rate_alerting": 0.00018410103464781472,
+        "alert_events": 1,
+        "alerts_per_minute": 1.6148088739130315,
+        "minutes_exact": 0.6192683333333334,
+        "flagged_count": 9,
+        "roi_object_cycles": 13297,
+        "roi_moving_object_cycles": 842,
+        "out_of_roi_object_cycles": 13862,
+        "p50_ms": 1.0619499980748515,
+        "p99_ms": 1.9679360009467914,
+        "max_ms": 77.68729999588686,
+        "n": 1120,
+        "detector_p99_ms": 1.7402429995490794,
+        "assembly_cpu_p99_ms": 0.26702900251621026,
+        "assembly_n": 1119,
+        "assembly_eof_unmeasured": 1,
+        "assembly_p50_ms": 33.2,
+        "assembly_p99_ms": 33.6,
+        "p99_budget_ms": 10.0,
+        "measurement_workers": 1,
+        "latency_budget_met": true
+      },
+      {
+        "split": "loso",
+        "part": "test",
+        "fold": "emptyRoom.csv",
+        "file": "emptyRoom.csv",
+        "segment_lo": 0,
+        "segment_hi": 4378,
+        "tag": "loso_emptyRoom",
+        "layers": "all",
+        "status": "ok",
+        "cycles": 4378,
+        "minutes": 2.421,
+        "object_cycles": 105377,
+        "fp_rate_flagged": 2.8469210548791484e-05,
+        "fp_rate_flagged_roi_static": 6.905123601712471e-05,
+        "fp_rate_flagged_roi_moving": 0.0,
+        "fp_rate_alerting": 0.0,
+        "alert_events": 0,
+        "alerts_per_minute": 0.0,
+        "minutes_exact": 2.421116666666667,
+        "flagged_count": 3,
+        "roi_object_cycles": 43447,
+        "roi_moving_object_cycles": 1,
+        "out_of_roi_object_cycles": 61930,
+        "p50_ms": 0.9049000009326846,
+        "p99_ms": 1.6865190040152789,
+        "max_ms": 121.33249999533291,
+        "n": 4378,
+        "detector_p99_ms": 1.471605001133865,
+        "assembly_cpu_p99_ms": 0.22653799904219316,
+        "assembly_n": 4377,
+        "assembly_eof_unmeasured": 1,
+        "assembly_p50_ms": 33.2,
+        "assembly_p99_ms": 33.5,
+        "p99_budget_ms": 10.0,
+        "measurement_workers": 1,
+        "latency_budget_met": true
+      },
+      {
+        "split": "loso",
+        "part": "test",
+        "fold": "onePersonMovingFrontAndBack.csv",
+        "file": "onePersonMovingFrontAndBack.csv",
+        "segment_lo": 0,
+        "segment_hi": 4127,
+        "tag": "loso_onePersonMovingFrontAndBack",
+        "layers": "all",
+        "status": "ok",
+        "cycles": 4127,
+        "minutes": 2.282,
+        "object_cycles": 93424,
+        "fp_rate_flagged": 0.0002354855283438945,
+        "fp_rate_flagged_roi_static": 9.688748940293084e-05,
+        "fp_rate_flagged_roi_moving": 0.01232394366197183,
+        "fp_rate_alerting": 0.00016055831477992808,
+        "alert_events": 4,
+        "alerts_per_minute": 1.7526794086459674,
+        "minutes_exact": 2.28222,
+        "flagged_count": 22,
+        "roi_object_cycles": 42421,
+        "roi_moving_object_cycles": 1136,
+        "out_of_roi_object_cycles": 51003,
+        "p50_ms": 0.8626999988337047,
+        "p99_ms": 1.608050003778771,
+        "max_ms": 118.15419999948062,
+        "n": 4127,
+        "detector_p99_ms": 1.4038399994024073,
+        "assembly_cpu_p99_ms": 0.23257399418071142,
+        "assembly_n": 4126,
+        "assembly_eof_unmeasured": 1,
+        "assembly_p50_ms": 33.2,
+        "assembly_p99_ms": 33.6,
+        "p99_budget_ms": 10.0,
+        "measurement_workers": 1,
+        "latency_budget_met": true
+      },
+      {
+        "split": "loso",
+        "part": "test",
+        "fold": "onePersonMovingSideToSide.csv",
+        "file": "onePersonMovingSideToSide.csv",
+        "segment_lo": 0,
+        "segment_hi": 4993,
+        "tag": "loso_onePersonMovingSideToSide",
+        "layers": "all",
+        "status": "ok",
+        "cycles": 4993,
+        "minutes": 2.762,
+        "object_cycles": 113581,
+        "fp_rate_flagged": 9.684718394801947e-05,
+        "fp_rate_flagged_roi_static": 0.0,
+        "fp_rate_flagged_roi_moving": 0.008921330089213302,
+        "fp_rate_alerting": 4.402144724909976e-05,
+        "alert_events": 2,
+        "alerts_per_minute": 0.7241514152332491,
+        "minutes_exact": 2.7618533333333337,
+        "flagged_count": 11,
+        "roi_object_cycles": 53534,
+        "roi_moving_object_cycles": 1233,
+        "out_of_roi_object_cycles": 60047,
+        "p50_ms": 0.9144999985437607,
+        "p99_ms": 1.7384359985589977,
+        "max_ms": 133.13970000126574,
+        "n": 4993,
+        "detector_p99_ms": 1.5348879998055054,
+        "assembly_cpu_p99_ms": 0.22680799062072765,
+        "assembly_n": 4992,
+        "assembly_eof_unmeasured": 1,
+        "assembly_p50_ms": 33.2,
+        "assembly_p99_ms": 33.5,
+        "p99_budget_ms": 10.0,
+        "measurement_workers": 1,
+        "latency_budget_met": true
+      },
+      {
+        "split": "loso",
+        "part": "test",
+        "fold": "multiplePeopleChaotic.csv",
+        "file": "multiplePeopleChaotic.csv",
+        "segment_lo": 0,
+        "segment_hi": 5597,
+        "tag": "loso_multiplePeopleChaotic",
+        "layers": "all",
+        "status": "ok",
+        "cycles": 5597,
+        "minutes": 3.096,
+        "object_cycles": 130342,
+        "fp_rate_flagged": 0.0015958018136901383,
+        "fp_rate_flagged_roi_static": 0.0016172506738544475,
+        "fp_rate_flagged_roi_moving": 0.02548918640576725,
+        "fp_rate_alerting": 0.0007211796658022741,
+        "alert_events": 30,
+        "alerts_per_minute": 9.689588644663406,
+        "minutes_exact": 3.0961066666666666,
+        "flagged_count": 208,
+        "roi_object_cycles": 63244,
+        "roi_moving_object_cycles": 3884,
+        "out_of_roi_object_cycles": 67098,
+        "p50_ms": 0.9156000014627352,
+        "p99_ms": 1.7065840055147417,
+        "max_ms": 141.35580000038317,
+        "n": 5597,
+        "detector_p99_ms": 1.4902120002079755,
+        "assembly_cpu_p99_ms": 0.232516002288321,
+        "assembly_n": 5596,
+        "assembly_eof_unmeasured": 1,
+        "assembly_p50_ms": 33.2,
+        "assembly_p99_ms": 33.6,
+        "p99_budget_ms": 10.0,
+        "measurement_workers": 1,
+        "latency_budget_met": true
+      }
+    ],
+    "exclusions": [
+      {
+        "split": "timeblock",
+        "part": "test",
+        "fold": "timeblock",
+        "file": "emptyRoom.csv",
+        "segment_lo": 3502,
+        "segment_hi": 4378,
+        "tag": "timeblock",
+        "status": "ok",
+        "load_report_scope": "full recording; segment counts separately below",
+        "rows": 105377,
+        "cycles": 4378,
+        "malformed_rows": 0,
+        "short_frames": 0,
+        "raw_len_mismatch": 0,
+        "duplicate_rows": 0,
+        "cycles_without_header": 0,
+        "header_count_mismatch": 0,
+        "non_monotonic_timestamps": 0,
+        "notes": [],
+        "emitted_frames": 21714,
+        "decoded_objects": 20838,
+        "malformed_object_attempts": 0,
+        "emitted_bad_id_frames": 0,
+        "emitted_short_headers": 0,
+        "emitted_missing_header_cycles": 0,
+        "emitted_count_mismatch_cycles": 0,
+        "emitted_duplicate_slot_object_frames": 0,
+        "emitted_range_order_object_frames": 0,
+        "emitted_burst_gap_object_frames": 0,
+        "out_of_roi_objects": 12396,
+        "score_outcomes": "{\"ae:available\": 8207, \"ae:insufficient_history\": 154, \"ae:outside_roi\": 12396, \"ae:track_gap\": 81, \"iforest:insufficient_history\": 154, \"iforest:ok\": 8207, \"iforest:outside_roi\": 12396, \"iforest:track_gap\": 81}",
+        "layer_status": "{\"kinematic\": \"active\", \"learned\": \"active\", \"protocol\": \"active\", \"replay\": \"active\"}"
+      },
+      {
+        "split": "timeblock",
+        "part": "test",
+        "fold": "timeblock",
+        "file": "onePersonMovingFrontAndBack.csv",
+        "segment_lo": 3301,
+        "segment_hi": 4127,
+        "tag": "timeblock",
+        "status": "ok",
+        "load_report_scope": "full recording; segment counts separately below",
+        "rows": 93424,
+        "cycles": 4127,
+        "malformed_rows": 0,
+        "short_frames": 0,
+        "raw_len_mismatch": 0,
+        "duplicate_rows": 0,
+        "cycles_without_header": 0,
+        "header_count_mismatch": 0,
+        "non_monotonic_timestamps": 0,
+        "notes": [],
+        "emitted_frames": 19181,
+        "decoded_objects": 18355,
+        "malformed_object_attempts": 0,
+        "emitted_bad_id_frames": 0,
+        "emitted_short_headers": 0,
+        "emitted_missing_header_cycles": 0,
+        "emitted_count_mismatch_cycles": 0,
+        "emitted_duplicate_slot_object_frames": 0,
+        "emitted_range_order_object_frames": 0,
+        "emitted_burst_gap_object_frames": 0,
+        "out_of_roi_objects": 9716,
+        "score_outcomes": "{\"ae:available\": 7342, \"ae:insufficient_history\": 1090, \"ae:outside_roi\": 9716, \"ae:track_gap\": 207, \"iforest:insufficient_history\": 1090, \"iforest:ok\": 7342, \"iforest:outside_roi\": 9716, \"iforest:track_gap\": 207}",
+        "layer_status": "{\"kinematic\": \"active\", \"learned\": \"active\", \"protocol\": \"active\", \"replay\": \"active\"}"
+      },
+      {
+        "split": "timeblock",
+        "part": "test",
+        "fold": "timeblock",
+        "file": "onePersonMovingSideToSide.csv",
+        "segment_lo": 3994,
+        "segment_hi": 4993,
+        "tag": "timeblock",
+        "status": "ok",
+        "load_report_scope": "full recording; segment counts separately below",
+        "rows": 113581,
+        "cycles": 4993,
+        "malformed_rows": 0,
+        "short_frames": 0,
+        "raw_len_mismatch": 0,
+        "duplicate_rows": 0,
+        "cycles_without_header": 0,
+        "header_count_mismatch": 0,
+        "non_monotonic_timestamps": 0,
+        "notes": [],
+        "emitted_frames": 22861,
+        "decoded_objects": 21862,
+        "malformed_object_attempts": 0,
+        "emitted_bad_id_frames": 0,
+        "emitted_short_headers": 0,
+        "emitted_missing_header_cycles": 0,
+        "emitted_count_mismatch_cycles": 0,
+        "emitted_duplicate_slot_object_frames": 0,
+        "emitted_range_order_object_frames": 0,
+        "emitted_burst_gap_object_frames": 0,
+        "out_of_roi_objects": 11089,
+        "score_outcomes": "{\"ae:available\": 9634, \"ae:insufficient_history\": 811, \"ae:outside_roi\": 11269, \"ae:track_gap\": 148, \"iforest:insufficient_history\": 811, \"iforest:ok\": 9634, \"iforest:outside_roi\": 11269, \"iforest:track_gap\": 148}",
+        "layer_status": "{\"kinematic\": \"active\", \"learned\": \"active\", \"protocol\": \"active\", \"replay\": \"active\"}"
+      },
+      {
+        "split": "timeblock",
+        "part": "test",
+        "fold": "timeblock",
+        "file": "multiplePeopleChaotic.csv",
+        "segment_lo": 4477,
+        "segment_hi": 5597,
+        "tag": "timeblock",
+        "status": "ok",
+        "load_report_scope": "full recording; segment counts separately below",
+        "rows": 130342,
+        "cycles": 5597,
+        "malformed_rows": 0,
+        "short_frames": 0,
+        "raw_len_mismatch": 0,
+        "duplicate_rows": 0,
+        "cycles_without_header": 0,
+        "header_count_mismatch": 0,
+        "non_monotonic_timestamps": 0,
+        "notes": [],
+        "emitted_frames": 28279,
+        "decoded_objects": 27159,
+        "malformed_object_attempts": 0,
+        "emitted_bad_id_frames": 0,
+        "emitted_short_headers": 0,
+        "emitted_missing_header_cycles": 0,
+        "emitted_count_mismatch_cycles": 0,
+        "emitted_duplicate_slot_object_frames": 0,
+        "emitted_range_order_object_frames": 0,
+        "emitted_burst_gap_object_frames": 0,
+        "out_of_roi_objects": 13862,
+        "score_outcomes": "{\"ae:available\": 11252, \"ae:insufficient_history\": 1684, \"ae:outside_roi\": 13917, \"ae:track_gap\": 306, \"iforest:insufficient_history\": 1684, \"iforest:ok\": 11252, \"iforest:outside_roi\": 13917, \"iforest:track_gap\": 306}",
+        "layer_status": "{\"kinematic\": \"active\", \"learned\": \"active\", \"protocol\": \"active\", \"replay\": \"active\"}"
+      },
+      {
+        "split": "loso",
+        "part": "test",
+        "fold": "emptyRoom.csv",
+        "file": "emptyRoom.csv",
+        "segment_lo": 0,
+        "segment_hi": 4378,
+        "tag": "loso_emptyRoom",
+        "status": "ok",
+        "load_report_scope": "full recording; segment counts separately below",
+        "rows": 105377,
+        "cycles": 4378,
+        "malformed_rows": 0,
+        "short_frames": 0,
+        "raw_len_mismatch": 0,
+        "duplicate_rows": 0,
+        "cycles_without_header": 0,
+        "header_count_mismatch": 0,
+        "non_monotonic_timestamps": 0,
+        "notes": [],
+        "emitted_frames": 109755,
+        "decoded_objects": 105377,
+        "malformed_object_attempts": 0,
+        "emitted_bad_id_frames": 0,
+        "emitted_short_headers": 0,
+        "emitted_missing_header_cycles": 0,
+        "emitted_count_mismatch_cycles": 0,
+        "emitted_duplicate_slot_object_frames": 0,
+        "emitted_range_order_object_frames": 0,
+        "emitted_burst_gap_object_frames": 0,
+        "out_of_roi_objects": 61930,
+        "score_outcomes": "{\"ae:available\": 43086, \"ae:insufficient_history\": 193, \"ae:outside_roi\": 61930, \"ae:track_gap\": 168, \"iforest:insufficient_history\": 193, \"iforest:ok\": 43086, \"iforest:outside_roi\": 61930, \"iforest:track_gap\": 168}",
+        "layer_status": "{\"kinematic\": \"active\", \"learned\": \"active\", \"protocol\": \"active\", \"replay\": \"active\"}"
+      },
+      {
+        "split": "loso",
+        "part": "test",
+        "fold": "onePersonMovingFrontAndBack.csv",
+        "file": "onePersonMovingFrontAndBack.csv",
+        "segment_lo": 0,
+        "segment_hi": 4127,
+        "tag": "loso_onePersonMovingFrontAndBack",
+        "status": "ok",
+        "load_report_scope": "full recording; segment counts separately below",
+        "rows": 93424,
+        "cycles": 4127,
+        "malformed_rows": 0,
+        "short_frames": 0,
+        "raw_len_mismatch": 0,
+        "duplicate_rows": 0,
+        "cycles_without_header": 0,
+        "header_count_mismatch": 0,
+        "non_monotonic_timestamps": 0,
+        "notes": [],
+        "emitted_frames": 97551,
+        "decoded_objects": 93424,
+        "malformed_object_attempts": 0,
+        "emitted_bad_id_frames": 0,
+        "emitted_short_headers": 0,
+        "emitted_missing_header_cycles": 0,
+        "emitted_count_mismatch_cycles": 0,
+        "emitted_duplicate_slot_object_frames": 0,
+        "emitted_range_order_object_frames": 0,
+        "emitted_burst_gap_object_frames": 0,
+        "out_of_roi_objects": 51003,
+        "score_outcomes": "{\"ae:available\": 36273, \"ae:insufficient_history\": 5078, \"ae:outside_roi\": 51022, \"ae:track_gap\": 1051, \"iforest:insufficient_history\": 5078, \"iforest:ok\": 36273, \"iforest:outside_roi\": 51022, \"iforest:track_gap\": 1051}",
+        "layer_status": "{\"kinematic\": \"active\", \"learned\": \"active\", \"protocol\": \"active\", \"replay\": \"active\"}"
+      },
+      {
+        "split": "loso",
+        "part": "test",
+        "fold": "onePersonMovingSideToSide.csv",
+        "file": "onePersonMovingSideToSide.csv",
+        "segment_lo": 0,
+        "segment_hi": 4993,
+        "tag": "loso_onePersonMovingSideToSide",
+        "status": "ok",
+        "load_report_scope": "full recording; segment counts separately below",
+        "rows": 113581,
+        "cycles": 4993,
+        "malformed_rows": 0,
+        "short_frames": 0,
+        "raw_len_mismatch": 0,
+        "duplicate_rows": 0,
+        "cycles_without_header": 0,
+        "header_count_mismatch": 0,
+        "non_monotonic_timestamps": 0,
+        "notes": [],
+        "emitted_frames": 118574,
+        "decoded_objects": 113581,
+        "malformed_object_attempts": 0,
+        "emitted_bad_id_frames": 0,
+        "emitted_short_headers": 0,
+        "emitted_missing_header_cycles": 0,
+        "emitted_count_mismatch_cycles": 0,
+        "emitted_duplicate_slot_object_frames": 0,
+        "emitted_range_order_object_frames": 0,
+        "emitted_burst_gap_object_frames": 0,
+        "out_of_roi_objects": 60047,
+        "score_outcomes": "{\"ae:available\": 47730, \"ae:insufficient_history\": 3652, \"ae:outside_roi\": 61436, \"ae:track_gap\": 763, \"iforest:insufficient_history\": 3652, \"iforest:ok\": 47730, \"iforest:outside_roi\": 61436, \"iforest:track_gap\": 763}",
+        "layer_status": "{\"kinematic\": \"active\", \"learned\": \"active\", \"protocol\": \"active\", \"replay\": \"active\"}"
+      },
+      {
+        "split": "loso",
+        "part": "test",
+        "fold": "multiplePeopleChaotic.csv",
+        "file": "multiplePeopleChaotic.csv",
+        "segment_lo": 0,
+        "segment_hi": 5597,
+        "tag": "loso_multiplePeopleChaotic",
+        "status": "ok",
+        "load_report_scope": "full recording; segment counts separately below",
+        "rows": 130342,
+        "cycles": 5597,
+        "malformed_rows": 0,
+        "short_frames": 0,
+        "raw_len_mismatch": 0,
+        "duplicate_rows": 0,
+        "cycles_without_header": 0,
+        "header_count_mismatch": 0,
+        "non_monotonic_timestamps": 0,
+        "notes": [],
+        "emitted_frames": 135939,
+        "decoded_objects": 130342,
+        "malformed_object_attempts": 0,
+        "emitted_bad_id_frames": 0,
+        "emitted_short_headers": 0,
+        "emitted_missing_header_cycles": 0,
+        "emitted_count_mismatch_cycles": 0,
+        "emitted_duplicate_slot_object_frames": 0,
+        "emitted_range_order_object_frames": 0,
+        "emitted_burst_gap_object_frames": 0,
+        "out_of_roi_objects": 67098,
+        "score_outcomes": "{\"ae:available\": 53119, \"ae:insufficient_history\": 7807, \"ae:outside_roi\": 67869, \"ae:track_gap\": 1547, \"iforest:insufficient_history\": 7807, \"iforest:ok\": 53119, \"iforest:outside_roi\": 67869, \"iforest:track_gap\": 1547}",
+        "layer_status": "{\"kinematic\": \"active\", \"learned\": \"active\", \"protocol\": \"active\", \"replay\": \"active\"}"
+      }
+    ],
+    "scope": "all four time-block test recordings and four LOSO test folds; after full matrix, with no other validation jobs running"
+  },
+  "windows_interactive": {
+    "ok": true,
+    "windows": [
+      {
+        "backend": "TkAgg",
+        "event_loop_closed_by_timer": true
+      },
+      {
+        "backend": "TkAgg",
+        "event_loop_closed_by_timer": true
+      }
+    ],
+    "human_review": false
+  },
+  "fresh_matrix_manifest": "portable/attack_eval_manifest.json",
+  "source_line_endings": "Full sweep used remaining CRLF worktree source files; normal clones use tracked LF. Source bytes are identical after newline normalization. Original manifest hashes are preserved.",
+  "implementation_lf_sha256": {
+    "scripts/calibrate.py": "ca4b8e432c44b30a68c33e0b9c60efdc67c6ec43a835149293555e59c6d9540d",
+    "scripts/learn_baseline.py": "3731aa6fe44ad815d6d28edde97539d85fdf2a9236bad4f842ccaf1f413a3f6e",
+    "scripts/replay_demo.py": "0b3c7955a92b8eb70e42f07c6fe2f6bb1aa0c8cd848adcaf40836b0e431c158b",
+    "scripts/run_attack_eval.py": "0af4e2efc3b8749e6189180aaf3a4dcd44782eabb10c3e6ebbaa83490a33c557",
+    "scripts/run_clean_eval.py": "30b2c763cdb1c3fc79f3003d89b4f2d2c86b51a2d17aa94e7f22e6baffaab609",
+    "scripts/train.py": "d2689c63eaea0effa95ea66e5d82ece5d1b3d1a315af922a720e0426574b83f2",
+    "src/phantomguard/__init__.py": "4fc157c774ec93b28a20321683a2c2d165959956c92a9286a8cb72d474ea96e6",
+    "src/phantomguard/__main__.py": "2bfd49629cbeaf34d1d53eadbeccb267fa3bb3fe4dc9e5b08bff0bcb6d1e47e1",
+    "src/phantomguard/attack/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/phantomguard/attack/injector.py": "ce42b3dc23293bb5595761e26d1f0d04860ea2543509c4ecf5bd64514dae68a4",
+    "src/phantomguard/attack/levels.py": "87bce9e12b43e42b09ddee0fb5e0b716adc32b00c568ded290becc963a13ab83",
+    "src/phantomguard/attack/pools.py": "0dc39b825972c89c0e680db2cd3e3b3e1ebc9204bdb29571a19666dde667d500",
+    "src/phantomguard/attack/scenarios.py": "af87b078de32339c7dd03b0549e9baac3fd3445af944642743c3ad9cc9a53da3",
+    "src/phantomguard/bundle.py": "e495e54ea20e5bdf420fd29d8b2869f346b9b5eae1da49c02b214a398c2216f6",
+    "src/phantomguard/cli.py": "9c01f7ccf70276ed9130095d3b56e359294e8678631583799bbd73069d62d28b",
+    "src/phantomguard/commands/__init__.py": "e4e2ad55a1d041aca2dd6267b168915e1af031b89c37af086c4de4b622fbebc3",
+    "src/phantomguard/commands/calibrate.py": "9ccfb021f8a4d2dfc63a33488185d2541e3f4a094af9b3663419228cbb066f71",
+    "src/phantomguard/commands/learn_baseline.py": "71d312e38e621c1d14c2938a1d973397e266d0aeecb475bf7a46d4a188eeaae6",
+    "src/phantomguard/commands/replay_demo.py": "6afe83bea359d20ecb1e05b54af30a9fbc839daec2c88d2ad10dbba6e2f62509",
+    "src/phantomguard/commands/run_attack_eval.py": "0ac47d3209dff1271788c2ff487ef9c652e4c630a1ebfa2829eb23f12306eb04",
+    "src/phantomguard/commands/run_clean_eval.py": "e5064fc6fab69e069b15371b69d78e7adae646ea2030c5e46e9f6e09b7bc52df",
+    "src/phantomguard/commands/train.py": "ce991b9771730a707499b53214522900738d44ca87f579cea04434f73da450a8",
+    "src/phantomguard/config.py": "432830149a25b5ce9be1275ffb3880a2be44236290583ffd894d3d58beb1933d",
+    "src/phantomguard/cycles.py": "d973a83cee1ccf63ae1747be464894439ef651193cf1d3009b68f85f3ec304b1",
+    "src/phantomguard/decoder.py": "7284c213abd7041e5788e0b90f8e7f5639628552c89e1d78e3cf7f0e91513a9a",
+    "src/phantomguard/detect/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/phantomguard/detect/autoencoder.py": "05294ce01035e0edf58ee04001bb6d54ed1e0063ded409c40c66f7c96a5f8b04",
+    "src/phantomguard/detect/common.py": "21d290571bb5e45a970ef2cfb86e8d77f204e6082cb06b8440f05cf6e27c634d",
+    "src/phantomguard/detect/fusion.py": "1fe49d5bc69cb919063889701525b0f453cfbc2ddb329e8484cb106feb48a9d5",
+    "src/phantomguard/detect/kinematic.py": "980cae16f2fc6e5c2b84b4fcc1877daf4fa6dcba33dc0c43af33af4754757635",
+    "src/phantomguard/detect/pipeline.py": "eca6957a4b78a15392a2e57a10fae0a3a9b1a782b6b48621912c8a14eafd58a7",
+    "src/phantomguard/detect/protocol.py": "7e82fad7270ce5f9a56f2def7cacc32238e7ec2cd7f5ce19524c03b162942f50",
+    "src/phantomguard/detect/replay_fp.py": "666b9fe47f4e6096b546ab83858c7cedd055268b0218cf1d6418e401e78623e1",
+    "src/phantomguard/eval/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/phantomguard/eval/attack_adapter.py": "2af4a5bf2295c05a11f354b772655db41cb4a286cf3c2cb8cd136be122ffbe35",
+    "src/phantomguard/eval/metrics.py": "f3f394f4c924bfc1af0ccc6298b994cd73febad1aacc29ec10505294e27b8a87",
+    "src/phantomguard/eval/report.py": "1f240397dcac3dbd8e04b41eb439ff0d77b9ab51e94f6c35b858698238e92e41",
+    "src/phantomguard/eval/splits.py": "53cd3836e7c561191817eb80a4e2ee202a86be7cb64993bacc5b99b27c96c6a5",
+    "src/phantomguard/frames.py": "fd5e33b4ed874a8bc973bb92406eb17595c530412b2711cedb3c2605ad7a6ae7",
+    "src/phantomguard/io/__init__.py": "785e661930bf3fd0c51b2071b1f7f690d6dadb22edc4234c406f1a1d9bbd260b",
+    "src/phantomguard/io/live.py": "c64562fcbd63c5e32b205a817261b39b5321db24933aab2937bbf3f3b5d8952e",
+    "src/phantomguard/io/replay.py": "c0b9d46b8d615ba9f97dff22d13f12a53e179c2807751e9de5b43d5a3e0b1afe",
+    "src/phantomguard/io/source.py": "865f11bcc5af5bf30179ac048e630734523ac22fcd0a26fc444c9a6f2547bd58",
+    "src/phantomguard/paths.py": "6c25b8345f3e4d3c267385a5e2fa038217fc0b7e6b831dc59540b17a82397e7e",
+    "src/phantomguard/resources/__init__.py": "8642d4c9741c982325f5758ab3dd1147739b54f7c2aa82f520ec07cd173439b5",
+    "src/phantomguard/stats/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/phantomguard/stats/baseline.py": "8c610c914081cddf12549f1a41cac349db9d0e7ec39b0a729e5ee9956d0607f4",
+    "src/phantomguard/tracks.py": "bdd836f5cbd3be4a1d174ff5be0fa47152812fd92111ab1e3bd712b942cd706e",
+    "src/phantomguard/viz/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/phantomguard/viz/console.py": "3d7c3686661f924aa42d705efe0aedd154b33192d4c4d5877af3765f99198111",
+    "src/phantomguard/web/__init__.py": "a4a060a74be5ddfdeda75f77e20e23bacc278153370611988b42a2850fc82a1e",
+    "src/phantomguard/web/api.py": "3fbd56d7d33e1e0335801365c2133d68ca7a54d97b72bf8f9914a61d7275ca36",
+    "src/phantomguard/web/jobs.py": "910c2a0d39dfd581f749cefb4c71c5ed5771a4155fe21fb3f4133888f355183f",
+    "src/phantomguard/workspace.py": "9798513d86bc8e19b531085c816520fe1a8fd5c2ea2855f688b64ab4f07fa01c",
+    "tools/check_browser.py": "7ce1f069c61f71a32d4985280d5bf6131ad3b182e5fa77dc8909c1fdc94416e1",
+    "tools/decode.py": "012a17675e9401bc0569a22a0ce05e5196f2c289f82e50e9d30aa2be924f7b02"
+  },
+  "artifact_preparation": "Offline baseline -> train -> calibrate for all five bundles, fixed permitted train/validation policy; no held-out model/threshold selection",
+  "prior_evidence": "Earlier 7eb3ec2/91a79bb sweep preserved in Git history; current matrix uses the new matching artifacts and 24 one-BLAS-thread workers.",
+  "limitations": [
+    "Clean under-1 alert/min target not met",
+    "Actual home server not deployed/tested",
+    "Ubuntu ran under WSL2; container is Debian bookworm",
+    "No native Linux desktop browser or human usability review",
+    "Arch and hosted CI not run in this assignment",
+    "Coordinate/tick/header assumptions unverified on hardware"
+  ],
+  "benchmark_code_sha": "e530d8f41dfd1fac75623907c1a5dc5f4b3ab2b7",
+  "post_viewer_fix": {
+    "changed_source_files": [
+      "src/phantomguard/commands/replay_demo.py",
+      "src/phantomguard/paths.py"
+    ],
+    "existing_path_ast_identical": true,
+    "scoring_source_lf_hashes_unchanged": true,
+    "smoke_equivalence": {
+      "windows": {
+        "matching_layer_rows": 36,
+        "fields": [
+          "attack_instances",
+          "detected_instances",
+          "identified_instances",
+          "undetected_instances",
+          "right_censored_instances",
+          "forged_object_frames",
+          "identified_object_frames",
+          "object_detection_rate",
+          "median_ttd_cycles_detected",
+          "static_forged_roi_objects",
+          "moving_forged_roi_objects",
+          "ae_valid_scores",
+          "ae_attack_scores",
+          "ae_auroc",
+          "iforest_valid_scores",
+          "iforest_attack_scores",
+          "iforest_auroc"
+        ],
+        "numeric_tolerance": 1e-12
+      },
+      "ubuntu_wsl": {
+        "matching_layer_rows": 36,
+        "fields": [
+          "attack_instances",
+          "detected_instances",
+          "identified_instances",
+          "undetected_instances",
+          "right_censored_instances",
+          "forged_object_frames",
+          "identified_object_frames",
+          "object_detection_rate",
+          "median_ttd_cycles_detected",
+          "static_forged_roi_objects",
+          "moving_forged_roi_objects",
+          "ae_valid_scores",
+          "ae_attack_scores",
+          "ae_auroc",
+          "iforest_valid_scores",
+          "iforest_attack_scores",
+          "iforest_auroc"
+        ],
+        "numeric_tolerance": 1e-12
+      }
+    }
+  },
+  "served_fresh_report_check": {
+    "url": "http://127.0.0.1:8766/api/evaluation",
+    "git_head": "e530d8f41dfd1fac75623907c1a5dc5f4b3ab2b7",
+    "completed_attack_runs": 2411,
+    "configuration_sha256": "3b868243603521e439bb81009af736a33c25e9533ce9ec7f7f190cc3d977cbb8"
+  },
+  "linux_case_check": {
+    "argv": [
+      "wsl",
+      "-d",
+      "Ubuntu-26.04",
+      "--exec",
+      "/home/rikon/Phantom Guard clean Linux v2/.venv/bin/python",
+      "-m",
+      "phantomguard",
+      "replay",
+      "--root",
+      "/home/rikon/Phantom Guard clean Linux v2",
+      "--file",
+      "OnePersonMovingFrontAndBack.csv",
+      "--cycles",
+      "1",
+      "--export"
+    ],
+    "exit_code": 2,
+    "expected_nonzero": true,
+    "stderr": "usage: __main__.py [-h] [--file FILE] [--config CONFIG] [--baseline BASELINE]\n                   [--output-dir OUTPUT_DIR] [--part {train,val,test,all}]\n                   [--start START] [--cycles CYCLES] [--attack {T1,T2,T3,T4}]\n                   [--level {A0,A1,A2,A3,A4}] [--provider PROVIDER]\n                   [--seed SEED] [--export] [--around-first-alert]\n                   [--gif-cycles GIF_CYCLES] [--stride STRIDE] [--root ROOT]\n                   [--data-dir DATA_DIR] [--processed-dir PROCESSED_DIR]\n                   [--models-dir MODELS_DIR] [--reports-dir REPORTS_DIR]\n__main__.py: error: [Errno 2] No such file or directory: '/home/rikon/Phantom Guard clean Linux v2/data/raw/OnePersonMovingFrontAndBack.csv'\n"
+  }
+}

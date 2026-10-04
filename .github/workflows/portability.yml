@@ -1,0 +1,30 @@
+name: Portable package and causal detector
+on: [push, pull_request]
+jobs:
+  unit:
+    strategy:
+      matrix:
+        os: [ubuntu-24.04, windows-latest]
+    runs-on: ${{ matrix.os }}
+    env:
+      PHANTOMGUARD_ROOT: ${{ github.workspace }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install -r requirements/dev.lock
+      - run: python -m pip install -r requirements/training-cpu.lock --index-url https://download.pytorch.org/whl/cpu
+      - run: python -m pip install --no-deps .
+      - run: python -m pytest -q --junitxml=validation.xml
+      - run: python -m pip check
+      - uses: actions/upload-artifact@v4
+        with:
+          name: validation-${{ matrix.os }}
+          path: validation.xml
+  container:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t phantomguard-ci .
+      - run: docker run --rm phantomguard-ci python -c "import phantomguard.frames; import waitress; import sys; assert 'torch' not in sys.modules"

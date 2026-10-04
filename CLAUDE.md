@@ -13,7 +13,9 @@ objects render green, flagged objects render red, each with a reason.
 - Work only from the four recorded CSVs in `data/raw/`. No live sensor, no Tailscale, no hardware.
 - Write everything against the `FrameSource` interface so a live source can be dropped in later.
 - Out of scope now: live CAN/ZLG capture, Tailscale, RF-layer spoofing, CAN-FD, bus-off/suppression
-  attacks (an attacker deleting real frames), web UI.
+  attacks (an attacker deleting real frames).
+- The current owner assignment expands this scope with a CPU browser prototype around recorded
+  replay and simulated CAN injection. Live hardware and actual server deployment remain excluded.
 
 ## Hard rules (do not break these)
 1. **Causal only.** The detector sees one scan cycle at a time and may use only past cycles.
@@ -196,7 +198,7 @@ docs/results/
 ```
 
 ## Commands
-- Setup: Python 3.11+, `python -m venv .venv && pip install -e ".[dev]"`
+- Setup: Python 3.11; pinned dependency/CPU installation is documented in README.md and docs/setup.md.
 - Tests: `pytest -q` (must stay green; add tests with each module)
 - Baseline: `python scripts/learn_baseline.py`
 - Train: `python scripts/train.py`

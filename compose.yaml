@@ -1,0 +1,43 @@
+name: phantomguard-p31
+services:
+  prototype:
+    build: .
+    image: phantomguard-p31:local
+    init: true
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${PHANTOMGUARD_PORT:-8765}:8765"
+    environment:
+      PHANTOMGUARD_ROOT: /workspace
+      PHANTOMGUARD_DATA_DIR: /workspace/data/raw
+      PHANTOMGUARD_PROCESSED_DIR: /workspace/data/processed
+      PHANTOMGUARD_MODELS_DIR: /workspace/models
+      PHANTOMGUARD_OUTPUT_DIR: /workspace/runs
+      PHANTOMGUARD_BASELINE: /workspace/configs/baseline.json
+      PHANTOMGUARD_REPORTS_DIR: "${PHANTOMGUARD_REPORTS_DIR:-/workspace/docs/results}"
+      PHANTOMGUARD_WORKERS: "${PHANTOMGUARD_WORKERS:-2}"
+      PHANTOMGUARD_MAX_CYCLES: "${PHANTOMGUARD_MAX_CYCLES:-1200}"
+      PHANTOMGUARD_JOB_SECONDS: "${PHANTOMGUARD_JOB_SECONDS:-120}"
+    volumes:
+      - "${PHANTOMGUARD_DATA_MOUNT:-./data/raw}:/workspace/data/raw:ro"
+      - "${PHANTOMGUARD_MODELS_MOUNT:-./models}:/workspace/models:ro"
+      - "./data/processed:/workspace/data/processed:ro"
+      - "./configs:/workspace/configs:ro"
+      - "./docs/results:/workspace/docs/results:ro"
+      - "phantomguard-runs:/workspace/runs"
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m,mode=1777
+    mem_limit: 2g
+    cpus: 2
+    pids_limit: 64
+    security_opt:
+      - no-new-privileges:true
+    cap_drop: [ALL]
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+volumes:
+  phantomguard-runs:

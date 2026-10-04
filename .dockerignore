@@ -1,0 +1,15 @@
+.git
+.venv
+data
+dataset
+models
+runs
+deployment-bundles
+docs/results
+.env
+.env.*
+__pycache__
+*.egg-info
+build
+dist
+tests

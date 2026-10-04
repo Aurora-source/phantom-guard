@@ -1,0 +1,10 @@
+-r offline.lock
+pytest==9.1.1
+iniconfig==2.3.0
+pluggy==1.6.0
+Pygments==2.21.0
+colorama==0.4.6; sys_platform == 'win32'
+playwright==1.58.0
+pyee==13.0.1
+greenlet==3.5.6
+typing_extensions==4.16.0

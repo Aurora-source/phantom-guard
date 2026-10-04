@@ -1,5 +1,17 @@
 # Phantom-Guard offline prototype: plan
 
+## Current extension: portable hosted prototype
+
+PR #4's Phases 0–6 implementation is accepted on upstream main at `89b182f`.
+The owner now authorizes a CPU browser around recorded data/simulated CAN attacks,
+portable fresh-clone setup, shared paths/doctor, pinned runtime/container, real
+Windows/Linux validation and a checksummed private data/artifact handoff bundle.
+Implementation is in `codex/portable-hosted-prototype`, preserving prior histories.
+No detector operating point changes are authorized by new held-out measurements.
+The existing under-one false-alert target is still an explicitly failing criterion.
+Final executed extension status is appended after validation; see README and
+docs/setup.md, data.md, pipeline.md, deployment.md and server-handoff.md.
+
 ## Context
 The repo contains only `CLAUDE.md` (the spec), `tools/decode.py` (decoder v2) and the four recorded CSVs. The
 task is to build the offline prototype that CLAUDE.md describes (frame layer, replay source, baseline, attacker,
@@ -243,3 +255,37 @@ This section supersedes earlier availability/status snapshots, which remain as h
 - Publication is to the verified `Aurora-source/phantom-guard` fork, followed by a
   cross-fork PR to `Krishna-Gunjan/phantom-guard:main`. This replaces the old
   push-after-each-phase/main-publication instructions for the current assignment.
+
+## Final extension status (2026-10-05)
+
+- Accepted Phases 0-6 remain implemented: decoder/source/baseline and real attacker
+  integration; causal protocol/physics/replay; CPU AE, offline IF and validation
+  fusion; full clean/attack/layer/ablation reporting; real matplotlib replay. No
+  attacker contract dependency remains. The under-one clean FP criterion is failing.
+- Added installed CPU CLI, a canonical immutable/raw-processed-model-runs layout,
+  shared anchored configuration, directory initialization/import/checksums, doctor,
+  pinned runtime/offline/training locks and explicit Python 3.11 support. Decoder
+  and commands live in the package; compatibility wrappers retain their interfaces.
+- Added bounded isolated browser/API jobs using real test replay and accepted
+  attacks, actual published evaluation data, detector colors/reasons/velocity/logs,
+  reset/cancellation and immutable playback seeks. Ground truth never affects it.
+  Linux deployment uses a pinned nonroot/read-only container and dedicated outputs.
+- Latest accepted main `f93f283` is merged. Its artifact IDs were unavailable
+  locally, so matching baselines/models/calibration were prepared offline using
+  fixed training/validation segments. Full matrix source is `e530d8f`: 2,411
+  eligible runs, 198 no-material attempts, 55 capacity exclusions, 1,296 unsupported
+  requests and no integration blockers. Earlier sweeps remain in Git history.
+  Windows and Ubuntu 26.04.1 WSL normal-wheel tests, real exports, browser/API
+  and container checks pass; executed counts and final checks are in the evidence.
+- Fresh generated results and portability evidence are under docs/results/portable
+  and portable_validation.json. Fresh clean FP is 1.42/3.41 per minute; eighteen
+  evading completed runs remain reported. Worst attacked processing p99 is 8.55 ms,
+  idle single-worker clean p99 is 1.97 ms; assembly p99 is separately 33.5–33.6 ms.
+  The under-one false-alert acceptance criterion still fails.
+- Final viewer correction anchors recording names to configured raw data and
+  explicit relative paths to the workspace; caller-directory files cannot override
+  either. Targeted regressions cover both the resolver and actual CLI selection.
+  Source newline equivalence is recorded separately from original benchmark hashes.
+- Private reproducible deployment ZIP, checksums and server handoff are prepared
+  locally; final archive verification/restoration and publication status are in the
+  handoff/delivery response. Actual home-server deployment is a later assignment.

@@ -1,163 +1,157 @@
 # Phantom Guard
 
-Offline detection of fabricated classic CAN radar frames using protocol integrity,
-windowed physics, replay fingerprints, and a clean-trained autoencoder. The source
-interface is `Frame(can_id, data, timestamp_ticks)`; attack labels stay in a sidecar.
-The hardware capture source is deliberately a stub.
+**Recorded radar replay. Simulated CAN attacks. Causal detection on CPU.**
 
-All commands below are for **Arch Linux** (bash/zsh) and are run from the repository root.
+Hack Sprint P31 prototype for SR75 radar streams. Explore clean recordings and
+T1 phantom, T2 flood, T3 replay and T4 shift/overwrite in a browser or matplotlib
+viewer. Protocol, physics, replay fingerprints and a trained NumPy autoencoder
+produce actual verdicts. Green means **not flagged**, not proven authentic.
 
-## 1. Install system packages
+The offline implementation covers Phases 0–6. The clean performance target
+**remains unmet**: accepted measurements are 1.42 false alerts/minute on time-block
+test and 3.41 on LOSO. Static phantoms, sparse moving clips, slot capacity and
+genuine repeated motion remain limitations. Coordinate units, tick duration and
+reconstructed header layout are assumptions. This is recorded-data research,
+not live CAN protection or a safety certification. See [generated evidence](docs/results/README.md).
 
-```bash
-sudo pacman -Syu --needed python git tk
+## Project layout
+
+| Directory | In Git? / supplied by | Reads / writes |
+|---|---|---|
+| `src/phantomguard` | tracked implementation | installed CLI, decoder, sources, attacker, detector, evaluator, viewers/API |
+| `configs` | tracked default/example YAML and learned baseline metadata | baseline/train/calibrate; all inference commands read matching config |
+| `data/raw` | README tracked; four immutable CSVs ignored, supplied by user | import-data copies; preparation/replay/evaluation read only |
+| `data/processed` | README tracked; generated fold baselines/caches ignored | baseline/train/calibrate write; LOSO evaluation reads |
+| `models` | README tracked; trusted trained artifacts ignored | train writes; inference/evaluation read only |
+| `runs` | README tracked; disposable results/logs/sidecars/jobs ignored | commands create writable outputs automatically |
+| `docs/results` | selected generated evidence tracked | publication summaries/CSVs/provenance; browser reads actual reports |
+| `deployment-bundles` | README tracked; archives/checksums ignored | bundle creates; verify/restore read |
+| `scripts`, `tools` | tracked compatibility commands and browser verifier | installed package required; prefer CLI entry points |
+| `tests`, `requirements`, `.github` | tracked tests, dependency locks, CI | validation/installation |
+
+The owner's `dataset` directory is an **external import location**. There is one
+configured raw data root: `data/raw` by default, or an explicit external directory.
+Raw files and models are intentionally not downloadable from this Git repository.
+
+Read [data/files/artifacts](docs/data.md), [installation/paths](docs/setup.md),
+[pipeline/command reference](docs/pipeline.md), [deployment](docs/deployment.md),
+and [tested server handoff](docs/server-handoff.md). They explain what a clone needs.
+The accepted upstream [Arch Linux notes](docs/setup-arch.md) use the same pinned
+Python 3.11 workflow; rolling system Python versions are not supported implicitly.
+
+## Windows PowerShell quick start
+
+Use installed **Python 3.11**, not an arbitrary default Python. These commands
+install a normal wheel into a new venv; no editable install or PYTHONPATH required.
+
+```powershell
+git clone https://github.com/Aurora-source/phantom-guard.git
+Set-Location phantom-guard
+git checkout codex/portable-hosted-prototype
+py -3.11 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements/offline.lock
+python -m pip install --no-deps .
+$env:PHANTOMGUARD_ROOT = (Get-Location).Path
+python -m phantomguard init
+python -m phantomguard import-data --source 'D:\Hacksprint\phantom-guard-phases-3-6\dataset'
 ```
 
-- `python` is Arch's current Python; the project needs 3.11 or newer.
-- `tk` provides the Tk libraries matplotlib uses for the interactive viewer window. It is not
-  needed for headless `--export` runs.
-- No GPU or CUDA is needed. Everything runs on the CPU.
+That last path is the inspected owner's source. Another user sets `--source` to
+their own directory with the exact four CSVs listed in [data.md](docs/data.md).
+Alternatively set `PHANTOMGUARD_DATA_DIR` to read external inputs without copying.
 
-## 2. Create the virtual environment
+Supply matching artifacts: use the verified bundle in the server handoff, or build
+them offline. To build (CPU only), run:
 
-Arch marks the system Python as externally managed (PEP 668), so `pip install` must run
-inside a virtual environment:
-
-```bash
-python -m venv .venv
-source .venv/bin/activate          # fish: source .venv/bin/activate.fish
-python -m pip install --upgrade pip
-# CPU-only PyTorch; a plain `pip install torch` pulls several GB of CUDA libraries
-python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
-python -m pip install -e ".[dev]"
+```powershell
+python -m pip install -r requirements/training-cpu.lock --index-url https://download.pytorch.org/whl/cpu
+python -m phantomguard baseline --loso
+python -m phantomguard train --loso
+python -m phantomguard calibrate --loso
 ```
 
-If pip reports `No matching distribution found for torch`, Arch's rolling Python is
-newer than the published PyTorch wheels. Create the environment with an older Python
-through `uv`, then run the same install commands:
+With matching artifacts restored/built:
+
+```powershell
+python -m phantomguard doctor --full
+python -m phantomguard replay --file onePersonMovingFrontAndBack.csv --cycles 150 --gif-cycles 40 --export --output-dir runs/smoke/clean
+python -m phantomguard replay --file onePersonMovingFrontAndBack.csv --attack T1 --level A2 --seed 11 --cycles 150 --gif-cycles 40 --export --output-dir runs/smoke/attack
+python -m phantomguard attack-eval --smoke --workers 1 --output-dir runs/smoke/evaluation
+python -m phantomguard serve --port 8765 --reports-dir docs/results/portable
+```
+
+Open **http://127.0.0.1:8765**. Stop with Ctrl+C. Exports are PNG/GIF plus detector
+alert CSV and a separate attacker sidecar. Tests are separate from evaluation;
+full validation commands are in [pipeline.md](docs/pipeline.md).
+
+## Linux Bash quick start
+
+On Ubuntu 26.04 use a dedicated Python 3.11 environment; its system Python may
+be 3.14. The container workflow in [deployment.md](docs/deployment.md) supplies
+the pinned runtime. For native Linux, install `uv` via its official installer if
+it is absent, then create the explicit 3.11 venv:
 
 ```bash
-sudo pacman -S --needed uv
-rm -rf .venv
-uv venv --python 3.12 --seed .venv
+git clone https://github.com/Aurora-source/phantom-guard.git
+cd phantom-guard
+git checkout codex/portable-hosted-prototype
+# Only if uv is absent:
+curl -LsSf https://astral.sh/uv/install.sh | sh
+export PATH="$HOME/.local/bin:$PATH"
+uv python install 3.11
+uv venv --python 3.11 .venv
 source .venv/bin/activate
-python -m pip install torch --index-url https://download.pytorch.org/whl/cpu
-python -m pip install -e ".[dev]"
+uv pip install --python .venv/bin/python -r requirements/offline.lock
+uv pip install --python .venv/bin/python --no-deps .
+export PHANTOMGUARD_ROOT="$(pwd)"
+python -m phantomguard init
 ```
 
-All later commands assume the environment is active (`source .venv/bin/activate`).
-Without activating it, call `.venv/bin/python` instead of `python`.
-
-## 3. Provide the recordings
-
-Put the four unchanged recordings under the configured `data.raw_dir` in
-`configs/default.yaml` (default `data/raw`). A read-only copy or a symlink is fine.
-Recordings, models, and caches are excluded from Git.
+Supply inputs/artifacts using the bundle, or set your real source directory:
 
 ```bash
-mkdir -p data/raw
-# copy ...
-cp /path/to/recordings/{emptyRoom,onePersonMovingFrontAndBack,onePersonMovingSideToSide,multiplePeopleChaotic}.csv data/raw/
-chmod a-w data/raw/*.csv
-# ... or link instead of copying
-# ln -s /path/to/recordings/*.csv data/raw/
+DATA_SOURCE="/srv/phantomguard-inputs"  # replace with your directory containing all four CSVs
+python -m phantomguard import-data --source "$DATA_SOURCE"
+uv pip install --python .venv/bin/python -r requirements/training-cpu.lock --index-url https://download.pytorch.org/whl/cpu
+python -m phantomguard baseline --loso
+python -m phantomguard train --loso
+python -m phantomguard calibrate --loso
+python -m phantomguard doctor --full
+python -m phantomguard replay --file onePersonMovingFrontAndBack.csv --cycles 150 --gif-cycles 40 --export --output-dir runs/smoke/clean
+python -m phantomguard replay --file onePersonMovingFrontAndBack.csv --attack T1 --level A2 --seed 11 --cycles 150 --gif-cycles 40 --export --output-dir runs/smoke/attack
+python -m phantomguard attack-eval --smoke --workers 1 --output-dir runs/smoke/evaluation
+python -m phantomguard serve --port 8765 --reports-dir docs/results/portable
 ```
 
-File names are **case-sensitive** on Linux and must match `configs/default.yaml` exactly.
-Watch for this when the files come from a Windows or macOS machine:
+When restoring compatible artifacts, skip the installation/training/calibration
+steps. Do not rebuild baselines after restoring trained models. Open localhost
+in a browser; on a remote server use the documented SSH tunnel/reverse proxy.
 
-| Recording | Rows | Cycles |
-|---|---:|---:|
-| emptyRoom.csv | 105377 | 4378 |
-| onePersonMovingFrontAndBack.csv | 93424 | 4127 |
-| onePersonMovingSideToSide.csv | 113581 | 4993 |
-| multiplePeopleChaotic.csv | 130342 | 5597 |
+## Full checks and evidence
 
-Quick check that every file is present:
-
-```bash
-python -c "from phantomguard.config import load_config, raw_path; c = load_config(); [print(f, raw_path(c, f).is_file()) for f in c['data']['files']]"
+```text
+python -m phantomguard clean-eval --workers 1 --output-dir runs/validation
+python -m phantomguard attack-eval --workers 2 --output-dir runs/validation
+python -m pip install -r requirements/dev.lock
+python -m pip install -r requirements/training-cpu.lock --index-url https://download.pytorch.org/whl/cpu
+python -m pytest -q --junitxml=runs/validation/tests.xml
+python -m playwright install chromium
+python tools/check_browser.py --output runs/browser-check
 ```
 
-## 4. Run the documented workflow
+The last command needs `serve` running in another terminal. Full evaluation
+includes configured seeds/repetitions, fixed time-block and LOSO splits,
+static/moving cases, supported levels, replay-source provenance, layer comparisons
+and ablations. It takes substantially longer than smoke. Never choose a threshold
+or model from held-out results; unsupported/missed/censored attacks remain visible.
 
-Run the preparation steps in this order. Baseline preparation removes later calibration
-and model metadata, so training and calibration must follow it.
+The examples display the published full validation reports. After generating
+your own complete evaluation in `runs/validation`, display that matching run with
+`python -m phantomguard serve --reports-dir runs/validation`. A smoke evaluation
+is an interface check and does not replace the full performance benchmark.
 
-```bash
-python scripts/learn_baseline.py --loso
-python scripts/train.py --loso
-python scripts/calibrate.py --loso
-python scripts/run_clean_eval.py --workers 1
-python scripts/run_attack_eval.py --preflight          # optional: availability/provenance check, no detector runs
-python scripts/run_attack_eval.py --workers "$(nproc)"
-python -m pytest -q
-```
-
-Compatible existing artifacts can be reused. Strict provenance checks reject changed
-datasets, split identities, feature contracts, or mismatched calibration. Training uses
-only fixed training blocks, and calibration uses clean validation data. No new test
-results choose models or thresholds. Earlier inspection of test results is disclosed in
-[the decisions log](docs/decisions.md).
-
-The evaluator covers all four scenarios, the configured seeds and repetitions, the
-60/20/20 time-block split, the four LOSO folds, static and moving cases, every layer, and
-the ablations. T3 at levels A0–A2 is explicitly unsupported. Limits caused by source
-material or slot capacity are recorded separately from completed attacks. The labels are
-joined on the final emitted frame indices, including rewritten headers and overwritten
-objects. Scene alarms and identification of the exact forged object are reported as
-separate rates.
-
-Evaluation pins each BLAS worker to one thread so that parallel workers do not multiply
-memory workspaces. Explicit `OPENBLAS_NUM_THREADS`, `OMP_NUM_THREADS`, or
-`MKL_NUM_THREADS` settings are respected and reported. If memory is limited, use a
-smaller `--workers` value than `$(nproc)`. Successful and unsupported attack jobs are
-checkpointed under the ignored `runs/attack_eval`, and changes to code, dataset, or
-artifacts select a new cache. Failed integration checks are retried and never count as
-passes.
-
-## Replay
-
-```bash
-python scripts/replay_demo.py --file onePersonMovingFrontAndBack.csv --export
-python scripts/replay_demo.py --file onePersonMovingFrontAndBack.csv --attack T1 --level A2 --export
-python scripts/replay_demo.py --file multiplePeopleChaotic.csv --attack T1 --level A3
-```
-
-`--export` writes a PNG, a GIF, and a detector alert CSV without needing a display.
-Without it, the matplotlib viewer opens with relative-time pacing; this needs a graphical
-session and the `tk` package from step 1. Tk runs through XWayland on Wayland desktops.
-Green means **not flagged**; it does not prove authenticity. Colours, arrows, reasons, and
-the alert log use only detector verdicts. Output names include the recording, split,
-attack, level, and seed. Use `--output-dir runs/my-validation` to keep per-machine output
-local.
-
-## Evidence and limits
-
-[The generated summary](docs/results/summary.md) and `attack_eval_*.csv` are the
-current evaluation evidence. The per-run and per-instance CSVs preserve denominators,
-undetected attacks, censoring, timing, and score availability. The manifest records the
-configuration, source checksums, artifact provenance, calibration settings, and
-implementation hashes. Paths in it are repo-relative POSIX paths. The committed
-`attack_eval_manifest.json` predates that change and still shows the generating
-machine's absolute Windows paths. Legacy `attack_matrix.csv` and `attack_ttd.csv` came
-from the earlier upstream evaluator and are historical evidence.
-
-The clean target is under one false alert per minute. Having the implementation in place
-does not show that the target is met: check the fresh clean report and summary for
-passing, failing, unsupported, and blocked outcomes. Coordinate units, tick duration, and
-the reconstructed header DLC remain assumptions. Static phantoms and complex genuine
-repeated motion remain difficult. The autoencoder is the fixed NumPy deployment choice
-and only corroborates other layers in fusion. The isolation forest is an offline
-comparison on equivalent scoring windows.
-
-Under this corroborating policy, autoencoder evidence adds no extra boolean alerts when
-another soft layer already votes in that cycle. Raw autoencoder and isolation-forest
-scores are still compared. The isolation forest is fitted on a fixed-seed training
-subset capped at 50,000 windows. Both models share training-only normalization and the
-same evaluation windows. Artifact metadata reports the actual fit counts and calibration
-values.
-
-See [the phase plan](docs/plan.md), [decisions](docs/decisions.md), and
-[the integration contract](docs/phase2-handoff.md) for the acceptance criteria and
-documented corrections.
+For the Ubuntu home server, follow [server-handoff.md](docs/server-handoff.md):
+matching tested Git SHA, verified ZIP/checksum, read-only dataset/model mounts,
+bounded outputs, exact start/health commands, and measured/unverified limitations.
+Actual server deployment is intentionally left to the server Codex session.

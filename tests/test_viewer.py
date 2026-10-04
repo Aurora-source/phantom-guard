@@ -22,7 +22,7 @@ from phantomguard.viz.console import COLORS, ConsoleView
 
 @pytest.fixture
 def demo():
-    spec = importlib.util.spec_from_file_location("replay_demo_under_test", REPO_ROOT / "scripts" / "replay_demo.py")
+    spec = importlib.util.spec_from_file_location("replay_demo_under_test", REPO_ROOT / "src/phantomguard/commands/replay_demo.py")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
@@ -128,8 +128,12 @@ def local_replay(demo, tmp_path, monkeypatch):
                                  raw_hex=encode_object(1, 3, 1, 0, 0, 20).hex(" ")))
     cfg = load_config()
     baseline = {"cadence_lo": 328, "cadence_hi": 336}
-    monkeypatch.setattr(demo, "load_config", lambda path=None: cfg)
-    monkeypatch.setattr(demo, "load_baseline", lambda path=None: baseline)
+    def selected_config(args):
+        if args.output_dir:
+            cfg['_paths']['output'] = str(args.output_dir)
+        return cfg
+    monkeypatch.setattr(demo, "config_from_args", selected_config)
+    monkeypatch.setattr(demo, "load_baseline", lambda path=None, **kw: baseline)
     artifacts_calls = []
 
     def artifacts(tag, **kwargs):

@@ -231,10 +231,10 @@ class NumpyAE:
 
 def load_iforest(tag: str = "timeblock", models_dir: Path | None = None, cfg: dict | None = None,
                  baseline: dict | None = None, required: bool = False, strict: bool = False) -> dict | None:
-    from phantomguard.config import REPO_ROOT
+    from phantomguard.config import paths, load_config
 
     required = required or strict
-    path = (models_dir if models_dir is not None else REPO_ROOT / "models") / f"iforest_{tag}.pkl"
+    path = (models_dir if models_dir is not None else paths(cfg or load_config()).models) / f"iforest_{tag}.pkl"
     if not path.exists():
         if required:
             raise FileNotFoundError(f"{path} missing: run scripts/train.py")

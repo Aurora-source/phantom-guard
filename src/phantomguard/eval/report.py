@@ -15,7 +15,7 @@ import statistics
 from datetime import datetime, timezone
 from pathlib import Path
 
-from phantomguard.config import REPO_ROOT, raw_path
+from phantomguard.config import REPO_ROOT, raw_path, paths
 
 
 def sha256(path: Path) -> str | None:
@@ -28,24 +28,43 @@ def sha256(path: Path) -> str | None:
     return digest.hexdigest()
 
 
-def portable_path(path: Path) -> str:
-    """Path as recorded in manifests: repo-relative POSIX when inside the checkout, else absolute POSIX.
+def portable_path(path: Path, cfg: dict | None = None) -> str:
+    """Legacy repo-relative paths, or canonical configured payload paths.
 
-    Absolute, OS-specific paths (e.g. ``D:\\...``) made manifests and the checkpoint cache id depend on
-    the machine and the checkout location.
+    Keep the accepted one-argument interface for callers; generated manifests
+    provide config so external data/model roots do not expose developer paths.
     """
     p = Path(path).resolve()
-    try:
-        return p.relative_to(REPO_ROOT).as_posix()
-    except ValueError:
-        return p.as_posix()
+    if cfg is None:
+        try:
+            return p.relative_to(REPO_ROOT).as_posix()
+        except ValueError:
+            return p.as_posix()
+    locations = [(paths(cfg).models, 'models'), (paths(cfg).processed, 'data/processed'),
+                 (paths(cfg).raw, 'data/raw'), (paths(cfg).output, 'runs'), (paths(cfg).root, '')]
+    for anchor, label in locations:
+        try:
+            return (Path(label) / p.relative_to(anchor)).as_posix()
+        except ValueError:
+            pass
+    return path.name
+
+
+def portable_config(cfg: dict) -> dict:
+    import copy
+    result = copy.deepcopy(cfg)
+    result.pop('_paths', None)
+    result.pop('paths', None)
+    result['data']['raw_dir'] = 'data/raw'
+    result['data']['processed_dir'] = 'data/processed'
+    return result
 
 
 def provenance(cfg: dict, artifacts: list[Path]) -> dict:
+    root = paths(cfg).root
     def git(*args):
-        # Plain git; missing git (or no repository) records None instead of crashing the report.
         try:
-            proc = subprocess.run(["git", *args], cwd=REPO_ROOT, capture_output=True, text=True, check=False)
+            proc = subprocess.run(["git", *args], cwd=paths(cfg).root, capture_output=True, text=True, check=False)
         except OSError:
             return None
         return proc.stdout.strip() if proc.returncode == 0 else None
@@ -57,17 +76,17 @@ def provenance(cfg: dict, artifacts: list[Path]) -> dict:
             packages[name] = "unavailable"
     return {"generated_utc": datetime.now(timezone.utc).isoformat(), "git_head": git("rev-parse", "HEAD"),
             "git_branch": git("branch", "--show-current"), "git_dirty": bool(git("status", "--porcelain")),
-            "configuration": cfg, "configuration_sha256": hashlib.sha256(json.dumps(cfg, sort_keys=True).encode()).hexdigest(),
+            "configuration": portable_config(cfg), "configuration_sha256": hashlib.sha256(json.dumps(portable_config(cfg), sort_keys=True).encode()).hexdigest(),
             "python": platform.python_version(), "platform": platform.platform(), "packages": packages,
             "logical_cpu_count": os.cpu_count(),
             "blas_environment": {k: os.environ.get(k) for k in
                                  ("OPENBLAS_NUM_THREADS", "OMP_NUM_THREADS", "MKL_NUM_THREADS")},
             "processing_timer": "perf_counter elapsed time for grouping/decoding and detector CPU work; source I/O excluded",
-            "recordings": [{"file": f, "path": portable_path(raw_path(cfg, f)), "sha256": sha256(raw_path(cfg, f))}
+            "recordings": [{"file": f, "path": "data/raw/" + f, "sha256": sha256(raw_path(cfg, f))}
                            for f in cfg["data"]["files"]],
-            "artifacts": [{"path": portable_path(p), "sha256": sha256(p), "details": artifact_details(p)} for p in artifacts],
-            "implementation_sha256": {p.relative_to(REPO_ROOT).as_posix(): sha256(p)
-                                      for directory in (REPO_ROOT / "src", REPO_ROOT / "scripts", REPO_ROOT / "tools")
+            "artifacts": [{"path": portable_path(p, cfg), "sha256": sha256(p), "details": artifact_details(p)} for p in artifacts],
+            "implementation_sha256": {p.relative_to(root).as_posix(): sha256(p)
+                                      for directory in (root / "src", root / "scripts", root / "tools")
                                       for p in sorted(directory.rglob("*.py"))},
             "model_selection": "AE fixed for NumPy online deployment before attack testing; IF is an offline comparator",
             "historical_test_disclosure": "Test results had previously been inspected before the historical validation calibration; "
