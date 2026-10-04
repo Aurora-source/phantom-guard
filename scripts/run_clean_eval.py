@@ -1,0 +1,214 @@
+#!/usr/bin/env python3
+"""Clean-data evaluation of the detector (no attacks injected).
+
+Reports false positives per object-cycle and persistent alerts per minute on held-out CLEAN data:
+(a) time-block split: validation and test segments of each file, with configs/baseline.json and
+    models trained on the train split;
+(b) leave-one-scenario-out: each whole file, with the fold baseline and models trained on the
+    other three files.
+Also: per-layer ablation, static vs moving, reason-code counts, latency, and AE vs isolation forest
+exceedance on the same held-out windows. All numbers in docs/results/clean_eval.md come from here.
+
+Detection rates, time-to-detect and AUROC need attacked data and are not produced.
+"""
+
+from __future__ import annotations
+
+import json
+import pickle
+import sys
+from concurrent.futures import ProcessPoolExecutor
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+from scipy import stats as sps
+
+from phantomguard.config import BASELINE_PATH, REPO_ROOT, load_baseline, load_config, raw_path
+from phantomguard.detect.autoencoder import windows_from_tracks
+from phantomguard.detect.common import LAYERS
+from phantomguard.detect.pipeline import MODELS_DIR, Detector, load_artifacts
+from phantomguard.eval.metrics import latency_stats, lite, score
+from phantomguard.eval.splits import Segment, loso_folds, time_block_segments
+from phantomguard.io.replay import ReplaySource
+from phantomguard.stats.baseline import collect
+
+RESULTS = REPO_ROOT / "docs" / "results"
+
+SUBSETS = {
+    "protocol": ("protocol",),
+    "protocol+kinematic": ("protocol", "kinematic"),
+    "protocol+kinematic+replay": ("protocol", "kinematic", "replay"),
+    "all": LAYERS,
+    "all-minus-protocol": ("kinematic", "replay", "learned"),
+    "all-minus-kinematic": ("protocol", "replay", "learned"),
+    "all-minus-replay": ("protocol", "kinematic", "learned"),
+    "all-minus-learned": ("protocol", "kinematic", "replay"),
+}
+
+
+def run_segment(job):
+    split, part, seg, baseline_path, tag = job
+    cfg = load_config()
+    b = load_baseline(baseline_path)
+    ae, lib = load_artifacts(tag)
+    det = Detector(cfg, b, ae, lib)
+    cycles = [lite(r) for r in det.run(ReplaySource(raw_path(cfg, seg.file), (seg.lo, seg.hi)))]
+    return split, part, seg, cycles
+
+
+def fmt_rate(x):
+    return f"{100 * x:.3f}%"
+
+
+def main():
+    cfg = load_config()
+    if not (MODELS_DIR / "ae_timeblock.npz").exists():
+        sys.exit("models missing: run scripts/learn_baseline.py --loso and scripts/train.py --loso first")
+    tb = time_block_segments(cfg)
+    jobs = [("timeblock", part, s, BASELINE_PATH, "timeblock") for part in ("val", "test") for s in tb[part]]
+    pdir = REPO_ROOT / cfg["data"]["processed_dir"]
+    for held, fold in loso_folds(cfg).items():
+        stem = Path(held).stem
+        jobs.append(("loso", "test", fold["test"][0], pdir / f"baseline_loso_{stem}.json", f"loso_{stem}"))
+    with ProcessPoolExecutor(cfg["eval"]["workers"]) as ex:
+        results = list(ex.map(run_segment, jobs))
+
+    rows, abl, reason_rows = [], [], []
+    all_lat = []
+    for split, part, seg, cycles in results:
+        all_lat.extend(cycles)
+        for name, layers in SUBSETS.items():
+            m = score(cycles, cfg, layers)
+            r = {"split": split, "part": part, "file": seg.file, "layers": name, **m.row()}
+            abl.append(r)
+            if name == "all":
+                rows.append(r)
+                for code, n in sorted((m.reasons + m.cycle_reasons).items()):
+                    reason_rows.append({"split": split, "part": part, "file": seg.file, "reason": code, "count": n,
+                                        "per_object_cycle": n / m.obj_cycles})
+    df = pd.DataFrame(rows)
+    dab = pd.DataFrame(abl)
+    drs = pd.DataFrame(reason_rows)
+    RESULTS.mkdir(parents=True, exist_ok=True)
+    df.to_csv(RESULTS / "clean_eval.csv", index=False)
+    dab.to_csv(RESULTS / "clean_eval_ablation.csv", index=False)
+    drs.to_csv(RESULTS / "clean_eval_reasons.csv", index=False)
+    lat = latency_stats(all_lat)
+
+    # Pooled ablation over the time-block TEST segments and over LOSO
+    def pooled(d):
+        g = d.groupby("layers", sort=False)
+        out = []
+        for name, x in g:
+            oc = x["object_cycles"].sum()
+            out.append({"layers": name, "object_cycles": int(oc), "minutes": x["minutes"].sum(),
+                        "fp_flagged": (x["fp_rate_flagged"] * x["object_cycles"]).sum() / oc,
+                        "fp_alerting": (x["fp_rate_alerting"] * x["object_cycles"]).sum() / oc,
+                        "alert_events": int(x["alert_events"].sum()),
+                        "alerts_per_minute": x["alert_events"].sum() / x["minutes"].sum()})
+        return pd.DataFrame(out)
+
+    p_test = pooled(dab[(dab.split == "timeblock") & (dab.part == "test")])
+    p_val = pooled(dab[(dab.split == "timeblock") & (dab.part == "val")])
+    p_loso = pooled(dab[dab.split == "loso"])
+
+    # AE vs isolation forest on held-out TEST windows (time-block), at their val-calibrated thresholds
+    b = load_baseline()
+    n, roi, thr = cfg["learned"]["window_cycles"], cfg["roi"]["max_range"], cfg["motion"]["moving_threshold_mps"]
+    xte, mte = windows_from_tracks(list(collect(cfg, tb["test"]).tracks.values()), n, roi, thr)
+    ae, _ = load_artifacts("timeblock")
+    iso = pickle.loads((MODELS_DIR / "iforest_timeblock.pkl").read_bytes())
+    e_ae = ae.errors(xte)
+    e_if = -iso["model"].score_samples((xte - iso["mean"]) / iso["std"])
+    cmp_rows = []
+    for cls, mask in (("static", ~mte), ("moving", mte)):
+        cmp_rows.append({"windows": cls, "n": int(mask.sum()),
+                         "ae_exceedance": float((e_ae[mask] > b[f"ae_threshold_{cls}"]["value"]).mean()),
+                         "iforest_exceedance": float((e_if[mask] > b[f"iforest_threshold_{cls}"]["value"]).mean()),
+                         "spearman_ae_vs_iforest": float(sps.spearmanr(e_ae[mask], e_if[mask])[0])})
+    dcmp = pd.DataFrame(cmp_rows)
+    dcmp.to_csv(RESULTS / "clean_eval_ae_vs_iforest.csv", index=False)
+
+    write_report(cfg, df, p_val, p_test, p_loso, drs, lat, dcmp)
+    print((RESULTS / "clean_eval.md").read_text())
+
+
+def table(d: pd.DataFrame, cols: list[str], fmts: dict) -> str:
+    head = "| " + " | ".join(cols) + " |\n|" + "---|" * len(cols) + "\n"
+    body = ""
+    for _, r in d.iterrows():
+        body += "| " + " | ".join(fmts.get(c, str)(r[c]) for c in cols) + " |\n"
+    return head + body
+
+
+def write_report(cfg, df, p_val, p_test, p_loso, drs, lat, dcmp):
+    pct = lambda x: f"{100 * x:.3f}%"
+    f2 = lambda x: f"{x:.2f}"
+    m, n = cfg["fusion"]["m"], cfg["fusion"]["n"]
+    lines = ["# Clean-data evaluation (no attacks)", "",
+             "Generated by `scripts/run_clean_eval.py`. Every number below is produced by that script.", "",
+             "**Scope.** False positives on held-out *clean* data only. No attacker is implemented in this repo yet, "
+             "so detection rate by attack type and level, time-to-detect, and AUROC of the learned score are **not "
+             "reported**. A layer that raises no false positives here has *not* been shown to catch anything.", "",
+             f"- Definitions: *flagged* = an object-cycle with at least one reason code from the enabled layers. *Alerting* = after fusion "
+             f"(hard reason, or {m} of the last {n} cycles of the track flagged). *Alert events* = number of times a track (or "
+             "the cycle stream) enters the alert state. Minutes come from header timestamps × `tick_seconds` "
+             f"({cfg['units']['tick_seconds']}, unverified assumption).",
+             "- Thresholds: `configs/baseline.json` (time-block) and `data/processed/baseline_loso_*.json` (LOSO), learned "
+             "from train (AE thresholds: validation). The test split was not used for any threshold.",
+             f"- The ROI (range <= {cfg['roi']['max_range']}) applies to the kinematic, replay and learned layers; protocol checks apply to every frame.",
+             "", "## Pooled results, all layers", ""]
+    cols = ["layers", "object_cycles", "minutes", "fp_flagged", "fp_alerting", "alert_events", "alerts_per_minute"]
+    fm = {"fp_flagged": pct, "fp_alerting": pct, "alerts_per_minute": f2, "minutes": f2,
+          "object_cycles": lambda x: str(int(x)), "alert_events": lambda x: str(int(x))}
+    for title, p in (("Time-block VALIDATION (thresholds calibrated here for the learned layer)", p_val),
+                     ("Time-block TEST (held out)", p_test), ("Leave-one-scenario-out (each whole file held out)", p_loso)):
+        lines += [f"### {title}", "", table(p, cols, fm)]
+    lines += ["## Per file, all layers", ""]
+    c2 = ["split", "part", "file", "cycles", "minutes", "fp_rate_flagged", "fp_rate_flagged_roi_static",
+          "fp_rate_flagged_roi_moving", "fp_rate_alerting", "alert_events", "alerts_per_minute"]
+    fm2 = {"fp_rate_flagged": pct, "fp_rate_flagged_roi_static": pct, "fp_rate_flagged_roi_moving": pct,
+           "fp_rate_alerting": pct, "alerts_per_minute": f2, "minutes": f2}
+    lines += [table(df, c2, fm2)]
+    lines += ["## Reason codes on clean held-out data (all layers)", ""]
+    pv = drs.pivot_table(index="reason", columns=["split", "part"], values="count", aggfunc="sum", fill_value=0)
+    pv.columns = [f"{a}/{b}" for a, b in pv.columns]
+    lines += [table(pv.reset_index(), ["reason"] + list(pv.columns), {}), ""]
+    lines += ["## Learned layer: autoencoder vs isolation forest (time-block TEST windows)", "",
+              "Both are calibrated to the 99.9th percentile of validation-clean scores, so the exceedance on clean test windows "
+              "should be about 0.1%. Without attacked data the two cannot be ranked on detection. The AE is used online "
+              "because it runs in numpy inside the latency budget; the isolation forest is scored offline only.", "",
+              table(dcmp, ["windows", "n", "ae_exceedance", "iforest_exceedance", "spearman_ae_vs_iforest"],
+                    {"ae_exceedance": pct, "iforest_exceedance": pct, "spearman_ae_vs_iforest": f2, "n": str}), ""]
+    lines += ["## Latency", "",
+              f"Per-cycle processing (all layers including AE inference), over {lat['n']} cycles of all evaluated segments: "
+              f"p50 {lat['p50_ms']:.3f} ms, **p99 {lat['p99_ms']:.3f} ms**, max {lat['max_ms']:.3f} ms "
+              f"(budget: p99 < {cfg['latency']['p99_budget_ms']} ms). Measured in worker processes running in parallel on this machine.", ""]
+    lines += ["## Operating point (calibrated on validation by scripts/calibrate.py)", "",
+              "Soft kinematic and AE thresholds are quantiles of clean data; the quantile is the smallest candidate with "
+              "validation alerts/min < 1 (all layers, after fusion). The test split played no part. Val minutes are short, so "
+              "each rate rests on a handful of events.", ""]
+    pdir = REPO_ROOT / cfg["data"]["processed_dir"]
+    srcs = [("time-block", BASELINE_PATH)] + [(f"LOSO held={Path(f).stem}", pdir / f"baseline_loso_{Path(f).stem}.json")
+                                               for f in cfg["data"]["files"]]
+    for name, path in srcs:
+        sq = load_baseline(path).get("soft_quantile")
+        if sq is None:
+            continue
+        tab = pd.DataFrame(sq["table"])
+        lines += [f"**{name}**: chosen q = {sq['value']} ({sq['rule'].split(';')[0]})", "",
+                  table(tab, ["quantile", "val_alert_events", "val_minutes", "val_alerts_per_minute", "val_fp_flagged"],
+                        {"val_fp_flagged": pct, "val_alerts_per_minute": f2}), ""]
+    target = 1.0
+    tpm = p_test.set_index("layers").loc["all", "alerts_per_minute"]
+    lpm = p_loso.set_index("layers").loc["all", "alerts_per_minute"]
+    lines += ["## Against the target", "",
+              f"- Target: under {target} false alert per minute on clean held-out data after persistence filtering.",
+              f"- Time-block test: {tpm:.2f} alerts/min -> {'MET' if tpm < target else 'NOT MET'}.",
+              f"- LOSO: {lpm:.2f} alerts/min -> {'MET' if lpm < target else 'NOT MET'}.", ""]
+    (RESULTS / "clean_eval.md").write_text("\n".join(lines))
+
+
+if __name__ == "__main__":
+    main()

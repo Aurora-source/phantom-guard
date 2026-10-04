@@ -3,7 +3,7 @@ data/raw/
 data/processed/
 # Generated run outputs that are large or per-machine
 runs/
-models/*.pt
+models/
 # Python
 .venv/
 __pycache__/
