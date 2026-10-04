@@ -433,3 +433,19 @@ No bus, no live capture, no hardware (CLAUDE.md scope).
   detection. Zero final T4/A2–A4 duplicate-slot violations were found across the
   completed streams. Raw per-run/instance results and actual AUROCs are archived;
   no model choice follows those AUROCs. The under-1 clean target still fails.
+
+### Portability fixes for Linux (Arch) runs
+- **`eval/report.py` crashed without `rtk`.** `provenance()` shelled out to `rtk proxy git ...`. `rtk` is a tool on
+  the machine that produced PR #4, and a missing executable raises `FileNotFoundError` even with `check=False`, so
+  `run_attack_eval.py` failed while writing the manifest on a stock install. It now calls `git` directly and records
+  `None` if git is unavailable. Covered by `tests/test_portability.py`.
+- **Manifest paths were machine-specific.** Recording and artifact paths were absolute (`D:\Hacksprint\...` in the
+  committed manifest), and implementation-hash keys used the OS separator (`src\phantomguard\...` on Windows). Both
+  feed the checkpoint cache id, so the same checkout got a different identity per OS and directory. Paths are now
+  repo-relative POSIX (`portable_path()`), or absolute POSIX when outside the checkout. The committed
+  `attack_eval_manifest.json` is generated evidence from that run; it was left untouched, not hand-edited
+  (hard rule 8), and will be replaced on the next full evaluation.
+- **README rewritten for Arch Linux:** pacman packages (`tk` for the interactive viewer), a mandatory venv (PEP 668),
+  the CPU-only PyTorch wheel index, a `uv` fallback when Arch's Python is newer than PyTorch's wheels, and
+  case-sensitive recording names. Verified here: the full test suite, the data check one-liner, and
+  `run_attack_eval.py --preflight` end to end.

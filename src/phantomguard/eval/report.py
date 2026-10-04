@@ -28,8 +28,18 @@ def sha256(path: Path) -> str | None:
     return digest.hexdigest()
 
 
-def portable_path(path: Path, cfg: dict) -> str:
+def portable_path(path: Path, cfg: dict | None = None) -> str:
+    """Legacy repo-relative paths, or canonical configured payload paths.
+
+    Keep the accepted one-argument interface for callers; generated manifests
+    provide config so external data/model roots do not expose developer paths.
+    """
     p = Path(path).resolve()
+    if cfg is None:
+        try:
+            return p.relative_to(REPO_ROOT).as_posix()
+        except ValueError:
+            return p.as_posix()
     locations = [(paths(cfg).models, 'models'), (paths(cfg).processed, 'data/processed'),
                  (paths(cfg).raw, 'data/raw'), (paths(cfg).output, 'runs'), (paths(cfg).root, '')]
     for anchor, label in locations:

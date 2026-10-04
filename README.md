@@ -36,6 +36,8 @@ Raw files and models are intentionally not downloadable from this Git repository
 Read [data/files/artifacts](docs/data.md), [installation/paths](docs/setup.md),
 [pipeline/command reference](docs/pipeline.md), [deployment](docs/deployment.md),
 and [tested server handoff](docs/server-handoff.md). They explain what a clone needs.
+The accepted upstream [Arch Linux notes](docs/setup-arch.md) use the same pinned
+Python 3.11 workflow; rolling system Python versions are not supported implicitly.
 
 ## Windows PowerShell quick start
 
