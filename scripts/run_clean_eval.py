@@ -25,7 +25,7 @@ import pandas as pd
 from scipy import stats as sps
 
 from phantomguard.config import BASELINE_PATH, REPO_ROOT, load_baseline, load_config, raw_path
-from phantomguard.detect.autoencoder import windows_from_tracks
+from phantomguard.detect.autoencoder import collection_config, load_iforest, score_iforest, windows_from_tracks
 from phantomguard.detect.common import LAYERS
 from phantomguard.detect.pipeline import MODELS_DIR, Detector, load_artifacts
 from phantomguard.eval.metrics import latency_stats, lite, score
@@ -51,7 +51,7 @@ def run_segment(job):
     split, part, seg, baseline_path, tag = job
     cfg = load_config()
     b = load_baseline(baseline_path)
-    ae, lib = load_artifacts(tag)
+    ae, lib = load_artifacts(tag, strict=True, cfg=cfg, baseline=b)
     det = Detector(cfg, b, ae, lib)
     cycles = [lite(r) for r in det.run(ReplaySource(raw_path(cfg, seg.file), (seg.lo, seg.hi)))]
     return split, part, seg, cycles
@@ -116,11 +116,11 @@ def main():
     # AE vs isolation forest on held-out TEST windows (time-block), at their val-calibrated thresholds
     b = load_baseline()
     n, roi, thr = cfg["learned"]["window_cycles"], cfg["roi"]["max_range"], cfg["motion"]["moving_threshold_mps"]
-    xte, mte = windows_from_tracks(list(collect(cfg, tb["test"]).tracks.values()), n, roi, thr)
-    ae, _ = load_artifacts("timeblock")
-    iso = pickle.loads((MODELS_DIR / "iforest_timeblock.pkl").read_bytes())
+    xte, mte = windows_from_tracks(list(collect(collection_config(cfg, b), tb["test"]).tracks.values()), n, roi, thr)
+    ae, _ = load_artifacts("timeblock", strict=True, cfg=cfg, baseline=b)
+    iso = load_iforest("timeblock", cfg=cfg, baseline=b, required=True)
     e_ae = ae.errors(xte)
-    e_if = -iso["model"].score_samples((xte - iso["mean"]) / iso["std"])
+    e_if = score_iforest(iso, xte)
     cmp_rows = []
     for cls, mask in (("static", ~mte), ("moving", mte)):
         cmp_rows.append({"windows": cls, "n": int(mask.sum()),
@@ -175,16 +175,29 @@ def write_report(cfg, df, p_val, p_test, p_loso, drs, lat, dcmp):
     pv = drs.pivot_table(index="reason", columns=["split", "part"], values="count", aggfunc="sum", fill_value=0)
     pv.columns = [f"{a}/{b}" for a, b in pv.columns]
     lines += [table(pv.reset_index(), ["reason"] + list(pv.columns), {}), ""]
+    calibration = load_baseline()
+    quantile = calibration["soft_quantile"]["value"]
+    threshold_rows = pd.DataFrame([{"class": cls,
+                                  "ae_threshold": calibration[f"ae_threshold_{cls}"]["value"],
+                                  "iforest_threshold": calibration[f"iforest_threshold_{cls}"]["value"],
+                                  "validation_windows": calibration[f"ae_threshold_{cls}"]["n_windows"]}
+                                 for cls in ("static", "moving")])
     lines += ["## Learned layer: autoencoder vs isolation forest (time-block TEST windows)", "",
-              "Both are calibrated to the 99.9th percentile of validation-clean scores, so the exceedance on clean test windows "
-              "should be about 0.1%. Without attacked data the two cannot be ranked on detection. The AE is used online "
+              f"Both use the selected validation quantile q={quantile} ({100*quantile:.4g}th percentile), separately "
+              "for static and moving windows. Held-out clean exceedance is measured below; it need not match the "
+              "validation tail probability. Without attacked data the two cannot be ranked on detection. The AE is used online "
               "because it runs in numpy inside the latency budget; the isolation forest is scored offline only.", "",
+              table(threshold_rows, ["class", "ae_threshold", "iforest_threshold", "validation_windows"], {}), "",
               table(dcmp, ["windows", "n", "ae_exceedance", "iforest_exceedance", "spearman_ae_vs_iforest"],
                     {"ae_exceedance": pct, "iforest_exceedance": pct, "spearman_ae_vs_iforest": f2, "n": str}), ""]
     lines += ["## Latency", "",
               f"Per-cycle processing (all layers including AE inference), over {lat['n']} cycles of all evaluated segments: "
               f"p50 {lat['p50_ms']:.3f} ms, **p99 {lat['p99_ms']:.3f} ms**, max {lat['max_ms']:.3f} ms "
               f"(budget: p99 < {cfg['latency']['p99_budget_ms']} ms). Measured in worker processes running in parallel on this machine.", ""]
+    lines += [f"Detector CPU p99 {lat['detector_p99_ms']:.3f} ms; frame grouping/decoding CPU p99 "
+              f"{lat['assembly_cpu_p99_ms']:.3f} ms. Total processing above includes both. Timestamp-based "
+              "assembly delay is separate and is reported by run_attack_eval.py; source I/O/capture waiting "
+              "and offline IF scoring are excluded from processing.", ""]
     lines += ["## Operating point (calibrated on validation by scripts/calibrate.py)", "",
               "Soft kinematic and AE thresholds are quantiles of clean data; the quantile is the smallest candidate with "
               "validation alerts/min < 1 (all layers, after fusion). The test split played no part. Val minutes are short, so "
@@ -207,7 +220,7 @@ def write_report(cfg, df, p_val, p_test, p_loso, drs, lat, dcmp):
               f"- Target: under {target} false alert per minute on clean held-out data after persistence filtering.",
               f"- Time-block test: {tpm:.2f} alerts/min -> {'MET' if tpm < target else 'NOT MET'}.",
               f"- LOSO: {lpm:.2f} alerts/min -> {'MET' if lpm < target else 'NOT MET'}.", ""]
-    (RESULTS / "clean_eval.md").write_text("\n".join(lines))
+    (RESULTS / "clean_eval.md").write_text("\n".join(lines), encoding="utf-8")
 
 
 if __name__ == "__main__":
