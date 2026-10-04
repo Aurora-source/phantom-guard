@@ -289,3 +289,98 @@ No bus, no live capture, no hardware (CLAUDE.md scope).
   vs 72%). It now uses `zlib.crc32` via `job_seed()`, with a regression test across two PYTHONHASHSEED values.
   A first before/after comparison that mixed this randomness into the trade-off (it suggested a 4-13 point cost)
   was discarded in favour of the like-for-like comparison above.
+
+## 2026-10-04 — complete-workflow integration and real-data audit
+
+- **Accepted versus contributor work:** merged `origin/main` at `1f5d2ee` into the
+  existing `codex/phases-3-6` history. Since the original base `7cdfa58`, main accepted
+  `38f9693` (Phase 2 planners/injection/evaluation/viewer), `62a9db8` (validation
+  M/N, corroborating AE, deterministic legacy seeds), and PR #3's merge. Phase 0
+  frames and Phase 1 ingestion/baseline were already accepted. No contributor branch
+  or original-checkout file was edited. The expanded assignment authorizes Phase 2
+  contract corrections in this feature branch.
+- **Real supplied inputs:** inventoried all four `dataset/*.csv` files, their 22
+  decoder-v2 columns, SHA256, rows and cycles. Their existing read-only `data/raw`
+  copies match byte for byte. All `source_file` values are `live`, so recording
+  identities come from filenames. Models, processed data, checkpoints, environment,
+  and source datasets remain local and ignored. Dataset inventory accompanies the
+  generated reports.
+- **Compatible preparation:** learned median cadence as a baseline value rather
+  than baking 332 ticks into scheduling or display. This required regeneration in
+  baseline -> train -> calibrate order, with `--loso` at every stage. All five model
+  bundles have strict source/split/config/feature/baseline provenance. Model selection
+  remains fixed AE for NumPy deployment; IF is an offline comparator with the same
+  normalization and scoring windows (fixed-seed training subset capped at 50,000).
+- **Contract extension:** reused the accepted scenario planners and `MixedSource`.
+  `AttackedSource` now emits ordinary frames and a complete final-index sidecar,
+  including rewritten count headers. Generic sources are buffered for offline
+  scheduling and retain malformed/unknown frames. Legacy sparse object labels remain
+  available through `MixedSource`. Lifecycle metadata records requested/planned/
+  emitted instances and EOF truncation; missing plans are not invented attacks.
+- **Attacker corrections:** T4 A0/A1 retain the genuine slot and append alongside it;
+  A2+ overwrite. Stable-slot exhaustion is explicit unsupported behavior, never a
+  substitute slot outside the observed distribution. Separate instances honor the
+  configured gap after their actual end, preventing overlapping T4 duplicate slots.
+  Minimum source lengths/counts are enforced. Flood copies may be shorter than T3's
+  20-cycle replay minimum. A1/A2 unrelated velocities come from real training pools.
+- **Naive-byte wording:** the original phase plan says A0 has random bytes, while
+  the frame contract requires forged objects to use `encode_object`. The accepted
+  attacker encodes random/unrelated decoded values into structurally valid object
+  payloads; it does not fuzz reserved bits or length. This implementation retains
+  that behavior. Malformed-byte/header/ID cases are separate regression fixtures,
+  not claimed as additional real attack-performance cells.
+- **Timing and level boundary:** every level serializes CAN frames using learned
+  spacing; inserted frames can delay subsequent authentic traffic and headers. A3+
+  also sorts by range and closes burst gaps. A2 repairs counts/counters/uniqueness
+  and retains nominal cadence except physical bus overrun; it is not required to
+  pass range order, burst contiguity, or scene count-envelope checks. This bus-overrun
+  limitation is disclosed rather than teleporting authentic frames backwards in time.
+- **Replay scopes:** earlier-stream material is restricted to the victim prefix
+  before onset. Training and unseen material are separate explicit choices at A3/A4,
+  independent of capability. Unseen segments never enter defender libraries. A
+  translated copy uses a nonzero quantized offset sampled from training positions,
+  with the whole trajectory inside the scene; failed material requests stay explicit.
+- **Header DLC contradiction:** recorded header DLC remains unknown and rebuilt
+  headers default to five bytes. Classic CAN still imposes an eight-byte maximum.
+  Overlong headers are hard `HEADER_LEN` violations and causal cycle boundaries;
+  they cannot change the preceding closed-cycle verdict.
+- **Fusion and performance investigation:** both evaluators now apply the same
+  calibrated per-fold M/N as the online detector. Gap aging, reassignment, duplicate
+  votes, and offline/online equivalence have regressions. Fresh clean test results
+  are 1.42/min time-block (3 events) and 3.41/min LOSO (36 events), compared with the
+  old 3/5 AE-alone policy's 3.31/5.59 on the same outputs. Neither meets <1/min.
+  The remaining time-block events are physical plausibility tails. LOSO protocol
+  alone contributes 11 events (1.04/min); `RCS_BAND` is the largest physical reason
+  count (171 object-cycles). These are short-sample/generalization limitations, not
+  justification to enlarge thresholds on test. Historical test inspection remains
+  disclosed; this run makes no new test-based operating-point choice.
+- **Learned policy limitation:** accepted `learned_alone: false` suppresses a lone
+  learned vote. Because a cycle already votes when another soft layer flags it,
+  corroborating AE adds no incremental boolean alerts under this OR/M-of-N rule.
+  Reports state this and retain raw-score AE/IF AUROC, rather than claiming an
+  independent learned detection gain. The accepted policy is preserved.
+- **Resource failure and correction:** an intermediate 12-worker evaluation failed
+  with MemoryError and OpenBLAS workspace errors (24 BLAS threads per process).
+  Evaluation now defaults each BLAS worker to one thread and reports explicit
+  environment overrides. The full matrix began with eight workers and resumed
+  unchanged from validated checkpoints with sixteen once memory use was stable;
+  each run records its measured worker count. Clean latency uses one worker.
+  Successful/unsupported jobs are content-addressed and resumable; code,
+  artifact, data or config changes invalidate them. Blocked checks are retried.
+  Intermediate matrices affected by overlapping T4 or timing defects were discarded.
+- **Publication:** authenticated GitHub account verified as `Aurora-source`; the
+  verified fork is `https://github.com/Aurora-source/phantom-guard`. Preserve `origin`
+  as the original upstream and add `fork` for publication. Push only the feature
+  branch and create/update a cross-fork PR to upstream main; no force push or direct
+  main update is part of this assignment's final publication path.
+- **Final executed evidence:** 139 tests passed with zero skips (49.82 s); compileall,
+  pip check, local import and checksum checks passed. Real Tk clean and attacked
+  event loops completed with timed automated closure. Four real-data PNG/GIF pairs
+  and logs were regenerated, each GIF 75 frames. The full matrix completed 2,411
+  observed attack runs plus 198 no-material and 55 capacity exclusions, with no
+  integration blocker. Unsupported T3/A0–A2 requests remain explicit. Worst completed
+  attacked p99 is 5.76 ms (none over 10 ms); single-worker clean p99 is 1.52 ms.
+  Assembly p99 is separately 33.5–33.6 ms. Eighteen observed runs fully evade scene
+  detection. Zero final T4/A2–A4 duplicate-slot violations were found across the
+  completed streams. Raw per-run/instance results and actual AUROCs are archived;
+  no model choice follows those AUROCs. The under-1 clean target still fails.

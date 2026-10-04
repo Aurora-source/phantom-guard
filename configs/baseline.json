@@ -171,6 +171,11 @@
     "val_exceedance": 0.0,
     "value": 302
   },
+  "cadence_median": {
+    "rule": "median(train header gaps after capture warm-up)",
+    "split": "train",
+    "value": 332.0
+  },
   "colocation_min": {
     "frac_zero": 0.0,
     "rule": "q0.00010 of per-cycle minimum distance between in-ROI objects",
@@ -207,6 +212,37 @@
       ]
     }
   },
+  "fusion_mn": {
+    "rule": "fewest CLEAN validation alert events over mn_candidates; ties -> smallest N (fastest detection); no attack labels used",
+    "split": "val",
+    "table": [
+      {
+        "m": 3,
+        "n": 5,
+        "val_alert_events": 1,
+        "val_alerts_per_minute": 0.474,
+        "val_minutes": 2.111
+      },
+      {
+        "m": 4,
+        "n": 6,
+        "val_alert_events": 0,
+        "val_alerts_per_minute": 0.0,
+        "val_minutes": 2.111
+      },
+      {
+        "m": 5,
+        "n": 8,
+        "val_alert_events": 0,
+        "val_alerts_per_minute": 0.0,
+        "val_minutes": 2.111
+      }
+    ],
+    "value": [
+      4,
+      6
+    ]
+  },
   "hold_frac_moving": {
     "rule": "p5/p50/p95 over moving in-ROI tracks of the fraction of cycles where x, y, vx, vy are all unchanged",
     "split": "train",
@@ -232,7 +268,7 @@
   },
   "learned_artifacts": {
     "ae": {
-      "artifact_id": "f64e029c63199e0ac8f7d8f0aab7f271aa2f870dd2f720af0f56a60c0fa0c277",
+      "artifact_id": "f264e65b56ced6cf60e30a9292f04809d0258e8ac11d9a69c442a0a6d47b76a6",
       "baseline_signature": "40ffb109eb8d969a532ec57e7daf272b009392fde825978a13121fbbb61d40be",
       "contract": {
         "features": [
@@ -313,12 +349,25 @@
       "threshold_split": "val",
       "train_moving_windows": 4170,
       "train_windows": 107838,
+      "training": {
+        "batch_size": 512,
+        "epochs_completed": 30,
+        "epochs_configured": 30,
+        "hidden": 32,
+        "latent": 6,
+        "learning_rate": 0.001,
+        "max_train_seconds": 300,
+        "stopping_reason": "configured_epochs_complete",
+        "train_seconds": 7.909224271774292
+      },
       "val_moving_windows": 1479,
       "val_windows": 35178
     },
     "iforest": {
       "artifact_id": "c804cd658e4119cbb28d1466bc2dc82bcf3808fe1242431eaddfbf3bb532f13c",
       "baseline_signature": "40ffb109eb8d969a532ec57e7daf272b009392fde825978a13121fbbb61d40be",
+      "bootstrap": false,
+      "contamination": "auto",
       "contract": {
         "features": [
           "dx",
@@ -339,6 +388,8 @@
       },
       "fit_windows": 50000,
       "kind": "iforest",
+      "max_features": 1.0,
+      "max_samples": 256,
       "normalization_split": "train",
       "schema_version": 1,
       "seed": 11,
@@ -1128,9 +1179,9 @@
         "iforest_threshold_moving": 0.6755000837028137,
         "iforest_threshold_static": 0.5488360442179016,
         "quantile": 0.999,
-        "val_alert_events": 31,
-        "val_alerts_per_minute": 14.684,
-        "val_fp_flagged": 0.002834332689680093,
+        "val_alert_events": 29,
+        "val_alerts_per_minute": 13.737,
+        "val_fp_flagged": 0.002484275664261436,
         "val_minutes": 2.111
       },
       {
@@ -1139,9 +1190,9 @@
         "iforest_threshold_moving": 0.6828788072767019,
         "iforest_threshold_static": 0.5561307833833665,
         "quantile": 0.9995,
-        "val_alert_events": 15,
-        "val_alerts_per_minute": 7.105,
-        "val_fp_flagged": 0.0010388789141456915,
+        "val_alert_events": 12,
+        "val_alerts_per_minute": 5.684,
+        "val_fp_flagged": 0.0008356199961606649,
         "val_minutes": 2.111
       },
       {
@@ -1150,9 +1201,9 @@
         "iforest_threshold_moving": 0.689135215808091,
         "iforest_threshold_static": 0.5670340557153015,
         "quantile": 0.9999,
-        "val_alert_events": 2,
-        "val_alerts_per_minute": 0.947,
-        "val_fp_flagged": 9.033729688223405e-05,
+        "val_alert_events": 1,
+        "val_alerts_per_minute": 0.474,
+        "val_fp_flagged": 3.387648633083776e-05,
         "val_minutes": 2.111
       },
       {
@@ -1163,7 +1214,7 @@
         "quantile": 0.99995,
         "val_alert_events": 1,
         "val_alerts_per_minute": 0.474,
-        "val_fp_flagged": 6.775297266167552e-05,
+        "val_fp_flagged": 3.387648633083776e-05,
         "val_minutes": 2.111
       },
       {

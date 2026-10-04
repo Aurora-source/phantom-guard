@@ -1,9 +1,19 @@
 # Phase 2 integration handoff
 
-Phases 3–6 were completed in the isolated `codex/phases-3-6` worktree, based on
-`7cdfa584edd20c8653991a8fbe8d6023c7b55493`. At inspection, upstream Phase 2 had
-`attack/levels.py` and `attack/pools.py` (introduced by `cd43c0e`), but no scenario
-or injection modules. No files in `attack/` were changed by this assignment.
+The original Phases 3–6 branch was based on
+`7cdfa584edd20c8653991a8fbe8d6023c7b55493`. Upstream subsequently accepted Phase 2
+in PR #3 (`1f5d2ee`), including the planners in `38f9693` and validation-based fusion
+in `62a9db8`. Those histories are now merged into this feature branch. The current
+assignment authorizes completing all phases; the accepted attacker was extended
+in this worktree through the contract below. No contributor branch was edited.
+
+`MixedSource` retains its legacy sparse-object-label interface. `AttackedSource`
+reuses those planners and injection code and provides complete sidecars for the
+evaluation/demo adapter. Generic FrameSources are buffered for offline scheduling;
+malformed headers, malformed objects, and unknown IDs are retained. There is no
+live attack implementation. Every level serialises object frames on the bus;
+insertion can delay authentic frames and later headers. A3+ additionally sorts by
+range and removes gaps. Cadence and minimum spacing use learned baseline values.
 
 ## Interface
 
@@ -91,7 +101,7 @@ unseen attacker material never enters those libraries.
 
 ## Validation and remaining dependencies
 
-Once the modules/API are available, run:
+The modules and API are now available. Run:
 
 ```text
 python scripts/run_attack_eval.py
@@ -106,13 +116,27 @@ Missing Phase 2 produces a blocked matrix and a nonzero exit, while independent
 clean evaluation can complete. Fixture tests exercise frame integration and
 PNG/GIF export; they are never used as a headline attacker or attack benchmark.
 
-Current instance denominators are **observed emitted attack IDs**. All observed
+Instance denominators are **observed emitted attack IDs**. All observed
 undetected and EOF-touching instances remain in denominators; EOF-touching
 instances are conservatively marked right-censored. Planned instances that never
-emit a frame cannot be reconstructed from the required sidecar. Phase 2 must
-provide a separate schedule/lifecycle manifest before those can be counted as
-scheduled-but-unobserved or distinguished from genuinely completed EOF attacks.
-No such instances are silently asserted to be detected or undetected.
+emit a frame cannot be reconstructed from the required sidecar alone. The accepted
+provider additionally writes `<labels-stem>.instances.json`, recording requested
+versus planned instances, scheduled intervals, emitted IDs, and EOF truncation.
+The evaluator reports scheduled-but-unobserved and unscheduled/no-material counts
+separately; explicit lifecycle information replaces conservative EOF censoring.
+
+Stable-slot exhaustion raises `UnsupportedAttack`; it never silently changes a
+fabricated object's slot or substitutes out-of-distribution IDs. T4 A0/A1 retain
+the genuine slot, as required for a duplicate-frame attack. T3 provenance and
+exact/translated variants are explicit choices, rather than implicit choices based
+on capability level. Earlier-stream replay reads only the selected victim prefix
+before each onset. Unseen segments cannot overlap defender training.
+
+Instances honor the configured clean gap after the actual last forged cycle, so
+separate T4 overwrites cannot overlap and duplicate a target slot. Planning cannot
+read beyond the selected victim segment. Translated replay uses a nonzero,
+quantised offset sampled from training positions and keeps the entire copied
+trajectory inside the scene. No-source-material cells remain explicit outcomes.
 
 AE selection is fixed for NumPy CPU deployment before attack testing. IF is an
 offline comparison on exactly the captured online AE windows. Do not select a
