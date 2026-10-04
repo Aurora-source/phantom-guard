@@ -18,6 +18,9 @@ class ProtocolChecker:
         self.burst = (g("burst_gap_lo"), g("burst_gap_hi"))
         self.order_tol = g("range_order_tol")
         self.slot_max = g("slot_max")
+        m = cfg["protocol"].get("count_margin", 0)
+        self.count_lo = max(0, g("objs_per_cycle_lo") - m)
+        self.count_hi = g("objs_per_cycle_hi") + m
         ff = g("fixed_fields")
         self.ok_dyn, self.ok_res, self.ok_status = set(ff["dyn_prop"]), set(ff["reserved"]), set(ff["status"])
         self._prev_t: int | None = None
@@ -34,6 +37,8 @@ class ProtocolChecker:
         else:
             if h.count != cycle.n_received:
                 cr.append("COUNT_MISMATCH")
+            if not self.count_lo <= cycle.n_received <= self.count_hi:
+                cr.append("COUNT_RANGE")
             if h.status not in self.ok_status:
                 cr.append("STATUS")
             if self._prev_counter is not None and (h.meas_counter - self._prev_counter) % 65536 != self.counter_step:

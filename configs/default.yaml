@@ -26,6 +26,10 @@ protocol:
   header_status_ok: 0x01
   # Cycles at the start of a stream whose period is not checked (capture-start flush, see decisions.md).
   cadence_warmup_cycles: 2
+  # Tolerance on the learned [min,max] objects-per-cycle bound (COUNT_RANGE). Covers cross-scenario
+  # count variation (per-file maxima differ by ~3) so normal busy cycles do not alarm; a flood adds
+  # 10-30 objects and still clears it. See docs/decisions.md 2026-10-04.
+  count_margin: 3
 
 roi:
   # UNVERIFIED distance units: coordinates may not be true metres. Provisional ROI.
@@ -82,8 +86,13 @@ learned:
   iforest_trees: 200
 
 fusion:
+  # Defaults; scripts/calibrate.py picks M/N from mn_candidates on clean validation (fusion_mn in baseline.json).
   m: 3
   n: 5
+  mn_candidates: [[3, 5], [4, 6], [5, 8]]
+  # The autoencoder is corroborating evidence only: a learned-only object-cycle does not count toward an
+  # alert. Design rule, not tuned (see docs/decisions.md 2026-10-04).
+  learned_alone: false
 
 attack:
   seeds: [11, 22, 33]

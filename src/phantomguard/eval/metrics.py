@@ -17,6 +17,16 @@ from phantomguard.detect.common import CycleResult, ObjVerdict
 from phantomguard.detect.fusion import Fusion
 
 
+# The fusion operating point used before 2026-10-04 (3 of 5, autoencoder may alert alone). Reports
+# re-apply it offline to the same detector output, so the trade-off of the calibrated point is measured
+# like-for-like. Measurement only: it never feeds a threshold.
+PREVIOUS_FUSION = {"m": 3, "n": 5, "learned_alone": True}
+
+
+def with_fusion(cfg: dict, fusion: dict) -> dict:
+    return {**cfg, "fusion": {**cfg["fusion"], **fusion}}
+
+
 @dataclass
 class LiteVerdict:
     track_id: int | None

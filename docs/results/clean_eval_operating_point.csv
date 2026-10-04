@@ -1,0 +1,4 @@
+data,minutes,calibrated_events,calibrated_per_min,previous_events,previous_per_min
+timeblock val,2.11,0,0.0,1,0.47367660677025974
+timeblock test,2.11,3,1.4202550462450823,10,4.734183487483607
+loso test,10.56,42,3.976784416307467,62,5.870491281215784

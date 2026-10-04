@@ -13,6 +13,7 @@ from dataclasses import dataclass, field
 REASONS: dict[str, tuple[str, bool]] = {
     # protocol, cycle level
     "COUNT_MISMATCH": ("protocol", True),
+    "COUNT_RANGE": ("protocol", True),
     "COUNTER": ("protocol", True),
     "CADENCE": ("protocol", True),
     "STATUS": ("protocol", True),
