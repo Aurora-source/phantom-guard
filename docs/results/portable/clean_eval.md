@@ -57,7 +57,7 @@ Same detector output, fusion re-applied offline. *calibrated* = the M/N chosen b
 |---|---|---|---|---|---|
 | timeblock val | 2.11 | 0 | 0.00 | 2 | 0.95 |
 | timeblock test | 2.11 | 3 | 1.42 | 7 | 3.31 |
-| loso test | 10.56 | 36 | 3.41 | 59 | 5.59 |
+| loso test | 10.56 | 36 | 3.41 | 60 | 5.68 |
 
 
 ## Per file, all layers
@@ -86,7 +86,7 @@ Same detector output, fusion re-applied offline. *calibrated* = the M/N chosen b
 | CADENCE | 1 | 0 | 0 |
 | COLOC | 1 | 1 | 0 |
 | JUMP | 5 | 0 | 0 |
-| LEARNED | 131 | 37 | 5 |
+| LEARNED | 129 | 37 | 5 |
 | POS_SPEED | 2 | 0 | 0 |
 | RCS_BAND | 171 | 5 | 0 |
 | RCS_RANGE | 1 | 0 | 0 |
@@ -103,8 +103,8 @@ Both use the selected validation quantile q=0.9999 (99.99th percentile), separat
 
 | class | ae_threshold | iforest_threshold | validation_windows |
 |---|---|---|---|
-| static | 2.5394326878376674 | 0.5670340557153015 | 33699 |
-| moving | 12.391257845763064 | 0.689135215808091 | 1479 |
+| static | 2.5393532133901515 | 0.5670340557153015 | 33699 |
+| moving | 12.390364242597148 | 0.689135215808091 | 1479 |
 
 
 | windows | n | ae_exceedance | iforest_exceedance | spearman_ae_vs_iforest |
@@ -115,9 +115,9 @@ Both use the selected validation quantile q=0.9999 (99.99th percentile), separat
 
 ## Latency
 
-Per-cycle processing (all layers including AE inference), over 26735 cycles of all evaluated segments: p50 0.853 ms, **p99 1.726 ms**, max 538.554 ms (budget: p99 < 10.0 ms). Measured with 1 worker(s) on this machine.
+Per-cycle processing (all layers including AE inference), over 26735 cycles of all evaluated segments: p50 0.863 ms, **p99 1.634 ms**, max 568.827 ms (budget: p99 < 10.0 ms). Measured with 1 worker(s) on this machine.
 
-Detector CPU p99 1.498 ms; frame grouping/decoding CPU p99 0.247 ms. Total processing above includes both. Timestamp-based assembly delay is separate and is reported by run_attack_eval.py; source I/O/capture waiting and offline IF scoring are excluded from processing.
+Detector CPU p99 1.421 ms; frame grouping/decoding CPU p99 0.240 ms. Total processing above includes both. Timestamp-based assembly delay is separate and is reported by run_attack_eval.py; source I/O/capture waiting and offline IF scoring are excluded from processing.
 
 ## Operating point (calibrated on validation by scripts/calibrate.py)
 

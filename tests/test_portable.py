@@ -43,6 +43,38 @@ def test_fixed_splits_cannot_be_reconfigured_into_training_data(tmp_path):
         load_config(root=tmp_path)
 
 
+def test_recording_arguments_use_configured_anchors(tmp_path, monkeypatch):
+    from phantomguard.paths import recording_path
+    root = tmp_path / 'workspace with spaces'
+    cfg = load_config(root=root, overrides={'data_dir': 'chosen raw'})
+    caller = tmp_path / 'unrelated caller'
+    caller.mkdir()
+    (caller / 'emptyRoom.csv').write_text('decoy', encoding='utf-8')
+    monkeypatch.chdir(caller)
+    assert recording_path(cfg, 'emptyRoom.csv') == root / 'chosen raw/emptyRoom.csv'
+    assert recording_path(cfg, 'inputs/emptyRoom.csv') == root / 'inputs/emptyRoom.csv'
+    external = tmp_path / 'external recording.csv'
+    assert recording_path(cfg, external) == external
+
+
+def test_replay_cli_does_not_select_a_cwd_recording(tmp_path, monkeypatch):
+    from phantomguard.commands import replay_demo
+    root = tmp_path / 'selected workspace'
+    caller = tmp_path / 'caller'
+    caller.mkdir()
+    (caller / 'emptyRoom.csv').write_text('decoy', encoding='utf-8')
+    monkeypatch.chdir(caller)
+    monkeypatch.setattr(replay_demo, 'load_baseline', lambda **kwargs: {})
+    selected = []
+    def source(path):
+        selected.append(path)
+        raise ValueError('fixture stops after path selection')
+    monkeypatch.setattr(replay_demo, 'ReplaySource', source)
+    with pytest.raises(SystemExit):
+        replay_demo.main(['--root', str(root), '--file', 'emptyRoom.csv', '--export'])
+    assert selected == [root / 'data/raw/emptyRoom.csv']
+
+
 def test_absolute_baseline_does_not_require_an_implicit_workspace(tmp_path,monkeypatch):
     import phantomguard.paths as p
     def no_default(*args,**kw):

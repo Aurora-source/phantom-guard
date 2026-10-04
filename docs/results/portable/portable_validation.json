@@ -1,7 +1,7 @@
 {
   "schema": 1,
-  "tested_code_sha": "91a79bb07123d5445dbc16569cb80c9ce0b5af31",
-  "integrated_upstream": "fc88afe",
+  "tested_code_sha": "e530d8f41dfd1fac75623907c1a5dc5f4b3ab2b7",
+  "integrated_upstream": "f93f283b09649a0d0165bc14e11b202c4572eb37",
   "initial_base": "89b182ff5777fe11c1676443085b36a52df0e94c",
   "runtime": {
     "python": "3.11.9",
@@ -137,9 +137,9 @@
   "artifacts": [
     {
       "tag": "timeblock",
-      "ae_artifact_id": "f264e65b56ced6cf60e30a9292f04809d0258e8ac11d9a69c442a0a6d47b76a6",
+      "ae_artifact_id": "2ad682efc017e2cf96d856772b20db898edd6c1e253947b3df013a671f067115",
       "library_fingerprints": 3806,
-      "baseline_sha256": "f664ec33375b8115fd32420a87c1d05f9f30bc8b7905d4964a48b8b62d8f8718",
+      "baseline_sha256": "b7f592bad60c25bfa4825c528cbb69d05b76239a5d2f500b755d41c933f82faf",
       "fusion_mn": [
         4,
         6
@@ -147,9 +147,9 @@
     },
     {
       "tag": "loso_emptyRoom",
-      "ae_artifact_id": "5c6645138520215720a0c29e368faef36f371e748ef583a0591ff5e961af658c",
+      "ae_artifact_id": "1d42d5146ea16e397a93b9d7e216f917efcfd14a189d55397cf7cb32d65ca5f1",
       "library_fingerprints": 4698,
-      "baseline_sha256": "6752ab2df1855d560fda4b1720840acd62f39a2ed23e75648c8d5b20360d4c2b",
+      "baseline_sha256": "a3fbc493c28ecdb86e154692026ef55bf6bd9491c65e06774322e612cd95f719",
       "fusion_mn": [
         5,
         8
@@ -157,9 +157,9 @@
     },
     {
       "tag": "loso_onePersonMovingFrontAndBack",
-      "ae_artifact_id": "018142692834b3b5cfd4426b5d8e7170935e14dac0041a43146c208d249f5ff0",
+      "ae_artifact_id": "667a9e9168bea46cfd0fd484cd18db05381923f8268bcd1330788736a8f3de90",
       "library_fingerprints": 4348,
-      "baseline_sha256": "40354fa1061c19b02f4a31f5dbaa97b7229ef344bec3c7ffdc9847e6a50abc4e",
+      "baseline_sha256": "fab4521effeb4cb975d082836fa9918cddb0dee1cfdada54590724821bc94eb7",
       "fusion_mn": [
         4,
         6
@@ -167,9 +167,9 @@
     },
     {
       "tag": "loso_onePersonMovingSideToSide",
-      "ae_artifact_id": "d438b234162900e41a76fc4a22df91d4fb9cc22ea1c0e3c5a43daef590ee632b",
+      "ae_artifact_id": "e8ac7fab1b8dd0295e1b23ee56c54da59d375ff7625c39703cd04e4237f24b27",
       "library_fingerprints": 3847,
-      "baseline_sha256": "1ed3867c8e89e1f11c1279e3c8e3d568fdca41edfc45c7e98d07b298a3269824",
+      "baseline_sha256": "58d5ddd7db0f4c22970c37f440ddd9203bee3910f3a41d8fadcc66234e66d4f0",
       "fusion_mn": [
         5,
         8
@@ -177,9 +177,9 @@
     },
     {
       "tag": "loso_multiplePeopleChaotic",
-      "ae_artifact_id": "3848287c3be5fd33cdf6f304fbc178bdbd355c4f961a79fa20d9ab9013c9e664",
+      "ae_artifact_id": "dec99317352832942b7ae3720cba6a7fbaf6d9ffbf0e719f7ca15e059feb598b",
       "library_fingerprints": 1208,
-      "baseline_sha256": "e89d547d14650a5935c064ac26ef7cc0fc370a5bdd9e92e378c176b5f3d005a2",
+      "baseline_sha256": "836a2cbc214b870d9634cfedee2699188d49aecdb4fa23fd1d9a8aff2d7a9f9c",
       "fusion_mn": [
         4,
         6
@@ -188,88 +188,30 @@
   ],
   "tests": {
     "windows_worktree": {
-      "tests": "166",
+      "tests": "168",
       "failures": "0",
       "errors": "0",
       "skipped": "0",
-      "time": "74.033",
-      "timestamp": "2026-10-04T23:14:08.341764+05:30",
-      "clean_pooled_denominators": {
-        "timeblock": {
-          "alert_events": 3,
-          "minutes_rounded_sum": 2.112,
-          "object_cycles": 88214
-        },
-        "loso": {
-          "alert_events": 36,
-          "minutes_rounded_sum": 10.561,
-          "object_cycles": 442724
-        }
-      },
-      "final_suite": {
-        "tests": "168",
-        "errors": "0",
-        "failures": "0",
-        "skipped": "0",
-        "time": "71.072",
-        "timestamp": "2026-10-04T23:59:54.121737+05:30"
-      }
+      "time": "55.247",
+      "timestamp": "2026-10-05T00:29:43.221078+05:30"
     },
-    "windows_clean_clone": {
-      "tests": "166",
+    "windows_normal_wheel": {
+      "tests": "168",
       "failures": "0",
       "errors": "0",
       "skipped": "0",
-      "time": "107.203",
-      "timestamp": "2026-10-04T23:17:19.211278+05:30",
-      "clean_pooled_denominators": {
-        "timeblock": {
-          "alert_events": 3,
-          "minutes_rounded_sum": 2.112,
-          "object_cycles": 88214
-        },
-        "loso": {
-          "alert_events": 36,
-          "minutes_rounded_sum": 10.561,
-          "object_cycles": 442724
-        }
-      },
-      "final_suite": {
-        "tests": "168",
-        "errors": "0",
-        "failures": "0",
-        "skipped": "0",
-        "time": "75.177",
-        "timestamp": "2026-10-05T00:00:12.621443+05:30"
-      }
+      "time": "141.153",
+      "timestamp": "2026-10-05T00:31:27.594777+05:30",
+      "smoke_manifest_sha256": "5818332b63057e6b193cbdb61d91e16aecfa665816ee2de2e3bc3cb945e3d426"
     },
-    "ubuntu_26_04_1_wsl_clean_clone": {
-      "tests": "166",
+    "ubuntu_26_04_1_wsl_normal_wheel": {
+      "tests": "168",
       "failures": "0",
       "errors": "0",
       "skipped": "0",
-      "time": "71.177",
-      "timestamp": "2026-10-04T17:47:22.192920+00:00",
-      "clean_pooled_denominators": {
-        "timeblock": {
-          "alert_events": 3,
-          "minutes_rounded_sum": 2.112,
-          "object_cycles": 88214
-        },
-        "loso": {
-          "alert_events": 36,
-          "minutes_rounded_sum": 10.561,
-          "object_cycles": 442724
-        }
-      },
-      "final_suite": {
-        "tests": "168",
-        "errors": "0",
-        "failures": "0",
-        "skipped": "0",
-        "time": "53.053",
-        "timestamp": "2026-10-04T18:33:35.619210+00:00"
-      }
+      "time": "109.409",
+      "timestamp": "2026-10-04T19:01:25.655838+00:00",
+      "smoke_manifest_sha256": "13a2d6f6e91688ac11238d84f6e8acea95721d4ec9f65f7a5eb1e6a54a7b5172"
     }
   },
   "browser": {
@@ -341,31 +283,9 @@
         "browser-T1-A2.png",
         "browser-mobile.png"
       ]
-    },
-    "final_published_container": {
-      "ok": true,
-      "url": "http://127.0.0.1:8766",
-      "browser": "Chromium / Playwright 1.58.0",
-      "checks": [
-        "readiness",
-        "clean real replay",
-        "play/pause/step/seek",
-        "reset",
-        "T1/A2 real attack",
-        "unsupported T3/A2 disabled",
-        "generated report filters",
-        "independent browser session",
-        "cancel",
-        "mobile layout"
-      ],
-      "page_errors": [],
-      "screenshots": [
-        "browser-clean.png",
-        "browser-T1-A2.png",
-        "browser-mobile.png"
-      ]
     }
   },
+  "browser_client": "Windows Chromium / Playwright; APIs: Windows, Ubuntu 26.04.1 WSL and Debian bookworm container",
   "container": {
     "ok": true,
     "missing_models_health_status": 200,
@@ -374,22 +294,22 @@
       "timeblock: trained artifacts missing: /workspace/models/ae_timeblock.npz, /workspace/models/replay_library_timeblock.pkl; run scripts/train.py; next: restore matching bundle, or offline baseline --loso -> train --loso -> calibrate --loso"
     ],
     "normal_readiness": 200,
-    "image_id": "sha256:ddf52d5ca5f064c4f93769aed48ce194b2b5f31c82b615920a289704879fb77a",
+    "image_id": "sha256:a7e6e35f04d6df92bfc18b8f853cf385b22c30e43d236f21ec7ac7ee6e84c7ff",
     "read_only_root": true,
     "read_only_input_mounts": true,
     "memory_limit_bytes": 2147483648,
     "cpu_limit": 2,
     "pids_limit": 64,
     "stats": {
-      "BlockIO": "0B / 0B",
-      "CPUPerc": "0.05%",
+      "BlockIO": "20MB / 0B",
+      "CPUPerc": "122.81%",
       "Container": "phantomguard-p31-prototype-1",
-      "ID": "4ca17ace6d0a",
-      "MemPerc": "1.82%",
-      "MemUsage": "37.21MiB / 2GiB",
+      "ID": "05f70f6dfe28",
+      "MemPerc": "5.64%",
+      "MemUsage": "115.5MiB / 2GiB",
       "Name": "phantomguard-p31-prototype-1",
-      "NetIO": "1.74kB / 3.91kB",
-      "PIDs": "11"
+      "NetIO": "20.5kB / 90.7kB",
+      "PIDs": "14"
     }
   },
   "container_api_attacks": {
@@ -405,7 +325,7 @@
           "cycles": 600
         },
         "state": "complete",
-        "seconds": 12.219000000000051,
+        "seconds": 28.188000000000102,
         "provenance": {
           "source": "recorded sensor replay",
           "attack": "simulated CAN attack",
@@ -415,8 +335,8 @@
           "shown_cycles": 600,
           "seed_rule": "browser uses the selected seed directly; matrix repetitions use SeedSequence",
           "recording_sha256": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e",
-          "model_artifact_id": "f264e65b56ced6cf60e30a9292f04809d0258e8ac11d9a69c442a0a6d47b76a6",
-          "baseline_sha256": "f664ec33375b8115fd32420a87c1d05f9f30bc8b7905d4964a48b8b62d8f8718",
+          "model_artifact_id": "2ad682efc017e2cf96d856772b20db898edd6c1e253947b3df013a671f067115",
+          "baseline_sha256": "b7f592bad60c25bfa4825c528cbb69d05b76239a5d2f500b755d41c933f82faf",
           "configuration": {
             "data": {
               "raw_dir": "data/raw",
@@ -572,7 +492,7 @@
           "cycles": 600
         },
         "state": "complete",
-        "seconds": 13.608999999999469,
+        "seconds": 22.90600000000086,
         "provenance": {
           "source": "recorded sensor replay",
           "attack": "simulated CAN attack",
@@ -582,8 +502,8 @@
           "shown_cycles": 600,
           "seed_rule": "browser uses the selected seed directly; matrix repetitions use SeedSequence",
           "recording_sha256": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e",
-          "model_artifact_id": "f264e65b56ced6cf60e30a9292f04809d0258e8ac11d9a69c442a0a6d47b76a6",
-          "baseline_sha256": "f664ec33375b8115fd32420a87c1d05f9f30bc8b7905d4964a48b8b62d8f8718",
+          "model_artifact_id": "2ad682efc017e2cf96d856772b20db898edd6c1e253947b3df013a671f067115",
+          "baseline_sha256": "b7f592bad60c25bfa4825c528cbb69d05b76239a5d2f500b755d41c933f82faf",
           "configuration": {
             "data": {
               "raw_dir": "data/raw",
@@ -739,7 +659,7 @@
           "cycles": 600
         },
         "state": "complete",
-        "seconds": 14.140999999999622,
+        "seconds": 22.35900000000038,
         "provenance": {
           "source": "recorded sensor replay",
           "attack": "simulated CAN attack",
@@ -749,8 +669,8 @@
           "shown_cycles": 600,
           "seed_rule": "browser uses the selected seed directly; matrix repetitions use SeedSequence",
           "recording_sha256": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e",
-          "model_artifact_id": "f264e65b56ced6cf60e30a9292f04809d0258e8ac11d9a69c442a0a6d47b76a6",
-          "baseline_sha256": "f664ec33375b8115fd32420a87c1d05f9f30bc8b7905d4964a48b8b62d8f8718",
+          "model_artifact_id": "2ad682efc017e2cf96d856772b20db898edd6c1e253947b3df013a671f067115",
+          "baseline_sha256": "b7f592bad60c25bfa4825c528cbb69d05b76239a5d2f500b755d41c933f82faf",
           "configuration": {
             "data": {
               "raw_dir": "data/raw",
@@ -906,7 +826,7 @@
           "cycles": 600
         },
         "state": "complete",
-        "seconds": 13.671000000000276,
+        "seconds": 23.32799999999952,
         "provenance": {
           "source": "recorded sensor replay",
           "attack": "simulated CAN attack",
@@ -916,8 +836,8 @@
           "shown_cycles": 600,
           "seed_rule": "browser uses the selected seed directly; matrix repetitions use SeedSequence",
           "recording_sha256": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e",
-          "model_artifact_id": "f264e65b56ced6cf60e30a9292f04809d0258e8ac11d9a69c442a0a6d47b76a6",
-          "baseline_sha256": "f664ec33375b8115fd32420a87c1d05f9f30bc8b7905d4964a48b8b62d8f8718",
+          "model_artifact_id": "2ad682efc017e2cf96d856772b20db898edd6c1e253947b3df013a671f067115",
+          "baseline_sha256": "b7f592bad60c25bfa4825c528cbb69d05b76239a5d2f500b755d41c933f82faf",
           "configuration": {
             "data": {
               "raw_dir": "data/raw",
@@ -1072,10 +992,10 @@
         "-m",
         "pytest",
         "-q",
-        "--junitxml=D:\\Hacksprint\\phantom-guard-portable-hosted-prototype\\runs\\final-validation\\windows-tests.xml"
+        "--junitxml=D:\\Hacksprint\\phantom-guard-portable-hosted-prototype\\runs\\current-validation\\windows-tests.xml"
       ],
       "exit_code": 0,
-      "seconds": 75.51600000000008
+      "seconds": 56.61000000000058
     },
     {
       "argv": [
@@ -1085,31 +1005,162 @@
         "--workers",
         "1",
         "--output-dir",
-        "D:\\Hacksprint\\phantom-guard-portable-hosted-prototype\\runs\\final-validation"
+        "D:\\Hacksprint\\phantom-guard-portable-hosted-prototype\\runs\\current-validation"
       ],
       "exit_code": 0,
-      "seconds": 45.03099999999995
+      "seconds": 47.375
     },
     {
       "argv": [
-        "D:\\Hacksprint\\phantom-guard-portable-hosted-prototype\\.venv\\Scripts\\python.exe",
         "-m",
         "phantomguard",
         "attack-eval",
         "--workers",
         "24",
         "--output-dir",
-        "D:\\Hacksprint\\phantom-guard-portable-hosted-prototype\\runs\\final-validation"
+        "D:\\Hacksprint\\phantom-guard-portable-hosted-prototype\\runs\\current-validation"
       ],
       "exit_code": 0,
-      "seconds": 1268.2039999999997,
-      "resume_note": "Matching code/data/config/artifact checkpoints from 12-worker start reused; per-run measurement_workers retained. Resource sampling showed 39% CPU and >10 GiB free on 32 logical CPUs before increasing to 24."
+      "seconds": 1987.3279999999995
+    }
+  ],
+  "preparation": [
+    {
+      "argv": [
+        "D:\\Hacksprint\\phantom-guard-portable-hosted-prototype\\.venv\\Scripts\\python.exe",
+        "-m",
+        "phantomguard",
+        "baseline",
+        "--loso"
+      ],
+      "exit_code": 0,
+      "seconds": 29.686999999999898
+    },
+    {
+      "argv": [
+        "D:\\Hacksprint\\phantom-guard-portable-hosted-prototype\\.venv\\Scripts\\python.exe",
+        "-m",
+        "phantomguard",
+        "train",
+        "--loso"
+      ],
+      "exit_code": 0,
+      "seconds": 70.46900000000096
+    },
+    {
+      "argv": [
+        "D:\\Hacksprint\\phantom-guard-portable-hosted-prototype\\.venv\\Scripts\\python.exe",
+        "-m",
+        "phantomguard",
+        "calibrate",
+        "--loso"
+      ],
+      "exit_code": 0,
+      "seconds": 131.88999999999942
+    }
+  ],
+  "normal_wheel_windows_commands": [
+    {
+      "argv": [
+        "D:\\Hacksprint\\Phantom Guard clean Windows v2\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pip",
+        "install",
+        "--no-deps",
+        "--force-reinstall",
+        "."
+      ],
+      "seconds": 7.406000000000859,
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "D:\\Hacksprint\\Phantom Guard clean Windows v2\\.venv\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "-q",
+        "--junitxml=runs/windows-current-tests.xml"
+      ],
+      "seconds": 143.9369999999999,
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "D:\\Hacksprint\\Phantom Guard clean Windows v2\\.venv\\Scripts\\python.exe",
+        "-m",
+        "phantomguard",
+        "doctor",
+        "--full"
+      ],
+      "seconds": 4.5789999999997235,
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "D:\\Hacksprint\\Phantom Guard clean Windows v2\\.venv\\Scripts\\python.exe",
+        "-m",
+        "phantomguard",
+        "attack-eval",
+        "--root",
+        "D:\\Hacksprint\\Phantom Guard clean Windows v2",
+        "--smoke",
+        "--workers",
+        "1",
+        "--output-dir",
+        "runs/current-root-smoke"
+      ],
+      "seconds": 64.09300000000076,
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "D:\\Hacksprint\\Phantom Guard clean Windows v2\\.venv\\Scripts\\python.exe",
+        "-m",
+        "phantomguard",
+        "replay",
+        "--file",
+        "onePersonMovingFrontAndBack.csv",
+        "--cycles",
+        "150",
+        "--gif-cycles",
+        "40",
+        "--export",
+        "--output-dir",
+        "runs/current-replay/clean"
+      ],
+      "seconds": 14.563000000000102,
+      "exit_code": 0
+    },
+    {
+      "argv": [
+        "D:\\Hacksprint\\Phantom Guard clean Windows v2\\.venv\\Scripts\\python.exe",
+        "-m",
+        "phantomguard",
+        "replay",
+        "--file",
+        "onePersonMovingFrontAndBack.csv",
+        "--attack",
+        "T1",
+        "--level",
+        "A2",
+        "--seed",
+        "11",
+        "--cycles",
+        "150",
+        "--gif-cycles",
+        "40",
+        "--export",
+        "--output-dir",
+        "runs/current-replay/attack"
+      ],
+      "seconds": 25.639999999999418,
+      "exit_code": 0
     }
   ],
   "single_worker_latency": {
-    "tested_code_sha": "7eb3ec216ffd0efc4bd69bffa01ee2f09bebef1a",
+    "tested_code_sha": "e530d8f41dfd1fac75623907c1a5dc5f4b3ab2b7",
     "workers": 1,
-    "seconds": 42.5630000000001,
+    "seconds": 42.79600000000028,
     "rows": [
       {
         "split": "timeblock",
@@ -1135,12 +1186,12 @@
         "roi_object_cycles": 8442,
         "roi_moving_object_cycles": 0,
         "out_of_roi_object_cycles": 12396,
-        "p50_ms": 0.9073000010175747,
-        "p99_ms": 1.5694999999595893,
-        "max_ms": 63.76249999811989,
+        "p50_ms": 1.015499996356084,
+        "p99_ms": 1.7438999984733528,
+        "max_ms": 65.08450000546873,
         "n": 876,
-        "detector_p99_ms": 1.4030000004368048,
-        "assembly_cpu_p99_ms": 0.22539999963555601,
+        "detector_p99_ms": 1.5538749998995627,
+        "assembly_cpu_p99_ms": 0.24244999985967297,
         "assembly_n": 875,
         "assembly_eof_unmeasured": 1,
         "assembly_p50_ms": 33.2,
@@ -1173,12 +1224,12 @@
         "roi_object_cycles": 8639,
         "roi_moving_object_cycles": 491,
         "out_of_roi_object_cycles": 9716,
-        "p50_ms": 0.8992500002023007,
-        "p99_ms": 1.6302750018439838,
-        "max_ms": 61.48360000042885,
+        "p50_ms": 1.0349499989388278,
+        "p99_ms": 1.7230999997082108,
+        "max_ms": 66.88459999531915,
         "n": 826,
-        "detector_p99_ms": 1.4352750001762615,
-        "assembly_cpu_p99_ms": 0.21755000102530175,
+        "detector_p99_ms": 1.5471250003429304,
+        "assembly_cpu_p99_ms": 0.23165000402514124,
         "assembly_n": 825,
         "assembly_eof_unmeasured": 1,
         "assembly_p50_ms": 33.2,
@@ -1211,12 +1262,12 @@
         "roi_object_cycles": 10773,
         "roi_moving_object_cycles": 373,
         "out_of_roi_object_cycles": 11089,
-        "p50_ms": 0.9085000010600197,
-        "p99_ms": 1.6418740015615183,
-        "max_ms": 63.4330000002592,
+        "p50_ms": 1.0448000011820113,
+        "p99_ms": 1.741018003631325,
+        "max_ms": 69.18209999821556,
         "n": 999,
-        "detector_p99_ms": 1.4367360004871441,
-        "assembly_cpu_p99_ms": 0.21908599599555592,
+        "detector_p99_ms": 1.5441599999030584,
+        "assembly_cpu_p99_ms": 0.2168100045673782,
         "assembly_n": 998,
         "assembly_eof_unmeasured": 1,
         "assembly_p50_ms": 33.2,
@@ -1249,12 +1300,12 @@
         "roi_object_cycles": 13297,
         "roi_moving_object_cycles": 842,
         "out_of_roi_object_cycles": 13862,
-        "p50_ms": 0.9933999986060371,
-        "p99_ms": 1.983426001525003,
-        "max_ms": 76.9248000042353,
+        "p50_ms": 1.0619499980748515,
+        "p99_ms": 1.9679360009467914,
+        "max_ms": 77.68729999588686,
         "n": 1120,
-        "detector_p99_ms": 1.7737600000054952,
-        "assembly_cpu_p99_ms": 0.26206700003058353,
+        "detector_p99_ms": 1.7402429995490794,
+        "assembly_cpu_p99_ms": 0.26702900251621026,
         "assembly_n": 1119,
         "assembly_eof_unmeasured": 1,
         "assembly_p50_ms": 33.2,
@@ -1287,12 +1338,12 @@
         "roi_object_cycles": 43447,
         "roi_moving_object_cycles": 1,
         "out_of_roi_object_cycles": 61930,
-        "p50_ms": 0.921399999242567,
-        "p99_ms": 1.6637299995545614,
-        "max_ms": 129.65609999992012,
+        "p50_ms": 0.9049000009326846,
+        "p99_ms": 1.6865190040152789,
+        "max_ms": 121.33249999533291,
         "n": 4378,
-        "detector_p99_ms": 1.4598369996656393,
-        "assembly_cpu_p99_ms": 0.2329459996235527,
+        "detector_p99_ms": 1.471605001133865,
+        "assembly_cpu_p99_ms": 0.22653799904219316,
         "assembly_n": 4377,
         "assembly_eof_unmeasured": 1,
         "assembly_p50_ms": 33.2,
@@ -1325,12 +1376,12 @@
         "roi_object_cycles": 42421,
         "roi_moving_object_cycles": 1136,
         "out_of_roi_object_cycles": 51003,
-        "p50_ms": 0.878499999998894,
-        "p99_ms": 1.655200001951015,
-        "max_ms": 125.86389999887615,
+        "p50_ms": 0.8626999988337047,
+        "p99_ms": 1.608050003778771,
+        "max_ms": 118.15419999948062,
         "n": 4127,
-        "detector_p99_ms": 1.438439999346883,
-        "assembly_cpu_p99_ms": 0.2346220007166266,
+        "detector_p99_ms": 1.4038399994024073,
+        "assembly_cpu_p99_ms": 0.23257399418071142,
         "assembly_n": 4126,
         "assembly_eof_unmeasured": 1,
         "assembly_p50_ms": 33.2,
@@ -1363,12 +1414,12 @@
         "roi_object_cycles": 53534,
         "roi_moving_object_cycles": 1233,
         "out_of_roi_object_cycles": 60047,
-        "p50_ms": 0.9497000010014744,
-        "p99_ms": 1.6975719989568456,
-        "max_ms": 137.24839999576943,
+        "p50_ms": 0.9144999985437607,
+        "p99_ms": 1.7384359985589977,
+        "max_ms": 133.13970000126574,
         "n": 4993,
-        "detector_p99_ms": 1.493440000085684,
-        "assembly_cpu_p99_ms": 0.24461599878122794,
+        "detector_p99_ms": 1.5348879998055054,
+        "assembly_cpu_p99_ms": 0.22680799062072765,
         "assembly_n": 4992,
         "assembly_eof_unmeasured": 1,
         "assembly_p50_ms": 33.2,
@@ -1401,12 +1452,12 @@
         "roi_object_cycles": 63244,
         "roi_moving_object_cycles": 3884,
         "out_of_roi_object_cycles": 67098,
-        "p50_ms": 0.9208000001308392,
-        "p99_ms": 1.624120000051334,
-        "max_ms": 147.10960000138584,
+        "p50_ms": 0.9156000014627352,
+        "p99_ms": 1.7065840055147417,
+        "max_ms": 141.35580000038317,
         "n": 5597,
-        "detector_p99_ms": 1.4134840004044233,
-        "assembly_cpu_p99_ms": 0.22941199888009578,
+        "detector_p99_ms": 1.4902120002079755,
+        "assembly_cpu_p99_ms": 0.232516002288321,
         "assembly_n": 5596,
         "assembly_eof_unmeasured": 1,
         "assembly_p50_ms": 33.2,
@@ -1707,804 +1758,73 @@
     "human_review": false
   },
   "fresh_matrix_manifest": "portable/attack_eval_manifest.json",
-  "artifact_preparation": "Compatible five bundles reused, no retraining/calibration/held-out selection",
-  "prior_attempts": "Intermediate migration failures and interrupted matrices are not passes. Final matrix uses matching 12-worker checkpoints resumed with 24 workers; per-run concurrency preserved.",
+  "source_line_endings": "Full sweep used remaining CRLF worktree source files; normal clones use tracked LF. Source bytes are identical after newline normalization. Original manifest hashes are preserved.",
+  "implementation_lf_sha256": {
+    "scripts/calibrate.py": "ca4b8e432c44b30a68c33e0b9c60efdc67c6ec43a835149293555e59c6d9540d",
+    "scripts/learn_baseline.py": "3731aa6fe44ad815d6d28edde97539d85fdf2a9236bad4f842ccaf1f413a3f6e",
+    "scripts/replay_demo.py": "0b3c7955a92b8eb70e42f07c6fe2f6bb1aa0c8cd848adcaf40836b0e431c158b",
+    "scripts/run_attack_eval.py": "0af4e2efc3b8749e6189180aaf3a4dcd44782eabb10c3e6ebbaa83490a33c557",
+    "scripts/run_clean_eval.py": "30b2c763cdb1c3fc79f3003d89b4f2d2c86b51a2d17aa94e7f22e6baffaab609",
+    "scripts/train.py": "d2689c63eaea0effa95ea66e5d82ece5d1b3d1a315af922a720e0426574b83f2",
+    "src/phantomguard/__init__.py": "4fc157c774ec93b28a20321683a2c2d165959956c92a9286a8cb72d474ea96e6",
+    "src/phantomguard/__main__.py": "2bfd49629cbeaf34d1d53eadbeccb267fa3bb3fe4dc9e5b08bff0bcb6d1e47e1",
+    "src/phantomguard/attack/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/phantomguard/attack/injector.py": "ce42b3dc23293bb5595761e26d1f0d04860ea2543509c4ecf5bd64514dae68a4",
+    "src/phantomguard/attack/levels.py": "87bce9e12b43e42b09ddee0fb5e0b716adc32b00c568ded290becc963a13ab83",
+    "src/phantomguard/attack/pools.py": "0dc39b825972c89c0e680db2cd3e3b3e1ebc9204bdb29571a19666dde667d500",
+    "src/phantomguard/attack/scenarios.py": "af87b078de32339c7dd03b0549e9baac3fd3445af944642743c3ad9cc9a53da3",
+    "src/phantomguard/bundle.py": "e495e54ea20e5bdf420fd29d8b2869f346b9b5eae1da49c02b214a398c2216f6",
+    "src/phantomguard/cli.py": "9c01f7ccf70276ed9130095d3b56e359294e8678631583799bbd73069d62d28b",
+    "src/phantomguard/commands/__init__.py": "e4e2ad55a1d041aca2dd6267b168915e1af031b89c37af086c4de4b622fbebc3",
+    "src/phantomguard/commands/calibrate.py": "9ccfb021f8a4d2dfc63a33488185d2541e3f4a094af9b3663419228cbb066f71",
+    "src/phantomguard/commands/learn_baseline.py": "71d312e38e621c1d14c2938a1d973397e266d0aeecb475bf7a46d4a188eeaae6",
+    "src/phantomguard/commands/replay_demo.py": "6afe83bea359d20ecb1e05b54af30a9fbc839daec2c88d2ad10dbba6e2f62509",
+    "src/phantomguard/commands/run_attack_eval.py": "0ac47d3209dff1271788c2ff487ef9c652e4c630a1ebfa2829eb23f12306eb04",
+    "src/phantomguard/commands/run_clean_eval.py": "e5064fc6fab69e069b15371b69d78e7adae646ea2030c5e46e9f6e09b7bc52df",
+    "src/phantomguard/commands/train.py": "ce991b9771730a707499b53214522900738d44ca87f579cea04434f73da450a8",
+    "src/phantomguard/config.py": "432830149a25b5ce9be1275ffb3880a2be44236290583ffd894d3d58beb1933d",
+    "src/phantomguard/cycles.py": "d973a83cee1ccf63ae1747be464894439ef651193cf1d3009b68f85f3ec304b1",
+    "src/phantomguard/decoder.py": "7284c213abd7041e5788e0b90f8e7f5639628552c89e1d78e3cf7f0e91513a9a",
+    "src/phantomguard/detect/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/phantomguard/detect/autoencoder.py": "05294ce01035e0edf58ee04001bb6d54ed1e0063ded409c40c66f7c96a5f8b04",
+    "src/phantomguard/detect/common.py": "21d290571bb5e45a970ef2cfb86e8d77f204e6082cb06b8440f05cf6e27c634d",
+    "src/phantomguard/detect/fusion.py": "1fe49d5bc69cb919063889701525b0f453cfbc2ddb329e8484cb106feb48a9d5",
+    "src/phantomguard/detect/kinematic.py": "980cae16f2fc6e5c2b84b4fcc1877daf4fa6dcba33dc0c43af33af4754757635",
+    "src/phantomguard/detect/pipeline.py": "eca6957a4b78a15392a2e57a10fae0a3a9b1a782b6b48621912c8a14eafd58a7",
+    "src/phantomguard/detect/protocol.py": "7e82fad7270ce5f9a56f2def7cacc32238e7ec2cd7f5ce19524c03b162942f50",
+    "src/phantomguard/detect/replay_fp.py": "666b9fe47f4e6096b546ab83858c7cedd055268b0218cf1d6418e401e78623e1",
+    "src/phantomguard/eval/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/phantomguard/eval/attack_adapter.py": "2af4a5bf2295c05a11f354b772655db41cb4a286cf3c2cb8cd136be122ffbe35",
+    "src/phantomguard/eval/metrics.py": "f3f394f4c924bfc1af0ccc6298b994cd73febad1aacc29ec10505294e27b8a87",
+    "src/phantomguard/eval/report.py": "1f240397dcac3dbd8e04b41eb439ff0d77b9ab51e94f6c35b858698238e92e41",
+    "src/phantomguard/eval/splits.py": "53cd3836e7c561191817eb80a4e2ee202a86be7cb64993bacc5b99b27c96c6a5",
+    "src/phantomguard/frames.py": "fd5e33b4ed874a8bc973bb92406eb17595c530412b2711cedb3c2605ad7a6ae7",
+    "src/phantomguard/io/__init__.py": "785e661930bf3fd0c51b2071b1f7f690d6dadb22edc4234c406f1a1d9bbd260b",
+    "src/phantomguard/io/live.py": "c64562fcbd63c5e32b205a817261b39b5321db24933aab2937bbf3f3b5d8952e",
+    "src/phantomguard/io/replay.py": "c0b9d46b8d615ba9f97dff22d13f12a53e179c2807751e9de5b43d5a3e0b1afe",
+    "src/phantomguard/io/source.py": "865f11bcc5af5bf30179ac048e630734523ac22fcd0a26fc444c9a6f2547bd58",
+    "src/phantomguard/paths.py": "6c25b8345f3e4d3c267385a5e2fa038217fc0b7e6b831dc59540b17a82397e7e",
+    "src/phantomguard/resources/__init__.py": "8642d4c9741c982325f5758ab3dd1147739b54f7c2aa82f520ec07cd173439b5",
+    "src/phantomguard/stats/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/phantomguard/stats/baseline.py": "8c610c914081cddf12549f1a41cac349db9d0e7ec39b0a729e5ee9956d0607f4",
+    "src/phantomguard/tracks.py": "bdd836f5cbd3be4a1d174ff5be0fa47152812fd92111ab1e3bd712b942cd706e",
+    "src/phantomguard/viz/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/phantomguard/viz/console.py": "3d7c3686661f924aa42d705efe0aedd154b33192d4c4d5877af3765f99198111",
+    "src/phantomguard/web/__init__.py": "a4a060a74be5ddfdeda75f77e20e23bacc278153370611988b42a2850fc82a1e",
+    "src/phantomguard/web/api.py": "3fbd56d7d33e1e0335801365c2133d68ca7a54d97b72bf8f9914a61d7275ca36",
+    "src/phantomguard/web/jobs.py": "910c2a0d39dfd581f749cefb4c71c5ed5771a4155fe21fb3f4133888f355183f",
+    "src/phantomguard/workspace.py": "9798513d86bc8e19b531085c816520fe1a8fd5c2ea2855f688b64ab4f07fa01c",
+    "tools/check_browser.py": "7ce1f069c61f71a32d4985280d5bf6131ad3b182e5fa77dc8909c1fdc94416e1",
+    "tools/decode.py": "012a17675e9401bc0569a22a0ce05e5196f2c289f82e50e9d30aa2be924f7b02"
+  },
+  "artifact_preparation": "Offline baseline -> train -> calibrate for all five bundles, fixed permitted train/validation policy; no held-out model/threshold selection",
+  "prior_evidence": "Earlier 7eb3ec2/91a79bb sweep preserved in Git history; current matrix uses the new matching artifacts and 24 one-BLAS-thread workers.",
   "limitations": [
     "Clean under-1 alert/min target not met",
     "Actual home server not deployed/tested",
-    "Ubuntu ran under WSL2, container is Debian bookworm",
-    "Arch and CI have not run in this assignment",
-    "Coordinate/tick/header assumptions unverified on hardware",
-    "No human usability review"
-  ],
-  "benchmark_code_sha": "7eb3ec216ffd0efc4bd69bffa01ee2f09bebef1a",
-  "final_change_scope": "Only explicit-root provenance, canonical report references and UTF-8 text I/O after full matrix. No detector/attacker/formula/feature/fusion/threshold/metric changes.",
-  "scoring_sources_unchanged": {
-    "src/phantomguard/attack/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "src/phantomguard/attack/injector.py": "089f9a3076c4cbd1af28c427a974fb15a8710568ce3f4c3eb56a3c069afe43a7",
-    "src/phantomguard/attack/levels.py": "5238d1c3c6f81838fdecceb0bb067aea83908534049e58eb7b238d5ad9841d39",
-    "src/phantomguard/attack/pools.py": "689c79b8cde560b1fcc4c152d1315ac3473f77a83cf7e3c19b145dcdafc27a9f",
-    "src/phantomguard/attack/scenarios.py": "cfbabf31b662da71ca98ae76a6fbebf29fa4eab568c9939f02bd5c501bb0091e",
-    "src/phantomguard/cycles.py": "4d24d32bdaea13a016872758d30f65d7ccb2bcf4dd046c1fe0383be9fc89049c",
-    "src/phantomguard/detect/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-    "src/phantomguard/detect/autoencoder.py": "0d54eeaea3e85eb00c5ca3ab9ed30de9275cb1d93eb83fce829c5067c8e43517",
-    "src/phantomguard/detect/common.py": "e44d45ac5134e169a14d601ef825d5aad34c5590690672c43ba26c6a4e21d80f",
-    "src/phantomguard/detect/fusion.py": "a1999955fb19d25e03f6dafa493575c364ea3d0d7b2b12744fd3dc7c43560c6c",
-    "src/phantomguard/detect/kinematic.py": "aa17a5b4bc8c2efb7a516283ecdeb376a8a3e446cda137a11094cce28ff0bc88",
-    "src/phantomguard/detect/pipeline.py": "b301be4dc6b8ff3df610af062b1879acaf83c6e1c3adf445e787042a7ac508a1",
-    "src/phantomguard/detect/protocol.py": "aa0c33cd4b6cfe43dbc716049335503d7550fa819e19e7ace41528c4c5377d5f",
-    "src/phantomguard/detect/replay_fp.py": "801db021f2a2b930d5e090aaa1bbfccd714e198e4d5512af352890e56756f0ca",
-    "src/phantomguard/eval/metrics.py": "b0466fd11075e8fb216fae299fb4bf443838df790182562d920ac32876239855",
-    "src/phantomguard/frames.py": "bdfc355a36e99b911a5874d57aadb682dc88b5c5b644ba7401e4ccb83c41e9d2",
-    "src/phantomguard/tracks.py": "67ac22978a863568f763396e724853c91e03674a6305d3aaf06466b7d6fee9ae"
-  },
-  "final_smoke_exact_metric_equivalence": {
-    "layer_rows": 36,
-    "matches_full_matrix": true,
-    "excluded_fields": [
-      "assembly_cpu_p99_ms",
-      "detector_p99_ms",
-      "labels_path",
-      "latency_budget_met",
-      "max_ms",
-      "measurement_workers",
-      "p50_ms",
-      "p99_ms"
-    ]
-  },
-  "final_clean_csv_equal_to_benchmark": true,
-  "windows_root_only": {
-    "normal_wheel": true,
-    "root_flag_only": true,
-    "cwd_outside_checkout": true,
-    "smoke_completed": 4,
-    "source_hash_count": 56
-  },
-  "linux_root_only": {
-    "normal_wheel": true,
-    "root_flag_only": true,
-    "cwd_outside_checkout": true,
-    "smoke_completed": 4,
-    "source_hash_count": 56
-  },
-  "final_code_commands": [
-    {
-      "argv": [
-        "-m",
-        "pytest",
-        "-q",
-        "--junitxml=D:\\Hacksprint\\phantom-guard-portable-hosted-prototype\\runs\\final-code-validation\\windows-tests.xml"
-      ],
-      "seconds": 72.6869999999999,
-      "exit_code": 0
-    },
-    {
-      "argv": [
-        "-m",
-        "phantomguard",
-        "clean-eval",
-        "--workers",
-        "1",
-        "--output-dir",
-        "D:\\Hacksprint\\phantom-guard-portable-hosted-prototype\\runs\\final-code-validation"
-      ],
-      "seconds": 56.71900000000005,
-      "exit_code": 0
-    },
-    {
-      "argv": [
-        "-m",
-        "phantomguard",
-        "attack-eval",
-        "--smoke",
-        "--workers",
-        "1",
-        "--output-dir",
-        "D:\\Hacksprint\\phantom-guard-portable-hosted-prototype\\runs\\final-code-validation\\smoke"
-      ],
-      "seconds": 34.48399999999947,
-      "exit_code": 0
-    }
-  ],
-  "final_container": {
-    "ok": true,
-    "missing_models_health_status": 200,
-    "missing_models_readiness_status": 503,
-    "missing_models_errors": [
-      "timeblock: trained artifacts missing: /workspace/models/ae_timeblock.npz, /workspace/models/replay_library_timeblock.pkl; run scripts/train.py; next: restore matching bundle, or offline baseline --loso -> train --loso -> calibrate --loso"
-    ],
-    "normal_readiness": 200,
-    "image_id": "sha256:f8c7f4a4a270440c1776d24bf049ade3bfd58014ff24eafd2deb7b1fa403b1db",
-    "read_only_root": true,
-    "read_only_input_mounts": true,
-    "memory_limit_bytes": 2147483648,
-    "cpu_limit": 2,
-    "pids_limit": 64,
-    "stats": {
-      "BlockIO": "57.3kB / 4.1kB",
-      "CPUPerc": "77.25%",
-      "Container": "phantomguard-p31-prototype-1",
-      "ID": "7ca7044b76da",
-      "MemPerc": "5.28%",
-      "MemUsage": "108.2MiB / 2GiB",
-      "Name": "phantomguard-p31-prototype-1",
-      "NetIO": "14kB / 81.6kB",
-      "PIDs": "14"
-    }
-  },
-  "final_container_api_attacks": {
-    "ok": true,
-    "url": "http://127.0.0.1:8766",
-    "results": [
-      {
-        "request": {
-          "recording": "onePersonMovingFrontAndBack.csv",
-          "attack": "T1",
-          "level": "A2",
-          "seed": 11,
-          "cycles": 600
-        },
-        "state": "complete",
-        "seconds": 8.969000000000051,
-        "provenance": {
-          "source": "recorded sensor replay",
-          "attack": "simulated CAN attack",
-          "part": "test",
-          "segment_lo": 3301,
-          "segment_hi": 4127,
-          "shown_cycles": 600,
-          "seed_rule": "browser uses the selected seed directly; matrix repetitions use SeedSequence",
-          "recording_sha256": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e",
-          "model_artifact_id": "f264e65b56ced6cf60e30a9292f04809d0258e8ac11d9a69c442a0a6d47b76a6",
-          "baseline_sha256": "f664ec33375b8115fd32420a87c1d05f9f30bc8b7905d4964a48b8b62d8f8718",
-          "configuration": {
-            "data": {
-              "raw_dir": "data/raw",
-              "processed_dir": "data/processed",
-              "files": [
-                "emptyRoom.csv",
-                "onePersonMovingFrontAndBack.csv",
-                "onePersonMovingSideToSide.csv",
-                "multiplePeopleChaotic.csv"
-              ]
-            },
-            "units": {
-              "tick_seconds": 0.0001
-            },
-            "protocol": {
-              "header_can_id": 1546,
-              "object_can_id": 1547,
-              "header_len": 5,
-              "object_len": 8,
-              "header_status_ok": 1,
-              "cadence_warmup_cycles": 2,
-              "count_margin": 3
-            },
-            "roi": {
-              "max_range": 15.0
-            },
-            "zones": {
-              "near_max_range": 4.0,
-              "mid_max_range": 15.0
-            },
-            "motion": {
-              "moving_threshold_mps": 0.3
-            },
-            "splits": {
-              "train_frac": 0.6,
-              "val_frac": 0.2
-            },
-            "baseline": {
-              "hard_quantile": 0.999,
-              "soft_quantile": 0.99,
-              "margin_ticks": 2
-            },
-            "tracks": {
-              "reassign_jump_default": 1.0,
-              "max_gap_cycles": 1,
-              "min_track_cycles_for_stats": 20
-            },
-            "kinematic": {
-              "window_cycles": 15,
-              "rcs_window_cycles": 15,
-              "min_moving_cycles": 10
-            },
-            "replay": {
-              "k_gram": 12,
-              "disp_quant": 0.2,
-              "vel_quant": 0.25,
-              "min_complexity": 4,
-              "history_cycles": 20000
-            },
-            "learned": {
-              "window_cycles": 10,
-              "hidden": 32,
-              "latent": 6,
-              "epochs": 30,
-              "batch_size": 512,
-              "lr": 0.001,
-              "max_train_seconds": 300,
-              "threshold_quantile": 0.999,
-              "iforest_trees": 200
-            },
-            "fusion": {
-              "m": 3,
-              "n": 5,
-              "mn_candidates": [
-                [
-                  3,
-                  5
-                ],
-                [
-                  4,
-                  6
-                ],
-                [
-                  5,
-                  8
-                ]
-              ],
-              "learned_alone": false
-            },
-            "attack": {
-              "seeds": [
-                11,
-                22,
-                33
-              ],
-              "instances_per_run": 6,
-              "min_gap_cycles": 60,
-              "T1": {
-                "count": [
-                  1,
-                  3
-                ],
-                "life": [
-                  20,
-                  150
-                ]
-              },
-              "T2": {
-                "count": [
-                  10,
-                  30
-                ],
-                "life": [
-                  10,
-                  60
-                ]
-              },
-              "T3": {
-                "min_len": 20,
-                "max_len": 80
-              },
-              "T4": {
-                "life": [
-                  20,
-                  80
-                ],
-                "drift_per_cycle": [
-                  0.02,
-                  0.08
-                ]
-              }
-            },
-            "eval": {
-              "runs_per_cell": 3,
-              "workers": 4
-            },
-            "latency": {
-              "p99_budget_ms": 10.0
-            }
-          },
-          "labels": "complete emitted-test-stream sidecar; never read for playback"
-        },
-        "shown_cycles": 600,
-        "cycle_alerts": 0,
-        "objects": 13689
-      },
-      {
-        "request": {
-          "recording": "onePersonMovingFrontAndBack.csv",
-          "attack": "T2",
-          "level": "A2",
-          "seed": 11,
-          "cycles": 600
-        },
-        "state": "complete",
-        "seconds": 8.79700000000048,
-        "provenance": {
-          "source": "recorded sensor replay",
-          "attack": "simulated CAN attack",
-          "part": "test",
-          "segment_lo": 3301,
-          "segment_hi": 4127,
-          "shown_cycles": 600,
-          "seed_rule": "browser uses the selected seed directly; matrix repetitions use SeedSequence",
-          "recording_sha256": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e",
-          "model_artifact_id": "f264e65b56ced6cf60e30a9292f04809d0258e8ac11d9a69c442a0a6d47b76a6",
-          "baseline_sha256": "f664ec33375b8115fd32420a87c1d05f9f30bc8b7905d4964a48b8b62d8f8718",
-          "configuration": {
-            "data": {
-              "raw_dir": "data/raw",
-              "processed_dir": "data/processed",
-              "files": [
-                "emptyRoom.csv",
-                "onePersonMovingFrontAndBack.csv",
-                "onePersonMovingSideToSide.csv",
-                "multiplePeopleChaotic.csv"
-              ]
-            },
-            "units": {
-              "tick_seconds": 0.0001
-            },
-            "protocol": {
-              "header_can_id": 1546,
-              "object_can_id": 1547,
-              "header_len": 5,
-              "object_len": 8,
-              "header_status_ok": 1,
-              "cadence_warmup_cycles": 2,
-              "count_margin": 3
-            },
-            "roi": {
-              "max_range": 15.0
-            },
-            "zones": {
-              "near_max_range": 4.0,
-              "mid_max_range": 15.0
-            },
-            "motion": {
-              "moving_threshold_mps": 0.3
-            },
-            "splits": {
-              "train_frac": 0.6,
-              "val_frac": 0.2
-            },
-            "baseline": {
-              "hard_quantile": 0.999,
-              "soft_quantile": 0.99,
-              "margin_ticks": 2
-            },
-            "tracks": {
-              "reassign_jump_default": 1.0,
-              "max_gap_cycles": 1,
-              "min_track_cycles_for_stats": 20
-            },
-            "kinematic": {
-              "window_cycles": 15,
-              "rcs_window_cycles": 15,
-              "min_moving_cycles": 10
-            },
-            "replay": {
-              "k_gram": 12,
-              "disp_quant": 0.2,
-              "vel_quant": 0.25,
-              "min_complexity": 4,
-              "history_cycles": 20000
-            },
-            "learned": {
-              "window_cycles": 10,
-              "hidden": 32,
-              "latent": 6,
-              "epochs": 30,
-              "batch_size": 512,
-              "lr": 0.001,
-              "max_train_seconds": 300,
-              "threshold_quantile": 0.999,
-              "iforest_trees": 200
-            },
-            "fusion": {
-              "m": 3,
-              "n": 5,
-              "mn_candidates": [
-                [
-                  3,
-                  5
-                ],
-                [
-                  4,
-                  6
-                ],
-                [
-                  5,
-                  8
-                ]
-              ],
-              "learned_alone": false
-            },
-            "attack": {
-              "seeds": [
-                11,
-                22,
-                33
-              ],
-              "instances_per_run": 6,
-              "min_gap_cycles": 60,
-              "T1": {
-                "count": [
-                  1,
-                  3
-                ],
-                "life": [
-                  20,
-                  150
-                ]
-              },
-              "T2": {
-                "count": [
-                  10,
-                  30
-                ],
-                "life": [
-                  10,
-                  60
-                ]
-              },
-              "T3": {
-                "min_len": 20,
-                "max_len": 80
-              },
-              "T4": {
-                "life": [
-                  20,
-                  80
-                ],
-                "drift_per_cycle": [
-                  0.02,
-                  0.08
-                ]
-              }
-            },
-            "eval": {
-              "runs_per_cell": 3,
-              "workers": 4
-            },
-            "latency": {
-              "p99_budget_ms": 10.0
-            }
-          },
-          "labels": "complete emitted-test-stream sidecar; never read for playback"
-        },
-        "shown_cycles": 600,
-        "cycle_alerts": 12,
-        "objects": 14170
-      },
-      {
-        "request": {
-          "recording": "onePersonMovingFrontAndBack.csv",
-          "attack": "T3",
-          "level": "A3",
-          "seed": 11,
-          "cycles": 600
-        },
-        "state": "complete",
-        "seconds": 8.780999999999949,
-        "provenance": {
-          "source": "recorded sensor replay",
-          "attack": "simulated CAN attack",
-          "part": "test",
-          "segment_lo": 3301,
-          "segment_hi": 4127,
-          "shown_cycles": 600,
-          "seed_rule": "browser uses the selected seed directly; matrix repetitions use SeedSequence",
-          "recording_sha256": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e",
-          "model_artifact_id": "f264e65b56ced6cf60e30a9292f04809d0258e8ac11d9a69c442a0a6d47b76a6",
-          "baseline_sha256": "f664ec33375b8115fd32420a87c1d05f9f30bc8b7905d4964a48b8b62d8f8718",
-          "configuration": {
-            "data": {
-              "raw_dir": "data/raw",
-              "processed_dir": "data/processed",
-              "files": [
-                "emptyRoom.csv",
-                "onePersonMovingFrontAndBack.csv",
-                "onePersonMovingSideToSide.csv",
-                "multiplePeopleChaotic.csv"
-              ]
-            },
-            "units": {
-              "tick_seconds": 0.0001
-            },
-            "protocol": {
-              "header_can_id": 1546,
-              "object_can_id": 1547,
-              "header_len": 5,
-              "object_len": 8,
-              "header_status_ok": 1,
-              "cadence_warmup_cycles": 2,
-              "count_margin": 3
-            },
-            "roi": {
-              "max_range": 15.0
-            },
-            "zones": {
-              "near_max_range": 4.0,
-              "mid_max_range": 15.0
-            },
-            "motion": {
-              "moving_threshold_mps": 0.3
-            },
-            "splits": {
-              "train_frac": 0.6,
-              "val_frac": 0.2
-            },
-            "baseline": {
-              "hard_quantile": 0.999,
-              "soft_quantile": 0.99,
-              "margin_ticks": 2
-            },
-            "tracks": {
-              "reassign_jump_default": 1.0,
-              "max_gap_cycles": 1,
-              "min_track_cycles_for_stats": 20
-            },
-            "kinematic": {
-              "window_cycles": 15,
-              "rcs_window_cycles": 15,
-              "min_moving_cycles": 10
-            },
-            "replay": {
-              "k_gram": 12,
-              "disp_quant": 0.2,
-              "vel_quant": 0.25,
-              "min_complexity": 4,
-              "history_cycles": 20000
-            },
-            "learned": {
-              "window_cycles": 10,
-              "hidden": 32,
-              "latent": 6,
-              "epochs": 30,
-              "batch_size": 512,
-              "lr": 0.001,
-              "max_train_seconds": 300,
-              "threshold_quantile": 0.999,
-              "iforest_trees": 200
-            },
-            "fusion": {
-              "m": 3,
-              "n": 5,
-              "mn_candidates": [
-                [
-                  3,
-                  5
-                ],
-                [
-                  4,
-                  6
-                ],
-                [
-                  5,
-                  8
-                ]
-              ],
-              "learned_alone": false
-            },
-            "attack": {
-              "seeds": [
-                11,
-                22,
-                33
-              ],
-              "instances_per_run": 6,
-              "min_gap_cycles": 60,
-              "T1": {
-                "count": [
-                  1,
-                  3
-                ],
-                "life": [
-                  20,
-                  150
-                ]
-              },
-              "T2": {
-                "count": [
-                  10,
-                  30
-                ],
-                "life": [
-                  10,
-                  60
-                ]
-              },
-              "T3": {
-                "min_len": 20,
-                "max_len": 80
-              },
-              "T4": {
-                "life": [
-                  20,
-                  80
-                ],
-                "drift_per_cycle": [
-                  0.02,
-                  0.08
-                ]
-              }
-            },
-            "eval": {
-              "runs_per_cell": 3,
-              "workers": 4
-            },
-            "latency": {
-              "p99_budget_ms": 10.0
-            }
-          },
-          "labels": "complete emitted-test-stream sidecar; never read for playback"
-        },
-        "shown_cycles": 600,
-        "cycle_alerts": 0,
-        "objects": 13372
-      },
-      {
-        "request": {
-          "recording": "onePersonMovingFrontAndBack.csv",
-          "attack": "T4",
-          "level": "A3",
-          "seed": 11,
-          "cycles": 600
-        },
-        "state": "complete",
-        "seconds": 8.421000000000276,
-        "provenance": {
-          "source": "recorded sensor replay",
-          "attack": "simulated CAN attack",
-          "part": "test",
-          "segment_lo": 3301,
-          "segment_hi": 4127,
-          "shown_cycles": 600,
-          "seed_rule": "browser uses the selected seed directly; matrix repetitions use SeedSequence",
-          "recording_sha256": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e",
-          "model_artifact_id": "f264e65b56ced6cf60e30a9292f04809d0258e8ac11d9a69c442a0a6d47b76a6",
-          "baseline_sha256": "f664ec33375b8115fd32420a87c1d05f9f30bc8b7905d4964a48b8b62d8f8718",
-          "configuration": {
-            "data": {
-              "raw_dir": "data/raw",
-              "processed_dir": "data/processed",
-              "files": [
-                "emptyRoom.csv",
-                "onePersonMovingFrontAndBack.csv",
-                "onePersonMovingSideToSide.csv",
-                "multiplePeopleChaotic.csv"
-              ]
-            },
-            "units": {
-              "tick_seconds": 0.0001
-            },
-            "protocol": {
-              "header_can_id": 1546,
-              "object_can_id": 1547,
-              "header_len": 5,
-              "object_len": 8,
-              "header_status_ok": 1,
-              "cadence_warmup_cycles": 2,
-              "count_margin": 3
-            },
-            "roi": {
-              "max_range": 15.0
-            },
-            "zones": {
-              "near_max_range": 4.0,
-              "mid_max_range": 15.0
-            },
-            "motion": {
-              "moving_threshold_mps": 0.3
-            },
-            "splits": {
-              "train_frac": 0.6,
-              "val_frac": 0.2
-            },
-            "baseline": {
-              "hard_quantile": 0.999,
-              "soft_quantile": 0.99,
-              "margin_ticks": 2
-            },
-            "tracks": {
-              "reassign_jump_default": 1.0,
-              "max_gap_cycles": 1,
-              "min_track_cycles_for_stats": 20
-            },
-            "kinematic": {
-              "window_cycles": 15,
-              "rcs_window_cycles": 15,
-              "min_moving_cycles": 10
-            },
-            "replay": {
-              "k_gram": 12,
-              "disp_quant": 0.2,
-              "vel_quant": 0.25,
-              "min_complexity": 4,
-              "history_cycles": 20000
-            },
-            "learned": {
-              "window_cycles": 10,
-              "hidden": 32,
-              "latent": 6,
-              "epochs": 30,
-              "batch_size": 512,
-              "lr": 0.001,
-              "max_train_seconds": 300,
-              "threshold_quantile": 0.999,
-              "iforest_trees": 200
-            },
-            "fusion": {
-              "m": 3,
-              "n": 5,
-              "mn_candidates": [
-                [
-                  3,
-                  5
-                ],
-                [
-                  4,
-                  6
-                ],
-                [
-                  5,
-                  8
-                ]
-              ],
-              "learned_alone": false
-            },
-            "attack": {
-              "seeds": [
-                11,
-                22,
-                33
-              ],
-              "instances_per_run": 6,
-              "min_gap_cycles": 60,
-              "T1": {
-                "count": [
-                  1,
-                  3
-                ],
-                "life": [
-                  20,
-                  150
-                ]
-              },
-              "T2": {
-                "count": [
-                  10,
-                  30
-                ],
-                "life": [
-                  10,
-                  60
-                ]
-              },
-              "T3": {
-                "min_len": 20,
-                "max_len": 80
-              },
-              "T4": {
-                "life": [
-                  20,
-                  80
-                ],
-                "drift_per_cycle": [
-                  0.02,
-                  0.08
-                ]
-              }
-            },
-            "eval": {
-              "runs_per_cell": 3,
-              "workers": 4
-            },
-            "latency": {
-              "p99_budget_ms": 10.0
-            }
-          },
-          "labels": "complete emitted-test-stream sidecar; never read for playback"
-        },
-        "shown_cycles": 600,
-        "cycle_alerts": 0,
-        "objects": 13218
-      }
-    ]
-  },
-  "environmental_retry": "WSL PyPI build dependency request timed out once; identical pinned cached packages rebuilt with uv --offline, then final Linux checks passed."
+    "Ubuntu ran under WSL2; container is Debian bookworm",
+    "No native Linux desktop browser or human usability review",
+    "Arch and hosted CI not run in this assignment",
+    "Coordinate/tick/header assumptions unverified on hardware"
+  ]
 }

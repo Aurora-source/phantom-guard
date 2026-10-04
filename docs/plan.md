@@ -270,15 +270,22 @@ This section supersedes earlier availability/status snapshots, which remain as h
   attacks, actual published evaluation data, detector colors/reasons/velocity/logs,
   reset/cancellation and immutable playback seeks. Ground truth never affects it.
   Linux deployment uses a pinned nonroot/read-only container and dedicated outputs.
-- Full matrix source `7eb3ec2`; tested final code `91a79bb` changes only reporting
-  anchors/references and UTF-8 I/O afterward. Clean and smoke metric equivalence
-  plus source-hash checks preserve the benchmark's actual provenance. Final tests:
-  168 pass/zero skips on Windows and Ubuntu 26.04.1 WSL; fresh normal-wheel setup,
-  real clean/attacked exports, browser/API and container checks pass.
+- Latest accepted main `f93f283` is merged. Its artifact IDs were unavailable
+  locally, so matching baselines/models/calibration were prepared offline using
+  fixed training/validation segments. Full matrix source is `e530d8f`: 2,411
+  eligible runs, 198 no-material attempts, 55 capacity exclusions, 1,296 unsupported
+  requests and no integration blockers. Earlier sweeps remain in Git history.
+  Windows and Ubuntu 26.04.1 WSL normal-wheel tests, real exports, browser/API
+  and container checks pass; executed counts and final checks are in the evidence.
 - Fresh generated results and portability evidence are under docs/results/portable
-  and portable_validation.json. Compatible artifacts are reused without training
-  or calibration. Clean FP is 1.42/3.41 per minute; eighteen evading completed runs
-  remain reported. Full performance acceptance is not claimed.
+  and portable_validation.json. Fresh clean FP is 1.42/3.41 per minute; eighteen
+  evading completed runs remain reported. Worst attacked processing p99 is 8.55 ms,
+  idle single-worker clean p99 is 1.97 ms; assembly p99 is separately 33.5–33.6 ms.
+  The under-one false-alert acceptance criterion still fails.
+- Final viewer correction anchors recording names to configured raw data and
+  explicit relative paths to the workspace; caller-directory files cannot override
+  either. Targeted regressions cover both the resolver and actual CLI selection.
+  Source newline equivalence is recorded separately from original benchmark hashes.
 - Private reproducible deployment ZIP, checksums and server handoff are prepared
   locally; final archive verification/restoration and publication status are in the
   handoff/delivery response. Actual home-server deployment is a later assignment.

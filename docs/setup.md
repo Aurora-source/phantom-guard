@@ -77,6 +77,11 @@ substitution; the Python CLI does not silently load it. `.env` is ignored.
 
 ## Troubleshooting
 
+Recording arguments also have explicit anchors: `replay --file NAME.csv` reads
+the configured raw data directory; `--file inputs/NAME.csv` reads relative to
+the configured workspace root; an absolute file path is used as supplied.
+A same-named file in the caller's directory never overrides those choices.
+
 - **Missing recordings:** doctor names each file. Import from a directory containing
   the exact four CSVs, or set `--data-dir`. An extra `dataset` level is not searched.
 - **Missing/calibration/stale artifacts:** restore the matching verified bundle, or

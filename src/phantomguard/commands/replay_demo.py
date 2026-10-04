@@ -11,6 +11,7 @@ scene colours and alert logs use detector verdicts only. Green means "not flagge
 from __future__ import annotations
 
 from phantomguard.config import add_path_arguments, config_from_args, paths
+from phantomguard.paths import recording_path
 
 import argparse
 import csv
@@ -154,9 +155,7 @@ def main(argv: list[str] | None = None):
         args.output_dir = paths(cfg).output if args.output_dir else paths(cfg).output / "replay"
         b = load_baseline(cfg=cfg)
         seed = args.seed if args.seed is not None else cfg["attack"]["seeds"][0]
-        path = Path(args.file)
-        if not path.is_file():
-            path = raw_path(cfg, args.file)
+        path = recording_path(cfg, args.file)
         source = ReplaySource(path)
         if not source.cycles:
             raise ValueError(f"empty recording: {path}")

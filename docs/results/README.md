@@ -3,13 +3,14 @@
 ## Portable prototype validation (2026-10-05)
 
 The fresh full matrix is [portable/summary.md](portable/summary.md), with matching
-clean/layer/ablation/instance/exclusion CSVs and provenance. The matrix ran on
-`7eb3ec2`; final code `91a79bb` adds explicit-root reporting and UTF-8 text I/O.
-All detector/attacker/feature/fusion/metric sources are unchanged, and fresh clean
-classifications plus all 36 smoke layer rows match the full matrix exactly.
-[portable_validation.json](portable_validation.json) records that comparison,
-168 passing tests with zero skips on Windows and Ubuntu 26.04.1 WSL, normal-wheel
-fresh-clone checks, real browser/API checks and separate single-worker latency.
+clean/layer/ablation/instance/exclusion CSVs and provenance. It ran on `e530d8f`
+after merging accepted main `f93f283` and regenerating matching artifacts in
+baseline -> train -> calibrate order with the unchanged permitted splits.
+[portable_validation.json](portable_validation.json) records actual tests,
+normal-wheel checks on Windows and Ubuntu 26.04.1 WSL, real browser/API checks
+and separate single-worker latency. A subsequent viewer path fix prevents a
+caller-directory recording from overriding configured inputs; it does not alter
+detector, attacker, features, thresholds or metric calculations.
 
 Results remain 1.42 clean alerts/minute on time-block test and 3.41 on LOSO:
 **the under-one target is not met**. There are 2,411 eligible attack runs, 198
@@ -17,6 +18,10 @@ no-material attempts, 55 slot-capacity exclusions and 1,296 unsupported requests
 Eighteen completed runs evade scene detection. Scene/instance detection and exact
 forged-object identification remain separate. Original data/model hashes and
 fixed training/validation policy are retained; no new held-out tuning occurred.
+Worst completed attacked-run processing p99 is 8.55 ms with 24 workers; separate
+idle single-worker clean p99 is 1.97 ms. Assembly p99 is 33.5–33.6 ms under the
+unverified tick-duration assumption. The full sweep took about 33 minutes on
+the recorded 32-logical-CPU workstation; use fewer workers on the home server.
 
 Fresh browser screenshots are under `portable/browser`. The checks use Windows
 Chromium against Windows, native WSL Ubuntu and Debian container APIs; they do
@@ -29,7 +34,7 @@ and sidecar references; private sidecars are not included in the deployment ZIP.
 
 ## Accepted earlier workflow evidence
 
-The current programmatic evidence is [summary.md](summary.md),
+The accepted upstream programmatic evidence is [summary.md](summary.md),
 [clean_eval.md](clean_eval.md), and `attack_eval_*.csv/json`. The CSVs retain every
 requested seed, repetition, supported/unsupported outcome, observed instance,
 miss, censored delay, equivalent-window AE/IF score availability, and latency.
@@ -40,7 +45,7 @@ per-run AUROCs, with run counts, rather than pooled-score AUROC.
 archived generated files. [dataset_inventory.json](dataset_inventory.json) records
 the unchanged supplied recordings. [workflow_validation.json](workflow_validation.json)
 and [validation.xml](validation.xml) describe executed checks. The attack manifest
-binds the results to source commit `6d77465`, exact implementation hashes, data,
+binds those results to its recorded source commit, implementation hashes, data,
 config, split identities and local trained artifacts. Its dirty flag reflects
 generated baseline/documentation changes; implementation hashes were checked
 before archiving. Models and complete frame sidecars remain ignored local files.

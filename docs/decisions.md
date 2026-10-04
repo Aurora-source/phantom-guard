@@ -506,3 +506,14 @@ No bus, no live capture, no hardware (CLAUDE.md scope).
   on Windows and Linux. CSV field values are unchanged by this normalization.
   Selected fresh reports live under `docs/results/portable`; root reports retain
   the accepted upstream evidence and its original provenance.
+- The full regenerated-artifact sweep completed on `e530d8f` with no integration
+  blocker. Fresh clean rates remain 1.42/min and 3.41/min; no policy changed in
+  response. Final metrics, exclusions and evading runs are generated evidence.
+- Remaining CRLF source files in the development worktree differed from tracked
+  LF sources in normal clones. Every difference was verified to be newline-only.
+  Preserve the benchmark's original hashes and record canonical LF hashes in the
+  portability evidence; normalize working source files without altering code.
+- A viewer lookup preferred an existing caller-directory filename over configured
+  raw data. Recording names now resolve under raw data, explicit relative paths
+  under the workspace, and absolute paths remain explicit. Two fixture regressions
+  pass. Detector/attacker/feature/calibration/metric behavior is unchanged.

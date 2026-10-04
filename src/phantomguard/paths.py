@@ -129,3 +129,13 @@ def save_baseline(data, path=None, *, cfg=None) -> None:
 
 def raw_path(cfg, name) -> Path:
     return paths(cfg).raw / name
+
+
+def recording_path(cfg: dict, value: str | Path) -> Path:
+    """Resolve a recording name under raw data, or an explicit workspace path."""
+    selected = Path(value).expanduser()
+    if selected.is_absolute():
+        return selected.resolve()
+    if len(selected.parts) == 1:
+        return raw_path(cfg, selected)
+    return anchored(selected, paths(cfg).root)
