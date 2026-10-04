@@ -489,3 +489,20 @@ No bus, no live capture, no hardware (CLAUDE.md scope).
   the CPU-only PyTorch wheel index, a `uv` fallback when Arch's Python is newer than PyTorch's wheels, and
   case-sensitive recording names. Verified here: the full test suite, the data check one-liner, and
   `run_attack_eval.py --preflight` end to end.
+
+### Latest accepted baseline integration (2026-10-05)
+
+- Accepted upstream `f93f283` changes baseline metadata and generated reports,
+  without changing detector, attacker, features or split policy. Its referenced
+  trained weights are not supplied in Git and do not match any available local
+  bundle. The commit is merged with both histories preserved; source datasets,
+  the original checkout and the prior implementation worktree are unchanged.
+- Preserve the prior compatible artifacts and upstream baseline in ignored local
+  backups. Regenerate offline in the documented baseline -> train -> calibrate
+  order using the unchanged fixed training/validation policy. Re-evaluate this
+  coherent artifact set separately; the earlier full matrix is historical evidence
+  until the new sweep finishes. No held-out result selects weights or thresholds.
+- Canonicalize tracked generated CSV line endings to LF for reproducible restoration
+  on Windows and Linux. CSV field values are unchanged by this normalization.
+  Selected fresh reports live under `docs/results/portable`; root reports retain
+  the accepted upstream evidence and its original provenance.

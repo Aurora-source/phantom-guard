@@ -64,7 +64,7 @@
     "split": "val",
     "train_exceedance": 0.014148681055155876,
     "train_windows": 4170,
-    "value": 12.39034557429204
+    "value": 12.390364242597148
   },
   "ae_threshold_static": {
     "n_windows": 33699,
@@ -73,7 +73,7 @@
     "split": "val",
     "train_exceedance": 0.0007524018983678666,
     "train_windows": 103668,
-    "value": 2.5393515775233846
+    "value": 2.5393532133901515
   },
   "arrival_hi": {
     "rule": "max(train arrival offsets) + 2 ticks",
@@ -268,7 +268,7 @@
   },
   "learned_artifacts": {
     "ae": {
-      "artifact_id": "b58e25779fda4f0c150e004cef9fbcb9db6f49c26e2c78bcf633ba4f656a8c41",
+      "artifact_id": "2ad682efc017e2cf96d856772b20db898edd6c1e253947b3df013a671f067115",
       "baseline_signature": "40ffb109eb8d969a532ec57e7daf272b009392fde825978a13121fbbb61d40be",
       "contract": {
         "features": [
@@ -358,13 +358,13 @@
         "learning_rate": 0.001,
         "max_train_seconds": 300,
         "stopping_reason": "configured_epochs_complete",
-        "train_seconds": 5.450725317001343
+        "train_seconds": 5.979861259460449
       },
       "val_moving_windows": 1479,
       "val_windows": 35178
     },
     "iforest": {
-      "artifact_id": "4d43e3dc4b9dd6bb4e07c0183dd17c2784c642e90d35afe8d94850d7f90801f3",
+      "artifact_id": "c804cd658e4119cbb28d1466bc2dc82bcf3808fe1242431eaddfbf3bb532f13c",
       "baseline_signature": "40ffb109eb8d969a532ec57e7daf272b009392fde825978a13121fbbb61d40be",
       "bootstrap": false,
       "contamination": "auto",
@@ -455,7 +455,7 @@
       "val_windows": 35178
     },
     "replay": {
-      "artifact_id": "9a73f1e20e5113e9326d2f29af44e58a8cb6e455683b40a3b8fa52a5f81f4b8a",
+      "artifact_id": "04a0b4acc672704d327a78dfade7b70ada2bf64d5d62b2777f39e8e79dc3ca02",
       "baseline_signature": "40ffb109eb8d969a532ec57e7daf272b009392fde825978a13121fbbb61d40be",
       "contract": {
         "max_gap_cycles": 1,
@@ -1035,7 +1035,7 @@
     "value": 0.4528163835382096
   },
   "rr_scale": {
-    "corr": 0.9263789075969154,
+    "corr": 0.9263789075969155,
     "n_windows": 286,
     "rule": "least-squares k in range_rate = k * reported radial velocity, moving in-ROI windows with |v_r| >= 0.5",
     "split": "train",
@@ -1174,8 +1174,8 @@
     "split": "val",
     "table": [
       {
-        "ae_threshold_moving": 11.994351650164432,
-        "ae_threshold_static": 2.1211112692046705,
+        "ae_threshold_moving": 11.994357894273058,
+        "ae_threshold_static": 2.1211114521987735,
         "iforest_threshold_moving": 0.6755000837028137,
         "iforest_threshold_static": 0.5488360442179016,
         "quantile": 0.999,
@@ -1185,8 +1185,8 @@
         "val_minutes": 2.111
       },
       {
-        "ae_threshold_moving": 12.137568787821465,
-        "ae_threshold_static": 2.2612839813464785,
+        "ae_threshold_moving": 12.137586508520727,
+        "ae_threshold_static": 2.261283219769882,
         "iforest_threshold_moving": 0.6828788072767019,
         "iforest_threshold_static": 0.5561307833833665,
         "quantile": 0.9995,
@@ -1196,8 +1196,8 @@
         "val_minutes": 2.111
       },
       {
-        "ae_threshold_moving": 12.39034557429204,
-        "ae_threshold_static": 2.5393515775233846,
+        "ae_threshold_moving": 12.390364242597148,
+        "ae_threshold_static": 2.5393532133901515,
         "iforest_threshold_moving": 0.689135215808091,
         "iforest_threshold_static": 0.5670340557153015,
         "quantile": 0.9999,
@@ -1207,8 +1207,8 @@
         "val_minutes": 2.111
       },
       {
-        "ae_threshold_moving": 12.421942672600814,
-        "ae_threshold_static": 2.6567030024558203,
+        "ae_threshold_moving": 12.421961459356652,
+        "ae_threshold_static": 2.6567031376256622,
         "iforest_threshold_moving": 0.6899172668745135,
         "iforest_threshold_static": 0.5791333296134886,
         "quantile": 0.99995,
@@ -1218,8 +1218,8 @@
         "val_minutes": 2.111
       },
       {
-        "ae_threshold_moving": 12.453539770909684,
-        "ae_threshold_static": 2.7032602863742263,
+        "ae_threshold_moving": 12.453558676116254,
+        "ae_threshold_static": 2.7032597086296306,
         "iforest_threshold_moving": 0.6906993179409383,
         "iforest_threshold_static": 0.5853618834280881,
         "quantile": 1.0,
