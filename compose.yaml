@@ -21,16 +21,16 @@ services:
     volumes:
       - "${PHANTOMGUARD_DATA_MOUNT:-./data/raw}:/workspace/data/raw:ro"
       - "${PHANTOMGUARD_MODELS_MOUNT:-./models}:/workspace/models:ro"
-      - "./data/processed:/workspace/data/processed:ro"
-      - "./configs:/workspace/configs:ro"
-      - "./docs/results:/workspace/docs/results:ro"
+      - "${PHANTOMGUARD_PROCESSED_MOUNT:-./data/processed}:/workspace/data/processed:ro"
+      - "${PHANTOMGUARD_CONFIG_MOUNT:-./configs}:/workspace/configs:ro"
+      - "${PHANTOMGUARD_REPORTS_MOUNT:-./docs/results}:/workspace/docs/results:ro"
       - "phantomguard-runs:/workspace/runs"
     read_only: true
     tmpfs:
       - /tmp:size=64m,mode=1777
-    mem_limit: 2g
-    cpus: 2
-    pids_limit: 64
+    mem_limit: "${PHANTOMGUARD_MEMORY:-4g}"
+    memswap_limit: "${PHANTOMGUARD_MEMORY_SWAP:-4g}"
+    pids_limit: ${PHANTOMGUARD_PIDS_LIMIT:-128}
     security_opt:
       - no-new-privileges:true
     cap_drop: [ALL]

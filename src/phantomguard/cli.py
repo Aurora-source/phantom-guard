@@ -8,8 +8,8 @@ import sys
 
 
 def main(argv=None) -> int:
-    for key in ("OPENBLAS_NUM_THREADS", "OMP_NUM_THREADS", "MKL_NUM_THREADS"):
-        os.environ.setdefault(key, "1")
+    from phantomguard.web.runtime import numerical_policy
+    numerical_policy()
     argv = list(sys.argv[1:] if argv is None else argv)
     commands = {"baseline": "learn_baseline", "train": "train", "calibrate": "calibrate",
                 "clean-eval": "run_clean_eval", "attack-eval": "run_attack_eval", "replay": "replay_demo"}
@@ -36,6 +36,7 @@ def main(argv=None) -> int:
         if name in {"verify-bundle", "restore-bundle"}:
             p.add_argument("--archive", required=True)
         if name == "serve":
+            p.add_argument("--warm-workers", action="store_true", default=os.environ.get("PHANTOMGUARD_WARM_WORKERS", "0")=="1")
             p.add_argument("--host", default=os.environ.get("PHANTOMGUARD_HOST", "127.0.0.1"))
             p.add_argument("--port", type=int, default=int(os.environ.get("PHANTOMGUARD_PORT", "8765")))
             p.add_argument("--workers", type=int, default=int(os.environ.get("PHANTOMGUARD_WORKERS", "2")))
@@ -56,7 +57,7 @@ def main(argv=None) -> int:
             from phantomguard.web.api import serve
             serve(cfg, host=args.host, port=args.port, workers=args.workers, max_cycles=args.max_cycles, job_seconds=args.job_seconds,
                   max_queued=args.max_queued,max_jobs=args.max_jobs,max_sessions=args.max_sessions,ttl=args.ttl,output_mib=args.output_mib,
-                  job_cooldown=args.job_cooldown)
+                  job_cooldown=args.job_cooldown, warm_workers=args.warm_workers)
             return 0
         from phantomguard import workspace
         if args.command == "init":

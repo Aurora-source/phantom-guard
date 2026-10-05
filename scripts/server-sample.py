@@ -18,7 +18,7 @@ def group(root):
     d['process_count']=len(read(root/'cgroup.procs').splitlines())
     d.update(cpu=kv(root/'cpu.stat'),events=kv(root/'memory.events'),memory_stat=kv(root/'memory.stat'),pressure=pressure(root))
     return d
-start=time.monotonic(); prev=None; containers=[]; refresh=0; thermal_history=[]; service_pids={}; output_usage={}
+start=time.monotonic(); prev=None; containers=[]; refresh=0; thermal_history=[]; service_pids={}; output_usage={}; output_details={}
 if (out/'samples.jsonl').exists():
     for line in (out/'samples.jsonl').read_text().splitlines()[-40:]:
         old=json.loads(line)
@@ -37,11 +37,11 @@ with (out/'samples.jsonl').open('a',buffering=1) as f:
                 ids=subprocess.run(['pgrep','-x',name],capture_output=True,text=True).stdout.split()
                 service_pids[name]=int(ids[0]) if ids else 0
             for c in containers:
-                if c['Name']=='/phantomguard-server-prototype-1':
+                if c['Name'] in ['/phantomguard-server-prototype-1','/phantomguard-performance-stage-prototype-1']:
                     try:
                         code="import pathlib,json; p=pathlib.Path('/workspace/runs/browser'); f=[x for x in p.rglob('*') if x.is_file()]; print(json.dumps({'files':len(f),'bytes':sum(x.stat().st_size for x in f),'directories':len(list(p.iterdir()))}))"
-                        output_usage=json.loads(subprocess.check_output(['docker','exec',c['Id'],'python','-c',code],text=True,stderr=subprocess.DEVNULL,timeout=3))
-                    except Exception:pass
+                        output_details[c['Name']]=json.loads(subprocess.check_output(['docker','exec',c['Id'],'python','-c',code],text=True,stderr=subprocess.DEVNULL,timeout=3))
+                    except Exception:output_details.setdefault(c['Name'],{})
             refresh=tick+20
         stat=read('/proc/stat'); cpu=[int(x) for x in stat.splitlines()[0].split()[1:9]]
         vm=kv('/proc/vmstat'); mem={l.split(':')[0]:int(l.split()[1])*1024 for l in read('/proc/meminfo').splitlines()}
@@ -54,6 +54,7 @@ with (out/'samples.jsonl').open('a',buffering=1) as f:
             d['containers'][name]={'id':c['Id'],'pid':pid,'health':c['State'].get('Health',{}).get('Status'),'restarts':c['RestartCount'],'cgroup':group(cg(pid))}
         for name,pid in [('cloudflared',service_pids.get('cloudflared',0)),('qbittorrent',service_pids.get('qbittorrent-nox',0))]:
             d[name]={'stat':read(f'/proc/{pid}/stat'),'status':{l.split(':')[0]:l.split(':',1)[1].strip() for l in read(f'/proc/{pid}/status').splitlines() if l.startswith(('VmRSS:','VmHWM:','Threads:'))},'cgroup':group(cg(pid))}
+        output_usage={'bytes':sum(v.get('bytes',0) for v in output_details.values()),'files':sum(v.get('files',0) for v in output_details.values()),'directories':sum(v.get('directories',0) for v in output_details.values()),'per_container':output_details}
         d['output_usage']=output_usage
         d['services']={}
         d['temperature_C']={}

@@ -1,6 +1,6 @@
 # Explicit Python patch and immutable registry digest; no Ubuntu system Python dependency.
 FROM python:3.11.17-slim-bookworm@sha256:2333bd330d12de02514770b3585cad313644316047cdee24a7acfdece6de6efb
-ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 PHANTOMGUARD_ROOT=/workspace
+ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 PHANTOMGUARD_ROOT=/workspace
 WORKDIR /app
 COPY requirements/runtime.lock /app/requirements/runtime.lock
 RUN python -m pip install --no-cache-dir -r requirements/runtime.lock

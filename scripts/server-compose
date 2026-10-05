@@ -6,5 +6,5 @@ if [[ ! -f "$env_file" ]]; then
   echo "Copy deploy/server.env.example to $env_file and choose server limits." >&2
   exit 1
 fi
-exec docker compose --project-directory "$root" --project-name phantomguard-server \
+exec docker compose --project-directory "$root" --project-name "${PHANTOMGUARD_COMPOSE_PROJECT:-phantomguard-server}" \
   --env-file "$env_file" -f "$root/compose.yaml" -f "$root/compose.server.yaml" "$@"

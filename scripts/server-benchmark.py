@@ -3,6 +3,8 @@ import argparse, concurrent.futures, hashlib, json, pathlib, time, urllib.reques
 p=argparse.ArgumentParser();p.add_argument('--base',default='http://127.0.0.1:8765');p.add_argument('--out',required=True);p.add_argument('--label',required=True);p.add_argument('--seconds',type=int,default=120);p.add_argument('--poll',type=float,default=.5);p.add_argument('--samples',required=True);a=p.parse_args()
 out=pathlib.Path(a.out);out.mkdir(parents=True,exist_ok=True)
 stagefile=pathlib.Path(a.samples)/'stage'
+stagefile.parent.mkdir(parents=True,exist_ok=True)
+if not stagefile.exists():stagefile.write_text(a.label+'-setup')
 f=(out/(a.label+'-workload.jsonl')).open('a',buffering=1)
 def log(d):f.write(json.dumps({'time':time.time(),**d})+'\n')
 def api(path,method='GET',body=None,token=None):
