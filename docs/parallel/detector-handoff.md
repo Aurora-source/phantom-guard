@@ -1,9 +1,10 @@
 # Detector accuracy hand-off (Agent 2)
 
 Branch `codex/detector-accuracy` (fork `Aurora-source/phantom-guard`), anchor `3813b51`.
-Policy frozen at `e81c6b1`; tested commit (frozen policy + bounded evaluation cache) `0870ec6`.
-Detector, attacker, calibration and baselines are byte-identical between the two (`git diff e81c6b1 0870ec6`
-touches only `commands/run_attack_eval.py`). Generated results: [docs/results/detector-accuracy](../results/detector-accuracy/README.md).
+Policy frozen at `e81c6b1`. Final matrices ran at `0870ec6` (frozen policy + bounded evaluation cache).
+Tested/bundled commit `82bbde3` (adds generated results and reporting tooling). Detector, tracks, stats,
+attacker and configs are byte-identical across all three (`git diff e81c6b1 82bbde3 -- src/phantomguard/detect
+src/phantomguard/tracks.py src/phantomguard/stats configs` is empty). Generated results: [docs/results/detector-accuracy](../results/detector-accuracy/README.md).
 
 Prototype assumptions stay labelled and configurable: recorded sensor data with simulated CAN injection;
 coordinate units, tick duration and the frame layout are provisional. One recording session only.
@@ -60,12 +61,26 @@ bit-identical scores.
 
 ## Restore and verify
 
+Bundle (git-ignored, owner's machine): `deployment-bundles/phantomguard-detector-82bbde373e99b2b547934738a474a7d9e2b1ba18.zip`
+(10,338,057 bytes, SHA-256 `1908386d9644e9b064b7db8bedf145589c94dd2f4fc66cb496b3961db00d72fb`, 54 payload files),
+`.zip.sha256` beside it, manifest copy `….manifest.json` (SHA-256 `5de57d01f7e4…14c5`). Payload: four recordings,
+config, v2 time-block + LOSO baselines, unchanged trained models, tracked evidence reports.
+
 ```bash
-git fetch fork codex/detector-accuracy && git checkout --detach 0870ec6
-python -m phantomguard verify-bundle deployment-bundles/phantomguard-detector-0870ec6.zip
-python -m phantomguard restore-bundle deployment-bundles/phantomguard-detector-0870ec6.zip
+git fetch fork codex/detector-accuracy && git checkout --detach 82bbde373e99b2b547934738a474a7d9e2b1ba18
+python -m phantomguard verify-bundle --archive deployment-bundles/phantomguard-detector-82bbde373e99b2b547934738a474a7d9e2b1ba18.zip
+python -m phantomguard restore-bundle --archive deployment-bundles/phantomguard-detector-82bbde373e99b2b547934738a474a7d9e2b1ba18.zip
 python -m phantomguard doctor --full
+python -m phantomguard.commands.equivalence run --output runs/eq.json   # compare with the published digests
 ```
+
+Verified on this machine: restore into a fresh detached worktree at `82bbde3`, `doctor --full` ok for all five
+contexts, working tree clean, detector outputs identical to the frozen-run equivalence digests.
+The bundle carries the tracked root `docs/results` (upstream's historical legacy evidence, kept so restoration
+never overwrites tracked files); v2 evidence is tracked at the tested SHA under `docs/results/detector-accuracy/`.
+Full final-matrix CSVs stay ignored on the owner's machine (`runs/final-v2`, `runs/final-legacy`):
+`attack_eval_runs.csv` v2 `3cf5c842…a7e9` / legacy `e310bc2f…0fd4`, `attack_eval_instances.csv` v2 `de5dfe70…9938` /
+legacy `cdfd9b47…1ecb29`, `attack_eval_manifest.json` v2 `f3e942a3…128a` / legacy `4ba3636a…7c67`.
 
 Offline rebuild of the same artifacts (never on the deployment server): `baseline --profile v2 --loso`
 (trained models are unchanged and can be restored from the legacy bundle), then
