@@ -54,6 +54,8 @@ def main(argv=None) -> int:
     ap.add_argument("--latency", type=Path)
     ap.add_argument("--equivalence", type=Path)
     ap.add_argument("--coverage", type=Path)
+    ap.add_argument("--ledger-before", type=Path, help="clean-episode ledger of the legacy profile (test part)")
+    ap.add_argument("--ledger-after", type=Path, help="clean-episode ledger of profile v2 (test part)")
     ap.add_argument("--baseline", type=Path, required=True)
     ap.add_argument("--processed-dir", type=Path, required=True)
     ap.add_argument("--files", default="emptyRoom,onePersonMovingFrontAndBack,onePersonMovingSideToSide,multiplePeopleChaotic")
@@ -107,6 +109,20 @@ def main(argv=None) -> int:
                         f"{lat['hardware']['logical_cpus']} logical CPUs, {lat['hardware']['platform']}.")
     else:
         latency_line = "Latency benchmark not supplied."
+    boot_lines = []
+    for name, d in (("legacy", args.ledger_before), ("v2", args.ledger_after)):
+        if d is None:
+            missing.append(f"clean-episode ledger ({name})")
+            continue
+        from phantomguard.eval.bootstrap import ledger_bootstrap
+
+        sub = out / f"ledger-{name}"
+        sub.mkdir(exist_ok=True)
+        _copy(d, sub, ("clean_episodes.csv", "clean_ledger_summary.json"))
+        for split, r in ledger_bootstrap(d).items():
+            boot_lines.append(f"| {name} | {split} | {r['episodes']} | {r['minutes']} | {r['per_minute']} | "
+                              f"{r['bootstrap_ci95']} | {r['p_rate_below_1_per_min']} |")
+        sections.append(f"- **Clean-episode failure ledger ({name})**: [ledger-{name}/clean_episodes.csv](ledger-{name}/clean_episodes.csv)")
     baselines = {"timeblock": args.baseline,
                  **{f"loso_{s}": args.processed_dir / f"baseline_loso_{s}.json" for s in args.files.split(",")}}
     md = ["# Detector accuracy (profile v2) - generated results", "",
@@ -118,6 +134,10 @@ def main(argv=None) -> int:
           "| profile | split | episodes | minutes | per minute | 95% Poisson | worst recording per minute |",
           "|---|---|---|---|---|---|---|", *(headline or ["| (final comparison not supplied) | | | | | | |"]), "",
           "Poisson intervals assume independent episodes; episodes cluster, so treat them as a guide.", "",
+          "Clustered bootstrap (30 s contiguous blocks resampled within each split; one session, so this is",
+          "within-session variability only). `P(rate<1)` is the bootstrap fraction below 1 episode/min.", "",
+          "| profile | split | episodes | minutes | per minute | bootstrap 95% | P(rate<1) |",
+          "|---|---|---|---|---|---|---|", *(boot_lines or ["| (ledgers not supplied) | | | | | | |"]), "",
           "## Calibration (out-of-recording CV over train+validation; thresholds from clean data only)", "",
           *calibration_table(baselines), "",
           "## Latency", "", latency_line, "",

@@ -7,21 +7,21 @@
   "detector_artifact_id": "2ad682efc017e2cf96d856772b20db898edd6c1e253947b3df013a671f067115",
   "note": "Labels are NOT part of this record; evidence is derived from observed input and frozen calibration only. Only objects with a reason carry evidence.",
   "cycle": {
-    "index": 328,
+    "index": 141,
     "cycle_reasons": [],
     "cycle_alert": false,
     "cycle_evidence": [],
     "objects": [
       {
-        "frame_index": 8371,
-        "slot": 19,
-        "x": 11.4,
-        "y": 3.8,
-        "vx": -0.5,
-        "vy": 0.25,
+        "frame_index": 3341,
+        "slot": 14,
+        "x": 5.6,
+        "y": 4.6,
+        "vx": 0.0,
+        "vy": -2.75,
         "in_roi": true,
         "moving": true,
-        "track_id": 267,
+        "track_id": 129,
         "reasons": [
           "COLOC"
         ],
@@ -30,8 +30,9 @@
         },
         "flagged": true,
         "alert": true,
-        "timestamp_ticks": 50786825,
+        "timestamp_ticks": 50724721,
         "score_status": {
+          "association": "continued",
           "ae": "insufficient_history"
         },
         "evidence": [
@@ -42,20 +43,20 @@
             "scope": "object",
             "status": "trigger",
             "frames": [
-              8370,
-              8371
+              3340,
+              3341
             ],
             "cycles": null,
-            "observed": 0.0,
+            "observed": 0.2828427124746186,
             "expected": null,
-            "lo": 0.2828427124746186,
+            "lo": 0.39999999999999947,
             "hi": null,
             "normalized": null,
             "support": null,
             "suspects": {
               "frames": [
-                8370,
-                8371
+                3340,
+                3341
               ],
               "track_id": null,
               "basis": "colocated_pair"
@@ -69,14 +70,14 @@
             "scope": "track",
             "status": "persistent",
             "frames": [
-              8295,
-              8321,
-              8345,
-              8371
+              3266,
+              3291,
+              3317,
+              3341
             ],
             "cycles": [
-              325,
-              328
+              138,
+              141
             ],
             "observed": 4.0,
             "expected": 4.0,
@@ -86,9 +87,9 @@
             "support": null,
             "suspects": {
               "frames": [
-                8371
+                3341
               ],
-              "track_id": 267,
+              "track_id": 129,
               "basis": "exact_frame"
             },
             "note": "4 of the last 6 cycles flagged: COLOC"

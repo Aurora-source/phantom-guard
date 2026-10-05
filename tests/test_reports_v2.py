@@ -54,3 +54,14 @@ def test_clopper_pearson_zero_events():
     n = 442724
     assert cp_upper(0, n) == pytest.approx(1 - 0.05 ** (1 / n), rel=1e-6)
     assert cp_upper(5, 10) < 1 and cp_upper(0, 0) == 1.0
+
+
+def test_block_bootstrap_widens_for_clustered_episodes():
+    from phantomguard.eval.bootstrap import block_bootstrap_rate, blocks
+
+    assert blocks([0.0, 31.0, 299.0], 5.0, 30.0)[0] == (1, 0.5) and len(blocks([], 5.0, 30.0)) == 10
+    spread = block_bootstrap_rate([([30.0 * i + 1 for i in range(10)], 5.0)])
+    clustered = block_bootstrap_rate([([1.0 + i for i in range(10)], 5.0)])
+    assert spread["per_minute"] == clustered["per_minute"] == 2.0
+    width = lambda r: r["bootstrap_ci95"][1] - r["bootstrap_ci95"][0]
+    assert width(clustered) > width(spread)

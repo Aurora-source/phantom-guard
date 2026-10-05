@@ -7,103 +7,51 @@
   "layers": "all",
   "run_row": {
     "loc_forged_object_frames": 1163,
-    "loc_alerting_forged_frames": 201,
-    "loc_alerting_object_frames": 206,
-    "loc_exact_recall": 0.17282889079965605,
-    "loc_exact_precision": 0.9757281553398058,
+    "loc_alerting_forged_frames": 63,
+    "loc_alerting_object_frames": 66,
+    "loc_exact_recall": 0.05417024935511608,
+    "loc_exact_precision": 0.9545454545454546,
     "loc_excess_precision": 1.0,
     "loc_real_object_frames": 27159,
     "loc_false_suspect_frames": 0,
     "loc_false_suspect_rate": 0.0,
-    "loc_baseline_coincident_alert_frames": 5,
+    "loc_baseline_coincident_alert_frames": 3,
     "loc_cycle_alarm_cycles_attacked": 0,
     "loc_cycle_alarm_cycles_control": 0,
     "loc_cycle_alarm_excess_cycles": 0,
-    "loc_episodes_forged": 7,
+    "loc_episodes_forged": 6,
     "loc_episodes_real_coincident": 1,
     "loc_episodes_real_excess": 0,
     "loc_cycle_excess": 0,
     "loc_cycle_coincident": 0,
-    "loc_attacked_alert_events": 8,
+    "loc_attacked_alert_events": 7,
     "loc_control_alert_events": 1,
-    "loc_paired_excess_alert_events": 7
+    "loc_paired_excess_alert_events": 6
   },
   "instances": {
     "5": {
       "paired_status": "exact",
       "exact_identified": true,
-      "exact_ttd_cycles": 5,
-      "excess_ttd_cycles": 5,
+      "exact_ttd_cycles": 3,
+      "excess_ttd_cycles": 3,
       "forged_object_frames_loc": 381,
-      "forged_frames_alerting": 3,
-      "forged_frames_flagged": 5,
+      "forged_frames_alerting": 5,
+      "forged_frames_flagged": 7,
       "window_real_excess_alert_frames": 0,
-      "window_real_baseline_coincident_alert_frames": 5,
+      "window_real_baseline_coincident_alert_frames": 0,
       "window_cycle_excess_alarm_cycles": 0,
       "window_cycle_baseline_coincident_alarm_cycles": 0,
       "forged_reason_counts": {
-        "COLOC": 5
+        "COLOC": 7
       },
       "forged_track_ids": 3
     },
     "0": {
-      "paired_status": "none",
-      "exact_identified": false,
-      "exact_ttd_cycles": null,
-      "excess_ttd_cycles": null,
-      "forged_object_frames_loc": 124,
-      "forged_frames_alerting": 0,
-      "forged_frames_flagged": 2,
-      "window_real_excess_alert_frames": 0,
-      "window_real_baseline_coincident_alert_frames": 0,
-      "window_cycle_excess_alarm_cycles": 0,
-      "window_cycle_baseline_coincident_alarm_cycles": 0,
-      "forged_reason_counts": {
-        "LEARNED": 66,
-        "COLOC": 2
-      },
-      "forged_track_ids": 1
-    },
-    "3": {
-      "paired_status": "exact",
-      "exact_identified": true,
-      "exact_ttd_cycles": 21,
-      "excess_ttd_cycles": 21,
-      "forged_object_frames_loc": 286,
-      "forged_frames_alerting": 20,
-      "forged_frames_flagged": 21,
-      "window_real_excess_alert_frames": 0,
-      "window_real_baseline_coincident_alert_frames": 0,
-      "window_cycle_excess_alarm_cycles": 0,
-      "window_cycle_baseline_coincident_alarm_cycles": 0,
-      "forged_reason_counts": {
-        "COLOC": 21
-      },
-      "forged_track_ids": 2
-    },
-    "4": {
       "paired_status": "exact",
       "exact_identified": true,
       "exact_ttd_cycles": 3,
       "excess_ttd_cycles": 3,
-      "forged_object_frames_loc": 198,
-      "forged_frames_alerting": 153,
-      "forged_frames_flagged": 160,
-      "window_real_excess_alert_frames": 0,
-      "window_real_baseline_coincident_alert_frames": 0,
-      "window_cycle_excess_alarm_cycles": 0,
-      "window_cycle_baseline_coincident_alarm_cycles": 0,
-      "forged_reason_counts": {
-        "RCS_BAND": 160
-      },
-      "forged_track_ids": 3
-    },
-    "1": {
-      "paired_status": "exact",
-      "exact_identified": true,
-      "exact_ttd_cycles": 6,
-      "excess_ttd_cycles": 6,
-      "forged_object_frames_loc": 72,
+      "forged_object_frames_loc": 124,
       "forged_frames_alerting": 4,
       "forged_frames_flagged": 5,
       "window_real_excess_alert_frames": 0,
@@ -111,7 +59,59 @@
       "window_cycle_excess_alarm_cycles": 0,
       "window_cycle_baseline_coincident_alarm_cycles": 0,
       "forged_reason_counts": {
+        "LEARNED": 66,
         "COLOC": 5
+      },
+      "forged_track_ids": 1
+    },
+    "3": {
+      "paired_status": "exact",
+      "exact_identified": true,
+      "exact_ttd_cycles": 11,
+      "excess_ttd_cycles": 11,
+      "forged_object_frames_loc": 286,
+      "forged_frames_alerting": 30,
+      "forged_frames_flagged": 31,
+      "window_real_excess_alert_frames": 0,
+      "window_real_baseline_coincident_alert_frames": 0,
+      "window_cycle_excess_alarm_cycles": 0,
+      "window_cycle_baseline_coincident_alarm_cycles": 0,
+      "forged_reason_counts": {
+        "COLOC": 31
+      },
+      "forged_track_ids": 2
+    },
+    "4": {
+      "paired_status": "none",
+      "exact_identified": false,
+      "exact_ttd_cycles": null,
+      "excess_ttd_cycles": null,
+      "forged_object_frames_loc": 198,
+      "forged_frames_alerting": 0,
+      "forged_frames_flagged": 2,
+      "window_real_excess_alert_frames": 0,
+      "window_real_baseline_coincident_alert_frames": 0,
+      "window_cycle_excess_alarm_cycles": 0,
+      "window_cycle_baseline_coincident_alarm_cycles": 0,
+      "forged_reason_counts": {
+        "RCS_ENV": 2
+      },
+      "forged_track_ids": 3
+    },
+    "1": {
+      "paired_status": "exact",
+      "exact_identified": true,
+      "exact_ttd_cycles": 3,
+      "excess_ttd_cycles": 3,
+      "forged_object_frames_loc": 72,
+      "forged_frames_alerting": 14,
+      "forged_frames_flagged": 15,
+      "window_real_excess_alert_frames": 0,
+      "window_real_baseline_coincident_alert_frames": 0,
+      "window_cycle_excess_alarm_cycles": 0,
+      "window_cycle_baseline_coincident_alarm_cycles": 0,
+      "forged_reason_counts": {
+        "COLOC": 15
       },
       "forged_track_ids": 1
     },
@@ -121,15 +121,14 @@
       "exact_ttd_cycles": 3,
       "excess_ttd_cycles": 3,
       "forged_object_frames_loc": 102,
-      "forged_frames_alerting": 21,
-      "forged_frames_flagged": 28,
+      "forged_frames_alerting": 10,
+      "forged_frames_flagged": 12,
       "window_real_excess_alert_frames": 0,
       "window_real_baseline_coincident_alert_frames": 0,
       "window_cycle_excess_alarm_cycles": 0,
       "window_cycle_baseline_coincident_alarm_cycles": 0,
       "forged_reason_counts": {
-        "RCS_BAND": 24,
-        "COLOC": 4
+        "COLOC": 12
       },
       "forged_track_ids": 3
     }
