@@ -517,3 +517,69 @@ No bus, no live capture, no hardware (CLAUDE.md scope).
   raw data. Recording names now resolve under raw data, explicit relative paths
   under the workspace, and absolute paths remain explicit. Two fixture regressions
   pass. Detector/attacker/feature/calibration/metric behavior is unchanged.
+
+## 2026-10-05 — detector accuracy, evidence and artifacts (Agent 2, `codex/detector-accuracy`)
+
+Anchor `3813b51`. Detector changes are a **profile** stored in the baseline (`detector_contract`):
+a legacy baseline (no contract) runs the original rules bit-identically (clean evaluation outputs
+re-verified byte-identical after every detector change); a v2 baseline selects the reworked rules.
+Code that sees an unknown profile/schema refuses to run it.
+
+### Incident: a test run overwrote an external dataset copy (restored)
+- Running `pytest` in a shell that exported `PHANTOMGUARD_DATA_DIR` (pointing at the owner's external
+  dataset directory used for analysis) let `test_missing_and_case_sensitive_data_are_actionable`
+  write a lowercase `emptyroom.csv` fixture into that directory; Windows is case-insensitive, so the
+  10-byte fixture replaced `emptyRoom.csv`. It was restored from the verified bundle copy and its
+  SHA-256 re-checked (`13fb666d…2ebc`, docs/data.md). No other file changed (all four hashes verified).
+- Fix: `tests/conftest.py` removes every `PHANTOMGUARD_*` variable before configuration loads, so a
+  test session can no longer inherit path overrides. Tests needing overrides use monkeypatch.
+
+### Measurement before changes
+- Failure ledger of clean persistent-alert episodes (legacy, held-out parts): the largest single cause
+  was `RCS_BAND` (narrow per-range bands fitted to the training clutter), then `ARRIVAL` (late offsets
+  in busy cycles: offsets grow ~2.4 ticks per position in the burst), `SPEED`/`SLOT_RANGE`/`CADENCE`
+  empirical tails, and `REPLAY` chance collisions between real tracks.
+- A rule-level attribution run of the legacy detector on A3/A4 attacks used the **test** part (seed 11);
+  it was diagnostic of the existing system only. Every v2 design comparison since uses the
+  **validation** part; the test part is reserved for the frozen final matrix.
+- Attack identification at A3/A4 leaned on `COLOC` and `RCS_BAND` (and `REPLAY` for A4/T3). Forged
+  objects that land near real clutter are a property of the attacker's sampling, so rule ablations
+  (`--ablate-codes`) report the dependence instead of changing the attacker.
+
+### Profile v2 rules (all thresholds from clean data; none from attacks)
+- Structural and exact-regularity rules stay hard (format, counter, count, duplicate slot, status,
+  fixed bits, RCS grid, range order, burst contiguity). Empirical tails become soft evidence with an
+  exceedance threshold calibrated per rule.
+- Calibration = episodes, not marginal percentiles: inner leave-one-recording-out CV over the
+  train+validation portions; each rule gets the most sensitive grid value at which it alone adds no
+  clean alert episode over the system without tunable rules. Recordings are consecutive segments of
+  one session; no IID or distribution-free guarantee is claimed.
+- `RCS_BAND`/`RCS_RANGE` replaced by a range-conditional RCS envelope (kernel-weighted quantiles,
+  per-track weights, shrinkage by effective independent tracks); `ARRIVAL` replaced by a one-sided
+  offset-vs-burst-position line (`ARRIVAL_POS`).
+- Drift evidence (`DRIFT`): position change over 8/16/32 cycles vs integrated reported velocity in the
+  line-of-sight frame, with the gain B **fitted** per horizon/regime (not assumed 1) and MAD scales
+  floored at the 0.2 position quantum. Static-regime windows are heavy tailed (creeping far-field
+  clutter: z up to ~25 vs ~8 when moving), so they are a separate rule (`DRIFT_STATIC`) with its own
+  threshold instead of inflating the moving one.
+- `REPLAY` scores the run of consecutively matched windows. Clean chance collisions produced at most
+  5 consecutive matches; a replayed segment of >=20 cycles yields >=9. The run threshold is calibrated
+  like the other rules (legacy/uncalibrated: every hit flags, as before).
+- Failed experiment: replay rarity as fingerprint self-information under a unigram symbol model of the
+  library. Clean chance collisions sat at the 43rd-84th percentile of real moving windows, i.e. they
+  look like ordinary motion (real motion is strongly autocorrelated, which a unigram model ignores).
+  Rejected; output kept under `runs/experiments/replay_unigram_rarity.txt` (ignored).
+
+### Association
+- A velocity-predictive association gate was measured before adoption: it changes 4 of ~433k slot
+  links on the four recordings and never cuts a link the plain 1.0 gate keeps. It is implemented as a
+  single switch `tracks.predictive_gate` (default off; training, attacker pools and detector read the
+  same switch). Every verdict now reports its association status (`continued`, `gap_bridged`,
+  `ambiguous_continued`/`ambiguous_reset` within 0.7-1.3x of the gate, `born_by_jump` with the
+  predecessor track, `duplicate_slot`), so near-gate decisions are visible in evidence.
+
+### Data intake
+- `phantomguard.commands.intake` hashes new session folders read-only, assigns roles and keeps one
+  group reserved (hash and header only) until the policy is frozen. The four existing recordings are
+  `development`: all were inspected. 30-60 min of clean recording per new session is recommended
+  (docs/data-intake.md); no recording is synthesised.

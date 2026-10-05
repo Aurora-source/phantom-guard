@@ -103,3 +103,22 @@ def test_evidence_never_cites_the_future(v2):
                 if e.get("cycles"):
                     assert e["cycles"][-1] <= r.index
                 assert all(fi <= max(x.frame_index for x in r.frames) for fi in e["frames"])
+
+
+def test_unknown_contract_fails_clearly(v2):
+    import copy
+
+    base = copy.deepcopy(v2[0])
+    base["detector_contract"]["value"]["schema"] = 99
+    with pytest.raises(ValueError, match="not supported by this code"):
+        Detector(CFG, base, None, v2[1])
+    base["detector_contract"]["value"].update(profile="v9", schema=1)
+    with pytest.raises(ValueError, match="not supported by this code"):
+        Detector(CFG, base, None, v2[1])
+
+
+def test_every_reason_has_an_evidence_class():
+    from phantomguard.detect.common import REASONS
+    from phantomguard.detect.evidence import REASON_CLASS
+
+    assert set(REASONS) <= set(REASON_CLASS) and set(REASON_CLASS) <= set(REASONS)

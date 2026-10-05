@@ -1,6 +1,6 @@
 # Detector evidence / artifact interface (Agent 2) — additive, backward compatible
 
-Status: **draft 1** (written before the detector rework so Agents 1 and 3 can code against it).
+Status: **draft 2** (section 4 adds the v2 reason codes and fields; draft 1 content unchanged).
 Branch `codex/detector-accuracy`, anchor `3813b51`. Everything below is *additive*: no existing field,
 score, metric or file is repurposed. Consumers that ignore these fields keep working unchanged.
 
@@ -82,8 +82,34 @@ unusual-but-valid observation (`empirical_tail`).
 * `docs/parallel/fixtures/evidence_cycle.json` — one detector cycle with evidence-bearing verdicts.
 * `docs/parallel/fixtures/paired_localization.json` — one attacked run's paired localization rows.
 
-## 4. What is still to come (will be appended here; do not depend on it yet)
+## 4. Draft 2 additions (additive; legacy baselines never emit them)
 
-* New reason codes / classes for the reworked rules (`ARRIVAL_POS`, `RCS_INNOV`, `DRIFT`, ...).
+Profile v2 is selected by the baseline (`detector_contract.value.profile == "v2"`), never by a UI switch.
+
+| code | layer | class | meaning |
+|---|---|---|---|
+| `ARRIVAL_POS` | protocol | empirical_tail | object arrived later than its position in the burst predicts (one-sided) |
+| `RCS_ENV` | kinematic | empirical_tail | RCS outside the range-conditional clean envelope |
+| `DRIFT` | kinematic | motion_evidence | position change over 8/16/32 cycles disagrees with integrated reported velocity (moving windows) |
+| `DRIFT_STATIC` | kinematic | motion_evidence | the same for windows below the moving speed (heavy-tailed; high threshold) |
+
+`REPLAY` keeps its code and class. In v2 it flags only when the run of consecutively matched fingerprint
+windows exceeds a calibrated length; `scores.replay_run` (float) gives the run length on every hit, flagged
+or not. `RCS_BAND`, `RCS_RANGE` and `ARRIVAL` are not evaluated in v2 (superseded by `RCS_ENV` and
+`ARRIVAL_POS`); consumers must not assume a code appears.
+
+Other additive fields:
+
+* `ObjVerdict.score_status["association"]` (all profiles): `born | born_by_jump | duplicate_slot | continued |
+  gap_bridged | ambiguous_continued | ambiguous_reset`. Diagnostic only: how the slot link was made, with
+  `ambiguous_*` marking links within 0.7-1.3x of the reassignment gate. Never an attack indication on its own.
+* `JUMP` evidence `support` carries `association` and `predecessor_track` (the track this one replaced).
+* `CycleResult.detector_thread_cpu_ms` (float): thread CPU of the cycle. Coarse on Windows (~15.6 ms ticks);
+  use `detector_cpu_ms` (wall) for per-cycle display.
+* Calibrated per-rule thresholds live in the baseline under `rule_thresholds.value` (`null` = rule inactive),
+  with the out-of-recording CV table, curves and episode detail under `rule_thresholds.cv` / `.table`.
+
+## 5. Still to come (do not depend on it yet)
+
 * Artifact schema 2 identifiers, bundle manifest additions, and the bounded prepared-data loading contract.
 * `docs/parallel/detector-handoff.md`: tested commit, bundle path/checksum, restore commands, results.

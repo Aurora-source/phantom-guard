@@ -1,5 +1,13 @@
 from __future__ import annotations
 
+import os
+
+# Path overrides from the caller's shell must never reach tests: a fixture that writes into the
+# configured raw directory once overwrote an external dataset copy this way (docs/decisions.md,
+# 2026-10-05). Tests that need overrides set them with monkeypatch.
+for _k in [k for k in os.environ if k.startswith("PHANTOMGUARD_")]:
+    os.environ.pop(_k)
+
 import csv
 from pathlib import Path
 

@@ -60,6 +60,10 @@ tracks:
   reassign_jump_default: 1.0
   # The sensor often drops a slot for one cycle and brings it back (250-900 times per file).
   max_gap_cycles: 1
+  # Measure the reassignment jump against the nearer of the last and the velocity-predicted position.
+  # Conservative (only keeps links); changes 4 of ~433k links on the recordings, so off. Training, attacker
+  # pools and detector all read this one switch; changing it requires rebuilding every artifact.
+  predictive_gate: false
   min_track_cycles_for_stats: 20
 
 kinematic:

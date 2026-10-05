@@ -75,7 +75,8 @@ def collect_segment(cfg: dict, seg: Segment) -> SegmentStats:
     warm = cfg["protocol"]["cadence_warmup_cycles"]
     src = ReplaySource(raw_path(cfg, seg.file), (seg.lo, seg.hi))
     tm = TrackManager(cfg["tracks"]["reassign_jump_default"], cfg["units"]["tick_seconds"],
-                      cfg["motion"]["moving_threshold_mps"], history=2, max_gap_cycles=cfg["tracks"]["max_gap_cycles"])
+                      cfg["motion"]["moving_threshold_mps"], history=2, max_gap_cycles=cfg["tracks"]["max_gap_cycles"],
+                      predictive_gate=bool(cfg["tracks"].get("predictive_gate", False)))
     pts: dict[int, list] = defaultdict(list)
     prev_hdr_t = prev_counter = None
     hdr_seen = 0

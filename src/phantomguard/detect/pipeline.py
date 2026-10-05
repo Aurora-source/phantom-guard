@@ -99,7 +99,8 @@ class Detector:
         if self.kin.v2:
             hist = max(hist, max(self.kin.drift_h, default=0) + 1)
         self.tracks = TrackManager(bval(baseline, "reassign_jump"), cfg["units"]["tick_seconds"], self.thr,
-                                   history=hist, max_gap_cycles=cfg["tracks"]["max_gap_cycles"])
+                                   history=hist, max_gap_cycles=cfg["tracks"]["max_gap_cycles"],
+                                   predictive_gate=bool(cfg["tracks"].get("predictive_gate", False)))
         self.fusion = Fusion(effective_cfg(cfg, baseline), self.layers, emit_evidence=True)
         # Every layer runs so reasons and scores are always reported; fusion uses only enabled layers.
 
@@ -122,6 +123,7 @@ class Detector:
         for (ob, tr), v in zip(self.tracks.update(cycle), verdicts):
             o = ob.obj
             v.track_id = tr.track_id
+            v.score_status["association"] = tr.assoc
             if not v.in_roi:
                 v.score_status["ae"] = "outside_roi"
                 continue

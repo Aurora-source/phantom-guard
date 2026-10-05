@@ -86,7 +86,8 @@ def stream_pools(cfg: dict, cycles, lo: int, hi: int) -> Pools:
                 yield Frame(CAN_ID_OBJECT, raw, t)
 
     manager = TrackManager(cfg["tracks"]["reassign_jump_default"], cfg["units"]["tick_seconds"],
-                           cfg["motion"]["moving_threshold_mps"], max_gap_cycles=cfg["tracks"]["max_gap_cycles"])
+                           cfg["motion"]["moving_threshold_mps"], max_gap_cycles=cfg["tracks"]["max_gap_cycles"],
+                           predictive_gate=bool(cfg["tracks"].get("predictive_gate", False)))
     points = defaultdict(list)
     for cycle in iter_cycles(frames()):
         for _, track in manager.update(cycle):

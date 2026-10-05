@@ -107,8 +107,11 @@ class KinematicChecker:
             i = min(max(int(np.searchsorted(self.birth_edges, o.range)) - 1, 0), len(self.birth_nll) - 1)
             v.scores["birth_nll"] = float(self.birth_nll[i])
             if tr.born_by_jump:
-                v.note("JUMP", frames=fi, observed=o.range, suspect_frames=fi, suspect_track=tr.track_id, cycles=cyc(1),
-                       note="slot reused with a position jump larger than the reassignment threshold")
+                v.note("JUMP", frames=fi, observed=tr.gate_distance, hi=None, suspect_frames=fi, suspect_track=tr.track_id,
+                       cycles=cyc(1), support=support_record(None, "supported", association=tr.assoc,
+                                                             predecessor_track=tr.predecessor),
+                       note="slot reused with a position jump larger than the reassignment threshold"
+                            + (" (near the gate: association ambiguous)" if tr.assoc == "ambiguous_reset" else ""))
         if len(pts) >= 2 and pts[-2].rng <= self.roi:
             a, b = pts[-2], pts[-1]
             dt = b.t_s - a.t_s

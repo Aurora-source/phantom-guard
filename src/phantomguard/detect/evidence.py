@@ -35,7 +35,7 @@ REASON_CLASS: dict[str, str] = {
     "ACCEL": "empirical_tail", "RR_RESID": "empirical_tail", "POS_SPEED": "empirical_tail",
     "RCS_STD": "empirical_tail", "RCS_BAND": "empirical_tail", "JUMP": "empirical_tail",
     "COLOC": "empirical_tail", "REPLAY": "replay", "LEARNED": "learned",
-    "DRIFT": "motion_evidence", "DRIFT_STATIC": "motion_evidence", "RCS_INNOV": "empirical_tail", "ARRIVAL_POS": "empirical_tail",
+    "DRIFT": "motion_evidence", "DRIFT_STATIC": "motion_evidence", "RCS_ENV": "empirical_tail", "ARRIVAL_POS": "empirical_tail",
 }
 
 STATUS_TRIGGER = "trigger"          # the current observation itself violates the bound

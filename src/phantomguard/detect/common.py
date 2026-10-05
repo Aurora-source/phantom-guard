@@ -63,10 +63,24 @@ def rule_thresholds_of(baseline: dict) -> dict[str, float]:
     return {code: (float("inf") if value is None else float(value)) for code, value in values.items()}
 
 
+SUPPORTED_CONTRACTS = {"v2": 1}   # profile -> newest contract schema this code can run
+
+
 def contract_of(baseline: dict) -> dict | None:
-    """Detector profile contract stored in the baseline (profile v2+), or None for the legacy profile."""
+    """Detector profile contract stored in the baseline (profile v2+), or None for the legacy profile.
+
+    A baseline written by newer code (unknown profile or a newer schema) fails here with a clear message
+    instead of being scored with rules it was not calibrated for.
+    """
     c = baseline.get("detector_contract")
-    return (c["value"] if isinstance(c, dict) and "value" in c else c) if c else None
+    value = (c["value"] if isinstance(c, dict) and "value" in c else c) if c else None
+    if value is not None:
+        profile, schema = value.get("profile"), value.get("schema")
+        if profile not in SUPPORTED_CONTRACTS or not isinstance(schema, int) or schema > SUPPORTED_CONTRACTS[profile]:
+            raise ValueError(f"baseline detector contract profile={profile!r} schema={schema!r} is not supported by this "
+                             f"code (supports {SUPPORTED_CONTRACTS}); restore the bundle matching this commit or "
+                             f"re-run baseline/calibrate with this version")
+    return value
 
 
 def layer_of(code: str) -> str:
