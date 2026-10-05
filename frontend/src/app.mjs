@@ -828,6 +828,7 @@ async function poll(id, operation, initial) {
       await visible(controller.signal);
       if (!state) {
         await delay(pollMs, controller.signal);
+        await visible(controller.signal);
         state = await api(`/api/jobs/${id}`, { signal: controller.signal });
       }
       if (operation !== generation || job !== id) return;
