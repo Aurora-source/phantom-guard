@@ -1,6 +1,6 @@
 # Detector evidence / artifact interface (Agent 2) — additive, backward compatible
 
-Status: **draft 2** (section 4 adds the v2 reason codes and fields; draft 1 content unchanged).
+Status: **final** (section 4 adds the v2 reason codes and fields; draft 1 content unchanged).
 Branch `codex/detector-accuracy`, anchor `3813b51`. Everything below is *additive*: no existing field,
 score, metric or file is repurposed. Consumers that ignore these fields keep working unchanged.
 
@@ -127,6 +127,7 @@ checked, and raises `PreparedError` with a reason. Pools come from clean recordi
 | latency benchmark | `phantomguard.latency/1` |
 | baseline detector contract | `detector_contract.value = {profile: "v2", schema: 1}` |
 
-## 5. Still to come (do not depend on it yet)
+## 5. Final
 
-* `docs/parallel/detector-handoff.md`: tested commit, bundle path/checksum, restore commands, results.
+Final hand-off with tested commit, bundle path/checksums, restore commands and results:
+[detector-handoff.md](detector-handoff.md). Status of this document: **final** for `82bbde3`.
