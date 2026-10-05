@@ -6,6 +6,8 @@
 | [esbuild](https://github.com/evanw/esbuild)           | 0.25.10 | MIT, copyright Evan Wallace                 | Build only                                                    |
 | [Playwright](https://github.com/microsoft/playwright) | 1.58.0  | Apache-2.0, copyright Microsoft Corporation | Browser validation only                                       |
 
+Prettier 3.6.2 (MIT) is used for source formatting during development only.
+
 Dependency pins and integrity hashes are in `package-lock.json`. `npm ci` installs
 the original LICENSE files with these packages. Chromium downloaded by Playwright
 is used only for development tests and is never packaged with Python.

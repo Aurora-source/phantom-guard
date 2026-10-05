@@ -29,7 +29,8 @@ isolated Python preview commands, evidence limitations, measurements and routes.
 
 Three.js 0.180.0 is the only deployed third-party dependency (MIT). Its complete
 license is included in the compiled JavaScript banner. esbuild 0.25.10 (MIT)
-and Playwright 1.58.0 (Apache-2.0) are development-only. `package-lock.json` pins
+and Playwright 1.58.0 (Apache-2.0) are development-only. Prettier 3.6.2 (MIT)
+formats sources during development. `package-lock.json` pins
 transitive dependencies and platform-specific build binaries. The original
 licenses remain in their installed npm packages; notices are recorded in
 [third-party-notices.md](third-party-notices.md).
