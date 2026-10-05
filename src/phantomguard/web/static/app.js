@@ -82,9 +82,11 @@ async function run(){
     const created=await api("/api/jobs",{method:"POST",body:{recording:$("recording").value,attack,level:attack?$("level").value:null,seed:Number($("seed").value),cycles:Number($("cycles").value),motion:$("motion").value,variant:$("variant").value}});
     if(operation!==generation){await api(`/api/jobs/${created.id}`,{method:"DELETE"});return;}
     job=created.id;const thisJob=job;text("progress","Queued · waiting for an isolated CPU worker…");
+    let pollDelay=1000;
     while(job===thisJob){
-      await new Promise(r=>setTimeout(r,500));if(job!==thisJob)break;
+      await new Promise(r=>setTimeout(r,pollDelay));if(job!==thisJob)break;
       const state=await api(`/api/jobs/${thisJob}`);
+      pollDelay=state.state==="queued"?2000:1000;
       text("progress",`${state.state} · ${state.progress.stage||"waiting"} ${state.progress.completed||0}${state.progress.total?" / "+state.progress.total:""}`);
       if(state.state==="complete"){
         result=await api(`/api/jobs/${thisJob}/result`);cursor=0;$("seek").max=result.cycles.length-1;$("empty").style.display="none";

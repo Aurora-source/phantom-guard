@@ -86,12 +86,14 @@ def replay_worker(cfg, request, directory):
         atomic_json(progress, {'stage':'loading','completed':0})
         baseline = load_baseline(cfg=cfg)
         ae, library = load_artifacts(strict=True,cfg=cfg,baseline=baseline)
+        artifacts_loaded = time.monotonic()
         source = ReplaySource(raw_path(cfg,request['recording']))
         bounds = time_block(len(source.cycles),cfg['splits']['train_frac'],cfg['splits']['val_frac'])
         lo,hi = bounds['test']
         if hi <= lo:
             raise ValueError('Recording has an empty time-block test segment')
         source = ReplaySource(raw_path(cfg,request['recording']),(lo,hi))
+        data_loaded = time.monotonic()
         if request['attack']:
             atomic_json(progress, {'stage':'planning simulated attack','completed':0})
             source = attack_source(source,cfg,baseline,attack_type=request['attack'],level=request['level'],seed=request['seed'],
@@ -102,6 +104,7 @@ def replay_worker(cfg, request, directory):
             # ordinary frames still enter a causal iterator one at a time; neither
             # the detector nor presentation reads attack labels.
             source = list(source)
+        attack_planned = time.monotonic()
         detector = Detector(cfg,baseline,ae,library)
         results, display = [], []
         # Finishing the ordinary attacker iterator writes its complete final-index
@@ -119,6 +122,7 @@ def replay_worker(cfg, request, directory):
                 break
         if not results:
             raise ValueError('Empty replay; no cycles emitted')
+        detected = time.monotonic()
         # Clip labels are not used for scene colors or detector behavior.
         # If the source iterator stopped early its sidecar is explicitly partial;
         # this browser job is never presented as an attack-evaluation run.
@@ -134,8 +138,17 @@ def replay_worker(cfg, request, directory):
                   'summary':{'alerting_cycles':sum(r.cycle_alert or any(v.alert for v in r.objects) for r in results),
                   'object_cycles':sum(len(r.objects) for r in results),'green_means':'not flagged; authenticity is not established'},
                   'elapsed_seconds':time.monotonic()-started}
+        output['timings'] = {'artifact_loading_seconds':artifacts_loaded-started,
+            'data_loading_seconds':data_loaded-artifacts_loaded,
+            'attacker_planning_seconds':attack_planned-data_loaded,
+            'detect_and_display_seconds':detected-attack_planned,
+            'detector_cpu_seconds':sum(r.detector_cpu_ms for r in results)/1000,
+            'assembly_cpu_seconds':sum(r.assembly_cpu_ms for r in results)/1000,
+            'presentation_and_metrics_seconds':time.monotonic()-detected}
+        write_started = time.monotonic()
         atomic_json(d/'result.json',output)
-        atomic_json(progress,{'stage':'complete','completed':len(results)})
+        atomic_json(progress,{'stage':'complete','completed':len(results),
+                             'result_write_seconds':time.monotonic()-write_started})
     except Exception as exc:
         atomic_json(d/'error.json',{'error':str(exc),'type':type(exc).__name__})
 
@@ -154,11 +167,17 @@ class Job:
 
 
 class JobManager:
-    def __init__(self,cfg,*,workers=2,max_cycles=1200,job_seconds=120,ttl=600,max_jobs=8,max_sessions=16):
+    def __init__(self,cfg,*,workers=2,max_cycles=1200,job_seconds=120,ttl=600,max_jobs=8,max_sessions=16,max_queued=4,output_mib=128,job_cooldown=0):
         if not 1<=workers<=4 or not 1<=max_cycles<=1200 or not 1<=job_seconds<=300:
             raise ValueError('workers 1..4, max_cycles 1..1200 and job_seconds 1..300 required')
+        if not 1<=max_queued<=4 or not 1<=max_jobs<=8 or not 1<=max_sessions<=16 or not 30<=ttl<=600 or not 8<=output_mib<=128:
+            raise ValueError('max_queued 1..4, max_jobs 1..8, max_sessions 1..16, ttl 30..600 and output_mib 8..128 required')
+        if not 0<=job_cooldown<=60:
+            raise ValueError('job_cooldown 0..60 seconds required')
         self.cfg,self.workers,self.max_cycles,self.job_seconds = cfg,workers,max_cycles,job_seconds
         self.ttl,self.max_jobs,self.max_sessions = ttl,max_jobs,max_sessions
+        self.max_queued,self.output_mib = max_queued,output_mib
+        self.job_cooldown,self._next_start = job_cooldown,0
         self.directory=paths(cfg).output/'browser'
         self.directory.mkdir(parents=True,exist_ok=True)
         # Reclaim only expired directories created by this scheduler after a
@@ -169,6 +188,7 @@ class JobManager:
                 and time.time()-child.stat().st_mtime>ttl):
                 shutil.rmtree(child)
         self.jobs,self.sessions={},{}
+        self._orphan_scan_at=0
         self.lock=threading.RLock()
         self.stop=threading.Event()
         self.context=mp.get_context('spawn')
@@ -196,9 +216,9 @@ class JobManager:
             self._expire()
             if any(j.owner==token and j.state in {'queued','running'} for j in self.jobs.values()):
                 raise RequestError('This session already has a job; cancel/reset before restarting',409)
-            if len(self.jobs)>=self.max_jobs or sum(j.state=='queued' for j in self.jobs.values())>=4:
+            if len(self.jobs)>=self.max_jobs or sum(j.state=='queued' for j in self.jobs.values())>=self.max_queued:
                 raise RequestError('Replay queue/storage capacity reached; reset completed jobs or retry later',429)
-            if sum(p.stat().st_size for p in self.directory.rglob('*') if p.is_file())>128*1024*1024:
+            if sum(p.stat().st_size for p in self.directory.rglob('*') if p.is_file())>self.output_mib*1024*1024:
                 raise RequestError('Browser output quota reached; reset jobs or wait for cleanup',429)
             jid=uuid.uuid4().hex
             directory=self.directory/jid
@@ -235,6 +255,8 @@ class JobManager:
 
     def _terminate(self,job):
         if job.process is not None:
+            if job.state=='running' and self.job_cooldown:
+                self._next_start=time.monotonic()+self.job_cooldown
             if job.process.is_alive():
                 job.process.terminate()
             job.process.join(timeout=3)
@@ -253,6 +275,17 @@ class JobManager:
 
     def _expire(self):
         now=time.monotonic()
+        if now>=self._orphan_scan_at:
+            self._orphan_scan_at=now+30
+            # A crash can leave young directories that were not expired when
+            # the new scheduler started. Revisit those after their TTL, while
+            # protecting every job owned by the current scheduler and all links.
+            for child in self.directory.iterdir():
+                if (child.name not in self.jobs and re.fullmatch(r'[0-9a-f]{32}',child.name)
+                    and child.is_dir() and not child.is_symlink()
+                    and child.resolve().parent==self.directory.resolve()
+                    and time.time()-child.stat().st_mtime>self.ttl):
+                    shutil.rmtree(child)
         for token,seen in list(self.sessions.items()):
             if now-seen>self.ttl:
                 for job in list(self.jobs.values()):
@@ -288,7 +321,7 @@ class JobManager:
                         job.state,job.error='timed_out','Queue wait expired; retry later'
                 running=sum(j.state=='running' for j in self.jobs.values())
                 for job in self.jobs.values():
-                    if job.state=='queued' and running<self.workers:
+                    if job.state=='queued' and running<self.workers and now>=self._next_start:
                         job.process=self.context.Process(target=replay_worker,args=(self.cfg,job.request,str(job.directory)),daemon=True)
                         try:
                             job.process.start()
