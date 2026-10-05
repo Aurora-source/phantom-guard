@@ -1,0 +1,180 @@
+{
+  "fixture": "offline paired clean/attacked localization (evaluator-only; never a detector input)",
+  "recording": "multiplePeopleChaotic.csv",
+  "attack": "T1",
+  "level": "A3",
+  "seed": 11,
+  "layers": "all",
+  "run_row": {
+    "loc_forged_object_frames": 1163,
+    "loc_alerting_forged_frames": 201,
+    "loc_alerting_object_frames": 206,
+    "loc_exact_recall": 0.17282889079965605,
+    "loc_exact_precision": 0.9757281553398058,
+    "loc_excess_precision": 1.0,
+    "loc_real_object_frames": 27159,
+    "loc_false_suspect_frames": 0,
+    "loc_false_suspect_rate": 0.0,
+    "loc_baseline_coincident_alert_frames": 5,
+    "loc_cycle_alarm_cycles_attacked": 0,
+    "loc_cycle_alarm_cycles_control": 0,
+    "loc_cycle_alarm_excess_cycles": 0,
+    "loc_episodes_forged": 7,
+    "loc_episodes_real_coincident": 1,
+    "loc_episodes_real_excess": 0,
+    "loc_cycle_excess": 0,
+    "loc_cycle_coincident": 0,
+    "loc_attacked_alert_events": 8,
+    "loc_control_alert_events": 1,
+    "loc_paired_excess_alert_events": 7
+  },
+  "instances": {
+    "5": {
+      "paired_status": "exact",
+      "exact_identified": true,
+      "exact_ttd_cycles": 5,
+      "excess_ttd_cycles": 5,
+      "forged_object_frames_loc": 381,
+      "forged_frames_alerting": 3,
+      "forged_frames_flagged": 5,
+      "window_real_excess_alert_frames": 0,
+      "window_real_baseline_coincident_alert_frames": 5,
+      "window_cycle_excess_alarm_cycles": 0,
+      "window_cycle_baseline_coincident_alarm_cycles": 0,
+      "forged_reason_counts": {
+        "COLOC": 5
+      },
+      "forged_track_ids": 3
+    },
+    "0": {
+      "paired_status": "none",
+      "exact_identified": false,
+      "exact_ttd_cycles": null,
+      "excess_ttd_cycles": null,
+      "forged_object_frames_loc": 124,
+      "forged_frames_alerting": 0,
+      "forged_frames_flagged": 2,
+      "window_real_excess_alert_frames": 0,
+      "window_real_baseline_coincident_alert_frames": 0,
+      "window_cycle_excess_alarm_cycles": 0,
+      "window_cycle_baseline_coincident_alarm_cycles": 0,
+      "forged_reason_counts": {
+        "LEARNED": 66,
+        "COLOC": 2
+      },
+      "forged_track_ids": 1
+    },
+    "3": {
+      "paired_status": "exact",
+      "exact_identified": true,
+      "exact_ttd_cycles": 21,
+      "excess_ttd_cycles": 21,
+      "forged_object_frames_loc": 286,
+      "forged_frames_alerting": 20,
+      "forged_frames_flagged": 21,
+      "window_real_excess_alert_frames": 0,
+      "window_real_baseline_coincident_alert_frames": 0,
+      "window_cycle_excess_alarm_cycles": 0,
+      "window_cycle_baseline_coincident_alarm_cycles": 0,
+      "forged_reason_counts": {
+        "COLOC": 21
+      },
+      "forged_track_ids": 2
+    },
+    "4": {
+      "paired_status": "exact",
+      "exact_identified": true,
+      "exact_ttd_cycles": 3,
+      "excess_ttd_cycles": 3,
+      "forged_object_frames_loc": 198,
+      "forged_frames_alerting": 153,
+      "forged_frames_flagged": 160,
+      "window_real_excess_alert_frames": 0,
+      "window_real_baseline_coincident_alert_frames": 0,
+      "window_cycle_excess_alarm_cycles": 0,
+      "window_cycle_baseline_coincident_alarm_cycles": 0,
+      "forged_reason_counts": {
+        "RCS_BAND": 160
+      },
+      "forged_track_ids": 3
+    },
+    "1": {
+      "paired_status": "exact",
+      "exact_identified": true,
+      "exact_ttd_cycles": 6,
+      "excess_ttd_cycles": 6,
+      "forged_object_frames_loc": 72,
+      "forged_frames_alerting": 4,
+      "forged_frames_flagged": 5,
+      "window_real_excess_alert_frames": 0,
+      "window_real_baseline_coincident_alert_frames": 0,
+      "window_cycle_excess_alarm_cycles": 0,
+      "window_cycle_baseline_coincident_alarm_cycles": 0,
+      "forged_reason_counts": {
+        "COLOC": 5
+      },
+      "forged_track_ids": 1
+    },
+    "2": {
+      "paired_status": "exact",
+      "exact_identified": true,
+      "exact_ttd_cycles": 3,
+      "excess_ttd_cycles": 3,
+      "forged_object_frames_loc": 102,
+      "forged_frames_alerting": 21,
+      "forged_frames_flagged": 28,
+      "window_real_excess_alert_frames": 0,
+      "window_real_baseline_coincident_alert_frames": 0,
+      "window_cycle_excess_alarm_cycles": 0,
+      "window_cycle_baseline_coincident_alarm_cycles": 0,
+      "forged_reason_counts": {
+        "RCS_BAND": 24,
+        "COLOC": 4
+      },
+      "forged_track_ids": 3
+    }
+  },
+  "lifecycle": {
+    "planner_version": 2,
+    "plan_log": [
+      {
+        "index": 0,
+        "outcome": "scheduled",
+        "attempts": 1,
+        "attack_id": 0
+      },
+      {
+        "index": 1,
+        "outcome": "scheduled",
+        "attempts": 1,
+        "attack_id": 1
+      },
+      {
+        "index": 2,
+        "outcome": "scheduled",
+        "attempts": 1,
+        "attack_id": 2
+      },
+      {
+        "index": 3,
+        "outcome": "scheduled",
+        "attempts": 1,
+        "attack_id": 3
+      },
+      {
+        "index": 4,
+        "outcome": "scheduled",
+        "attempts": 1,
+        "attack_id": 4
+      },
+      {
+        "index": 5,
+        "outcome": "scheduled",
+        "attempts": 1,
+        "attack_id": 5
+      }
+    ],
+    "dropped_slot_capacity": [],
+    "requested_instances": 6
+  }
+}

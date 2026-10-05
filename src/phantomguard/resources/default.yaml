@@ -102,6 +102,9 @@ attack:
   T2: {count: [10, 30], life: [10, 60]}
   T3: {min_len: 20, max_len: 80}
   T4: {life: [20, 80], drift_per_cycle: [0.02, 0.08]}
+  # Bounded deterministic redraws when a scheduled instance cannot be planned (planner version 2). Attempt 0 is
+  # identical to version 1; retries redraw the same real-data distributions and never relax a rule.
+  planner_retries: 6
 
 eval:
   runs_per_cell: 3

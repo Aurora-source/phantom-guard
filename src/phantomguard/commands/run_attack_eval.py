@@ -34,6 +34,7 @@ from phantomguard.detect.common import LAYERS
 from phantomguard.detect.pipeline import MODELS_DIR, Detector, load_artifacts
 from phantomguard.eval.attack_adapter import (ATTACK_TYPES, LEVEL_NAMES, REPLAY_PROVENANCE, AttackUnavailable,
                                              UnsupportedAttack, attack_source, check_available, support_reason)
+from phantomguard.eval.localize import control_alerts, localization_metrics, read_lineage, replay_lineage
 from phantomguard.eval.metrics import assembly_stats, attack_metrics, latency_stats, lite, parse_labels, score
 from phantomguard.eval.report import provenance, write_report, portable_path
 from phantomguard.eval.splits import Segment, loso_folds, time_block_segments
@@ -69,18 +70,18 @@ def job_identity(context: dict, segment: Segment) -> dict:
             "file": segment.file, "segment_lo": segment.lo, "segment_hi": segment.hi, "tag": context["tag"]}
 
 
-def attack_jobs(cfg: dict, context: dict, segment: Segment) -> list[dict]:
+def attack_jobs(cfg: dict, context: dict, segment: Segment, types=None, levels=None, seeds=None, runs=None) -> list[dict]:
     jobs = []
-    for attack_type in ATTACK_TYPES:
-        for level in LEVEL_NAMES:
+    for attack_type in (types or ATTACK_TYPES):
+        for level in (levels or LEVEL_NAMES):
             motions = ("static", "moving") if attack_type in {"T1", "T2"} else ("moving",)
             provenances = REPLAY_PROVENANCE if attack_type == "T3" else ("not_applicable",)
             variants = ("exact", "translated") if attack_type == "T3" else ("not_applicable",)
             for motion in motions:
                 for prov in provenances:
                     for variant in variants:
-                        for seed in cfg["attack"]["seeds"]:
-                            for run in range(cfg["eval"]["runs_per_cell"]):
+                        for seed in (seeds or cfg["attack"]["seeds"]):
+                            for run in range(runs if runs is not None else cfg["eval"]["runs_per_cell"]):
                                 effective = int(np.random.SeedSequence([int(seed), run]).generate_state(1)[0])
                                 jobs.append({**job_identity(context, segment), "attack_type": attack_type,
                                              "level": level, "motion_case": motion, "replay_provenance": prov,
@@ -89,16 +90,16 @@ def attack_jobs(cfg: dict, context: dict, segment: Segment) -> list[dict]:
     return jobs
 
 
-def detect_stream(cfg: dict, baseline: dict, tag: str, source):
+def detect_stream(cfg: dict, baseline: dict, tag: str, source, *, with_iforest: bool = True):
     ae, library = load_artifacts(tag, strict=True, cfg=cfg, baseline=baseline)
-    iso = load_iforest(tag, cfg=cfg, baseline=baseline, required=True)
+    iso = load_iforest(tag, cfg=cfg, baseline=baseline, required=True) if with_iforest else None
     detector = Detector(cfg, baseline, ae, library, capture_windows=True)
     results = list(detector.run(source))
     if not results:
         raise ValueError("evaluation stream emitted no cycles")
     # Identical captured online features/ordering; sklearn is scored once outside latency.
     entries = [(cycle, fi, window) for cycle in results for fi, window in cycle.learned_windows.items()]
-    if entries:
+    if entries and iso is not None:
         scores = score_iforest(iso, [entry[2][0] for entry in entries])
         by_index = {v.frame_index: v for cycle in results for v in cycle.objects}
         for (_, fi, (_, moving)), value in zip(entries, scores):
@@ -110,6 +111,21 @@ def detect_stream(cfg: dict, baseline: dict, tag: str, source):
             if "iforest" not in verdict.score_status:
                 verdict.score_status["iforest"] = verdict.score_status.get("ae", "unavailable")
     return cycles
+
+
+_CONTROL_CACHE: dict = {}
+
+
+def control_for(cfg: dict, baseline: dict, context: dict, segment: Segment, scoring_cfg: dict) -> dict:
+    """Clean control of the same recording interval with the same frozen artifacts, per layer subset."""
+    key = (context["tag"], segment.file, segment.lo, segment.hi, json.dumps(scoring_cfg["fusion"], sort_keys=True))
+    if key not in _CONTROL_CACHE:
+        source = ReplaySource(raw_path(cfg, segment.file), (segment.lo, segment.hi))
+        cycles = detect_stream(cfg, baseline, context["tag"], source, with_iforest=False)
+        lineage = replay_lineage(source)
+        _CONTROL_CACHE[key] = {name: control_alerts(cycles, lineage, scoring_cfg, layers)
+                               for name, layers in SUBSETS.items()}
+    return _CONTROL_CACHE[key]
 
 
 def stream_counts(cycles, source: ReplaySource, identity: dict) -> dict:
@@ -215,6 +231,9 @@ def _run_attack(payload):
             labels = parse_labels(csv.DictReader(stream))
         lifecycle_path = labels_path.with_suffix(".instances.json")
         lifecycle = json.loads(lifecycle_path.read_text(encoding="utf-8")) if lifecycle_path.exists() else None
+        lineage_path = labels_path.with_suffix(".lineage.csv")
+        lineage = read_lineage(lineage_path) if lineage_path.is_file() else None
+        control = control_for(cfg, baseline, context, segment, scoring_cfg) if lineage is not None else None
         if any(label.is_attack and (label.attack_type != job["attack_type"] or label.level != job["level"])
                for label in labels):
             raise ValueError("sidecar metadata differs from requested attack cell")
@@ -226,20 +245,40 @@ def _run_attack(payload):
         for name, layers in SUBSETS.items():
             metrics, instances = attack_metrics(cycles, labels, scoring_cfg, layers,
                                                  copy_records=False, score_cache=score_cache)
+            loc = None
+            if lineage is not None:
+                loc = localization_metrics(cycles, labels, lineage, control[name], scoring_cfg, layers)
+                metrics.update(loc.row)
             if lifecycle is not None:
                 planned = lifecycle["planned_instances"]
+                outcomes = Counter(entry["outcome"] for entry in lifecycle.get("plan_log", []))
+                dropped = Counter(entry["reason"] for entry in lifecycle.get("dropped_slot_capacity", []))
                 metrics.update(requested_instances=lifecycle["requested_instances"], scheduled_instances=len(planned),
                                scheduled_unobserved_instances=sum(not i["emitted"] for i in planned),
-                               unscheduled_no_material_instances=lifecycle["requested_instances"]-len(planned))
+                               unscheduled_no_material_instances=lifecycle["requested_instances"]-len(planned),
+                               planner_version=lifecycle.get("planner_version", 1),
+                               planner_no_source_material_instances=outcomes.get("no_source_material", 0),
+                               planner_exhausted_instances=outcomes.get("planner_exhausted", 0),
+                               planner_window_exhausted_instances=outcomes.get("window_exhausted", 0),
+                               planner_retried_instances=sum(e.get("attempts", 1) > 1 for e in lifecycle.get("plan_log", [])),
+                               slot_capacity_dropped_instances=dropped.get("slot_capacity", 0),
+                               slot_capacity_partial_instances=dropped.get("slot_capacity_partial", 0),
+                               planning_seconds=lifecycle.get("planning_seconds"))
                 by_id = {str(i["attack_id"]): i for i in planned}
                 for instance in instances:
                     schedule = by_id.get(instance["attack_id"])
                     if schedule:
                         instance["right_censored"] = schedule["truncated_by_eof"]
+                        instance["scheduled_note"] = schedule.get("note")
                 metrics["right_censored_instances"] = sum(i["right_censored"] for i in instances)
             status = "ok" if metrics["attack_instances"] else "no_eligible_attack"
             rows.append({**job, "layers": name, "status": status, **metrics,
                          "labels_path": portable_path(labels_path, cfg), "replay_provenance_scope": provenance_scope, **timing})
+            if loc is not None:
+                for instance in instances:
+                    extra = dict(loc.instances.get(str(instance["attack_id"]), {}))
+                    extra["forged_reason_counts"] = json.dumps(extra.pop("forged_reason_counts", {}), sort_keys=True)
+                    instance.update(extra)
             instance_rows.extend({**job, "layers": name, **instance} for instance in instances)
         return rows, instance_rows, stream_counts(cycles, source, job)
     except UnsupportedAttack as exc:
@@ -258,6 +297,11 @@ def main(argv=None) -> int:
     parser.add_argument("--workers", type=int)
     parser.add_argument("--preflight", action="store_true", help="generate availability/provenance without detector runs")
     parser.add_argument("--smoke", action="store_true", help="four representative supported cells on chaotic time-block test; not a full benchmark")
+    parser.add_argument("--types", help="comma-separated attack types to run, e.g. T1,T4 (default all)")
+    parser.add_argument("--levels", help="comma-separated levels to run, e.g. A3,A4 (default all)")
+    parser.add_argument("--files", help="comma-separated recording file names to run (default all)")
+    parser.add_argument("--seeds", help="comma-separated configured attack seeds (default attack.seeds)")
+    parser.add_argument("--runs-per-cell", type=int, help="repetitions per cell (default eval.runs_per_cell)")
     add_path_arguments(parser)
     args = parser.parse_args(argv)
     cfg = config_from_args(args)
@@ -308,11 +352,22 @@ def main(argv=None) -> int:
     cache_id = hashlib.sha256(json.dumps(cache_contract, sort_keys=True).encode()).hexdigest()[:20]
     label_dir = paths(cfg).output / "attack_eval" / cache_id
     manifest["checkpoint_contract_sha256"] = cache_id
+    pick = lambda text, allowed: [x.strip() for x in text.split(",") if x.strip()] if text else None
+    types, levels = pick(args.types, ATTACK_TYPES), pick(args.levels, LEVEL_NAMES)
+    seeds = [int(x) for x in pick(args.seeds, None)] if args.seeds else None
+    files = set(pick(args.files, None) or [])
+    manifest["filters"] = {"types": types, "levels": levels, "files": sorted(files) or None, "seeds": seeds,
+                           "runs_per_cell": args.runs_per_cell}
+    for bad, allowed, label in ((types, ATTACK_TYPES, "types"), (levels, LEVEL_NAMES, "levels")):
+        if bad and set(bad) - set(allowed):
+            parser.error(f"unknown {label}: {sorted(set(bad) - set(allowed))}")
     for context in contexts:
         for segment in context["test"]:
+            if files and segment.file not in files:
+                continue
             if not args.preflight:
                 clean_payloads.append((cfg, context, segment))
-            for job in attack_jobs(cfg, context, segment):
+            for job in attack_jobs(cfg, context, segment, types, levels, seeds, args.runs_per_cell):
                 if args.smoke and not (segment.file == 'multiplePeopleChaotic.csv' and job['motion_case'] == 'moving'
                     and job['configured_seed'] == cfg['attack']['seeds'][0] and job['run'] == 0
                     and (job['attack_type'],job['level']) in {('T1','A2'),('T2','A2'),('T3','A3'),('T4','A3')}

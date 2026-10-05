@@ -20,6 +20,7 @@ Design rules mirror CLAUDE.md:
 from __future__ import annotations
 
 import math
+import time
 from dataclasses import dataclass, field
 
 import numpy as np
@@ -75,6 +76,11 @@ class GenContext:
     motion_case: str | None = None
     replay_provenance: str | None = None
     replay_variant: str | None = None
+    seed: int = 0
+    last_failure: str | None = None
+    plan_log: list = field(default_factory=list)
+    plan_seconds: float = 0.0
+    plan_note: str | None = None
 
     # ---- samplers (all from real data) ----
     def sample_offset_window(self) -> int:
@@ -218,8 +224,22 @@ def _segment_to_fields(ctx: GenContext, seg: np.ndarray, c0: int, dx: float, dy:
     return out
 
 
+def _fail(ctx, reason: str):
+    """Record why a plan attempt produced no instance (read by plan_run's lifecycle log)."""
+    try:
+        ctx.last_failure = reason
+    except AttributeError:  # frozen/minimal contexts used by tests
+        pass
+    return None
+
+
 def plan_instance(ctx: GenContext, atype: str, attack_id: int, c0: int, base_cycles, lo: int) -> Instance | None:
-    """Build one instance of scenario ``atype`` starting at global cycle index ``c0``."""
+    """Build one instance of scenario ``atype`` starting at global cycle index ``c0``.
+
+    On failure returns None and leaves a reason in ``ctx.last_failure``: ``no_source_material`` (the
+    permitted pool has nothing eligible), ``scene_infeasible`` (a drawn path leaves the scene before the
+    minimum life) or ``translation_infeasible``/``material_too_short`` (T3 geometry).
+    """
     ac = ctx.cfg["attack"]
     L = ctx.level
     if atype == "T1":
@@ -231,7 +251,9 @@ def plan_instance(ctx: GenContext, atype: str, attack_id: int, c0: int, base_cyc
             traj = _object_trajectory(ctx, c0, life, moving)
             if len(traj) >= ac["T1"]["life"][0]:
                 objs.append(ObjPlan(_pref_slot(ctx), False, traj))
-        return Instance(attack_id, atype, L.name, c0, c0 + life - 1, objs, f"{'moving' if moving else 'static'} x{len(objs)}") if objs else None
+        if not objs:
+            return _fail(ctx, "scene_infeasible")
+        return Instance(attack_id, atype, L.name, c0, c0 + life - 1, objs, f"{'moving' if moving else 'static'} x{len(objs)}")
     if atype == "T2":
         n = int(ctx.rng.integers(ac["T2"]["count"][0], ac["T2"]["count"][1] + 1))
         life = int(ctx.rng.integers(ac["T2"]["life"][0], ac["T2"]["life"][1] + 1))
@@ -244,23 +266,25 @@ def plan_instance(ctx: GenContext, atype: str, attack_id: int, c0: int, base_cyc
             traj = _object_trajectory(ctx, start, ln, moving=moving)
             if traj:
                 objs.append(ObjPlan(_pref_slot(ctx), False, traj))
-        return Instance(attack_id, atype, L.name, c0, c0 + life - 1, objs, f"flood x{len(objs)}") if len(objs) >= ac["T2"]["count"][0] else None
+        if len(objs) < ac["T2"]["count"][0]:
+            return _fail(ctx, "scene_infeasible")
+        return Instance(attack_id, atype, L.name, c0, c0 + life - 1, objs, f"flood x{len(objs)}")
     if atype == "T3":
         if ctx.replay_provenance == "earlier_stream":
             from phantomguard.attack.pools import stream_pools
             try:
                 pool = stream_pools(ctx.cfg, base_cycles, lo, c0)
             except ValueError:
-                return None
+                return _fail(ctx, "no_source_material")
         elif ctx.replay_provenance == "unseen":
             pool = ctx.unseen
         else:
             pool = ctx.unseen if (ctx.replay_provenance is None and L.data_aware and ctx.unseen is not None) else ctx.known
         if pool is None:
-            return None
+            return _fail(ctx, "no_source_material")
         seg = _pick_real_segment(ctx, pool, ac["T3"]["min_len"], ac["T3"]["max_len"])
         if seg is None:
-            return None
+            return _fail(ctx, "no_source_material")
         translate = ctx.replay_variant == "translated" if ctx.replay_variant else bool(ctx.rng.random() < 0.5)
         dx = dy = 0.0
         if translate:  # shift while keeping the copy inside the scene
@@ -271,16 +295,16 @@ def plan_instance(ctx: GenContext, atype: str, attack_id: int, c0: int, base_cyc
                 if (dx or dy) and all(ctx.in_scene(p[P_X]+dx, p[P_Y]+dy) for p in seg):
                     break
             else:
-                return None  # never call an exact copy a translated replay
+                return _fail(ctx, "translation_infeasible")  # never call an exact copy a translated replay
         traj = _segment_to_fields(ctx, seg, c0, dx, dy)
         if len(traj) < ac["T3"]["min_len"]:
-            return None
+            return _fail(ctx, "material_too_short")
         return Instance(attack_id, atype, L.name, c0, max(traj), [ObjPlan(_pref_slot(ctx), False, traj)],
                         f"replay {'translated' if (dx or dy) else 'exact'} len{len(traj)}")
     if atype == "T4":
         picked = _pick_live_moving_track(base_cycles, lo, c0, ctx.cfg)
         if picked is None:
-            return None
+            return _fail(ctx, "no_source_material")
         slot, start_c, seg = picked
         life = min(len(seg), int(ctx.rng.integers(ac["T4"]["life"][0], ac["T4"]["life"][1] + 1)))
         drift = float(ctx.rng.uniform(ac["T4"]["drift_per_cycle"][0], ac["T4"]["drift_per_cycle"][1]))
@@ -293,7 +317,7 @@ def plan_instance(ctx: GenContext, atype: str, attack_id: int, c0: int, base_cyc
                 break
             traj[start_c + k] = (_q("x", nx), _q("y", ny), _q("vx", vx), _q("vy", vy), _clip_rcs(ctx, rcs))
         if not traj:
-            return None
+            return _fail(ctx, "scene_infeasible")
         replace = L.fix_header  # A2+: overwrite the real frame in place; A0/A1: add alongside (dup slot)
         return Instance(attack_id, atype, L.name, min(traj), max(traj),
                         [ObjPlan(slot, replace, traj)], f"drift {drift:.3f}/cyc slot0x{slot:02x}")
@@ -344,31 +368,87 @@ def _pick_live_moving_track(base_cycles, lo: int, c0: int, cfg: dict):
     return None
 
 
+PLANNER_VERSION = 2  # 1 = single attempt per scheduled instance (published matrices); 2 = bounded deterministic retries
+
+
 def plan_run(ctx: GenContext, atype: str, base_cycles, lo: int, hi: int) -> list[Instance]:
-    """Schedule several spaced instances of one scenario across cycle window [lo, hi)."""
+    """Schedule several spaced instances of one scenario across cycle window [lo, hi).
+
+    Attempt 0 consumes ``ctx.rng`` exactly as planner version 1 did, so every instance version 1 could
+    plan is unchanged. Only when attempt 0 fails do up to ``attack.planner_retries`` further attempts run,
+    each with a child generator derived from (seed, schedule index, attempt) that never touches the main
+    stream. Retries redraw the same real-data distributions (count, life, motion, source track); they do
+    not relax any rule. Failures that no redraw can fix (``no_source_material``) are not retried. The
+    per-index outcome log is left in ``ctx.plan_log``.
+    """
     ac = ctx.cfg["attack"]
     gap = ac["min_gap_cycles"]
     n = ac["instances_per_run"]
+    retries = int(ac.get("planner_retries", 0))
     span = hi - lo
     instances: list[Instance] = []
+    log: list[dict] = []
+    started = time.perf_counter()
+    try:
+        ctx.plan_log = log
+    except AttributeError:
+        pass
     if span < gap + 60:
+        _record_plan(ctx, started, "span_too_short")
         return instances
     step = span // (n + 1)
     aid = 0
     cursor = lo + gap
+    main_rng = ctx.rng
+    seed = getattr(ctx, "seed", 0) or 0
     for i in range(n):
         if cursor >= hi - gap:
-            break
+            log.append({"index": i, "outcome": "window_exhausted", "attempts": 0})
+            continue
         c0 = lo + step * (i + 1) + int(ctx.rng.integers(-gap // 2, gap // 2 + 1))
         c0 = max(cursor, min(c0, hi - gap))
-        inst = plan_instance(ctx, atype, aid, c0, base_cycles, lo)
+        attempts, reason, inst = 0, None, None
+        for attempt in range(retries + 1):
+            attempts += 1
+            if attempt:
+                ctx.rng = np.random.default_rng(np.random.SeedSequence([int(seed), i, attempt]))
+            _fail_reset(ctx)
+            try:
+                inst = plan_instance(ctx, atype, aid, c0, base_cycles, lo)
+            finally:
+                ctx.rng = main_rng
+            if inst is not None:
+                break
+            reason = getattr(ctx, "last_failure", None) or "planner_failure"
+            if reason == "no_source_material":
+                break
         if inst is not None:
             active = [c for obj in inst.objects for c in obj.per_cycle]
             inst.c0, inst.c1 = min(active), max(active)
             instances.append(inst)
             cursor = inst.c1 + gap + 1
             aid += 1
+            log.append({"index": i, "outcome": "scheduled", "attempts": attempts, "attack_id": inst.attack_id})
+        else:
+            log.append({"index": i, "outcome": "no_source_material" if reason == "no_source_material"
+                        else "planner_exhausted", "reason": reason, "attempts": attempts})
+    _record_plan(ctx, started, None)
     return instances
+
+
+def _fail_reset(ctx) -> None:
+    try:
+        ctx.last_failure = None
+    except AttributeError:
+        pass
+
+
+def _record_plan(ctx, started: float, note: str | None) -> None:
+    try:
+        ctx.plan_seconds = time.perf_counter() - started
+        ctx.plan_note = note
+    except AttributeError:
+        pass
 
 
 @dataclass
@@ -400,5 +480,6 @@ def create_attacker(cfg, baseline, *, attack_type, level, seed, train_segments,
     if motion_case == "moving" and attack_type in {"T1", "T2"} and not len(known.vel_moving):
         raise UnsupportedAttack("no recorded moving velocity samples in permitted training segments")
     context = make_context(cfg, baseline, level, np.random.default_rng(seed), known, unseen)
+    context.seed = int(seed)
     context.motion_case, context.replay_provenance, context.replay_variant = motion_case, replay_provenance, replay_variant
     return Attacker(context, attack_type, int(seed), int(run_index))

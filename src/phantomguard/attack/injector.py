@@ -28,6 +28,11 @@ from phantomguard.frames import CAN_ID_HEADER, CAN_ID_OBJECT, Frame, build_heade
 from phantomguard.io.replay import RecordedCycle, ReplaySource
 
 LABEL_FIELDS = ["frame_index", "is_attack", "attack_id", "attack_type", "level"]
+# Evaluator-only join between final emitted frames and the recorded source frames. Injection shifts
+# final frame indices, so a clean control stream and an attacked stream are matched through this
+# lineage (source cycle + source object index), never through equal indices or numeric slots.
+LINEAGE_FIELDS = ["frame_index", "kind", "source_cycle", "source_obj", "source_slot", "attack_id"]
+LINEAGE_VERSION = 1
 
 
 @dataclass
@@ -39,24 +44,50 @@ class Label:
     level: str
 
 
+@dataclass
+class Lineage:
+    """kind: header | object | other (recorded, source_cycle/obj set), forged (no counterpart) or
+    replacement (a forged frame that overwrote the recorded object at source_cycle/source_obj)."""
+
+    frame_index: int
+    kind: str
+    source_cycle: int | None
+    source_obj: int | None
+    source_slot: int | None
+    attack_id: int | str = ""
+
+
 class MixedSource:
     """FrameSource over a recorded file with fabricated frames mixed in at planned cycles."""
 
     def __init__(self, base: ReplaySource, ctx: GenContext, instances: list[Instance], tag: str = "",
-                 complete_labels: bool = False):
+                 complete_labels: bool = False, on_slot_exhausted: str = "raise"):
+        if on_slot_exhausted not in {"raise", "drop"}:
+            raise ValueError("on_slot_exhausted must be 'raise' or 'drop'")
         self.base = base
         self.ctx = ctx
         self.name = f"{base.name}+{tag}" if tag else base.name
         self.labels: list[Label] = []
+        self.lineage: list[Lineage] = []
         self.complete_labels = complete_labels
-        # index instances' objects by the cycles they are active in
+        self.on_slot_exhausted = on_slot_exhausted
+        self.instances = list(instances)
+        # Instances (or objects) that could not get a stable valid slot. Version-1 behaviour was to fail the
+        # whole run; 'drop' keeps every other instance and records the capacity exclusion explicitly.
+        self.dropped: list[dict] = []
+        self._reserve_stable_slots(base)
+        # index instances' objects by the cycles they are active in (after any capacity drops)
         self._by_cycle: dict[int, list[tuple[Instance, int]]] = {}
-        for inst in instances:
+        for inst in self.instances:
             for oi, obj in enumerate(inst.objects):
                 for c in obj.per_cycle:
                     self._by_cycle.setdefault(c, []).append((inst, oi))
-        self.instances = instances
-        self._reserve_stable_slots(base)
+
+    def _min_objects(self, inst: Instance) -> int:
+        cfg = getattr(self.ctx, "cfg", None) or {}
+        if inst.atype == "T2":
+            return int(cfg.get("attack", {}).get("T2", {}).get("count", [1])[0])
+        return 1
 
     def _reserve_stable_slots(self, base: ReplaySource) -> None:
         """Give each A1+ fabricated object one slot, free across its whole life (no per-cycle reshuffle).
@@ -69,9 +100,12 @@ class MixedSource:
         cycles = base.cycles
         n = len(cycles)
         reserved_by_cycle: dict[int, set[int]] = {}
-        for inst in self.instances:
+        for inst in list(self.instances):
+            added: list[tuple[int, int]] = []
+            kept, failed = [], 0
             for obj in inst.objects:
                 if obj.slot_pref is None or obj.replace or inst.atype == "T4":
+                    kept.append(obj)
                     continue
                 active = [c for c in obj.per_cycle if 0 <= c < n]
                 blocked: set[int] = set()
@@ -84,13 +118,35 @@ class MixedSource:
                 else:
                     slot = next((int(x) for x in order if int(x) not in blocked and int(x) <= self.ctx.slot_max),
                                 None)
-                    if slot is None:
+                if slot is None:
+                    if self.on_slot_exhausted == "raise":
                         from phantomguard.eval.attack_adapter import UnsupportedAttack
                         raise UnsupportedAttack("no stable free slot across requested attack lifetime; "
                                                 "cannot preserve slot uniqueness without a generation artefact")
+                    failed += 1
+                    continue
                 obj.slot_pref = slot
                 for c in active:
                     reserved_by_cycle.setdefault(c, set()).add(slot)
+                    added.append((c, slot))
+                kept.append(obj)
+            if not failed:
+                continue
+            if len(kept) < self._min_objects(inst):
+                for c, slot in added:  # release this instance's reservations for later instances
+                    reserved_by_cycle.get(c, set()).discard(slot)
+                self.instances.remove(inst)
+                self.dropped.append({"attack_id": inst.attack_id, "reason": "slot_capacity", "level": inst.level,
+                                     "attack_type": inst.atype, "objects_requested": len(inst.objects),
+                                     "objects_allocated": len(kept), "scheduled_first_cycle": inst.c0,
+                                     "scheduled_last_cycle": inst.c1, "note": inst.note})
+            else:
+                inst.objects = kept
+                self.dropped.append({"attack_id": inst.attack_id, "reason": "slot_capacity_partial",
+                                     "level": inst.level, "attack_type": inst.atype, "objects_requested":
+                                     len(kept) + failed, "objects_allocated": len(kept),
+                                     "scheduled_first_cycle": inst.c0, "scheduled_last_cycle": inst.c1,
+                                     "note": inst.note})
 
     # ------------------------------------------------------------------ helpers
     def _free_slot(self, used: set[int]) -> int:
@@ -128,6 +184,7 @@ class MixedSource:
     # ------------------------------------------------------------------ iteration
     def __iter__(self) -> Iterator[Frame]:
         self.labels.clear()
+        self.lineage.clear()
         fi = 0
         base_cycles = self.base.cycles
         lo, hi = self.base.cycle_range
@@ -144,10 +201,12 @@ class MixedSource:
             # real object frames as (ts, raw, slot)
             reals = []
             real_slots = set()
-            for ts, raw in rc.objects:
+            src_of: dict[int, int] = {}  # id(raw bytes object) -> object index in the recorded cycle
+            for j, (ts, raw) in enumerate(rc.objects):
                 slot = raw[0] if raw else 0
                 reals.append([ts + shift, raw, slot, False, None])
                 real_slots.add(slot)
+                src_of[id(raw)] = j
             # build fabricated objects for this cycle
             fabs = []  # [ts|None, raw, slot, True, meta]
             used: set[int] = set()
@@ -160,6 +219,7 @@ class MixedSource:
                     replaced_slots.add(replace_slot)
                 fabs.append([None, raw, slot, True, meta, replace_slot, fields])
             # apply in-place replacements: drop the matching real frame, fab inherits its ts
+            replaced_src: dict[int, int] = {}  # id(forged raw) -> recorded object index it overwrote
             if replaced_slots:
                 kept = []
                 real_by_slot = {r[2]: r for r in reals}
@@ -173,6 +233,7 @@ class MixedSource:
                     rs = f[5]
                     if rs is not None and rs in real_by_slot:
                         f[0] = real_by_slot[rs][0]  # inherit the real frame's timestamp
+                        replaced_src[id(f[1])] = src_of.get(id(real_by_slot[rs][1]), -1)
 
             emit = self._assemble(rc, header_t, have_header, reals, fabs)
             # Every rewritten count header is a forged frame, separate from object identification.
@@ -182,6 +243,8 @@ class MixedSource:
                 status = rc.sync_status if rc.sync_status is not None else 1
                 active = self._by_cycle.get(cidx, [])
                 changed = count != rc.obj_count_header
+                self.lineage.append(Lineage(fi, "header", cidx, -1, None,
+                                            active[0][0].attack_id if changed and active else ""))
                 if self.complete_labels:
                     inst = active[0][0] if changed and active else None
                     self.labels.append(Label(fi, int(inst is not None), inst.attack_id if inst else "",
@@ -193,21 +256,34 @@ class MixedSource:
                 last_emitted_t = header_t
                 fi += 1
             elif original_header is not None:
+                self.lineage.append(Lineage(fi, "other", cidx, None, None))
                 if self.complete_labels:
                     self.labels.append(Label(fi, 0, "", "", ""))
                 yield Frame(original_header.can_id, original_header.data, original_header.timestamp_ticks + shift)
                 last_emitted_t = original_header.timestamp_ticks + shift
                 fi += 1
-            outgoing = [(Frame(CAN_ID_OBJECT, raw, ts), is_fab, meta) for ts, raw, slot, is_fab, meta in emit]
-            outgoing += [(Frame(frame.can_id, frame.data, frame.timestamp_ticks + shift), False, None)
+            outgoing = [(Frame(CAN_ID_OBJECT, raw, ts), is_fab, meta, raw) for ts, raw, slot, is_fab, meta in emit]
+            outgoing += [(Frame(frame.can_id, frame.data, frame.timestamp_ticks + shift), False, None, None)
                          for frame in getattr(self.base, "others", {}).get(cidx, [])]
             outgoing.sort(key=lambda item: item[0].timestamp_ticks)
-            for frame, is_fab, meta in outgoing:
+            for frame, is_fab, meta, raw in outgoing:
                 if is_fab and meta is not None:
                     aid, atype, lvl = meta
                     self.labels.append(Label(fi, 1, aid, atype, lvl))
-                elif self.complete_labels:
-                    self.labels.append(Label(fi, 0, "", "", ""))
+                    if id(raw) in replaced_src:
+                        j = replaced_src[id(raw)]
+                        self.lineage.append(Lineage(fi, "replacement", cidx, j if j >= 0 else None,
+                                                    rc.objects[j][1][0] if j >= 0 else None, aid))
+                    else:
+                        self.lineage.append(Lineage(fi, "forged", None, None, None, aid))
+                else:
+                    if raw is None:
+                        self.lineage.append(Lineage(fi, "other", cidx, None, None))
+                    else:
+                        j = src_of.get(id(raw))
+                        self.lineage.append(Lineage(fi, "object", cidx, j, raw[0] if raw else None))
+                    if self.complete_labels:
+                        self.labels.append(Label(fi, 0, "", "", ""))
                 yield frame
                 last_emitted_t = frame.timestamp_ticks
                 fi += 1
@@ -253,6 +329,17 @@ class MixedSource:
             previous = ts
         return serialised
 
+    def write_lineage(self, path: str | Path) -> None:
+        with open(path, "w", newline="") as fh:
+            w = csv.DictWriter(fh, fieldnames=LINEAGE_FIELDS)
+            w.writeheader()
+            for ln in self.lineage:
+                w.writerow({"frame_index": ln.frame_index, "kind": ln.kind,
+                            "source_cycle": "" if ln.source_cycle is None else ln.source_cycle,
+                            "source_obj": "" if ln.source_obj is None else ln.source_obj,
+                            "source_slot": "" if ln.source_slot is None else ln.source_slot,
+                            "attack_id": ln.attack_id})
+
     def write_labels(self, path: str | Path) -> None:
         with open(path, "w", newline="") as fh:
             w = csv.DictWriter(fh, fieldnames=LABEL_FIELDS)
@@ -260,6 +347,11 @@ class MixedSource:
             for lb in self.labels:
                 w.writerow({"frame_index": lb.frame_index, "is_attack": lb.is_attack, "attack_id": lb.attack_id,
                             "attack_type": lb.attack_type, "level": lb.level})
+
+
+def scenarios_module():
+    from phantomguard.attack import scenarios
+    return scenarios
 
 
 def label_map(src: MixedSource) -> dict[int, Label]:
@@ -293,7 +385,7 @@ class AttackedSource(MixedSource):
     def __init__(self, source, attacker, labels_path=None):
         base = source if isinstance(source, ReplaySource) else _BufferedSource(source)
         instances = attacker.plan(base)
-        super().__init__(base, attacker.context, instances, complete_labels=True)
+        super().__init__(base, attacker.context, instances, complete_labels=True, on_slot_exhausted="drop")
         self.labels_path = Path(labels_path) if labels_path else None
         self.seed, self.run_index = attacker.seed, attacker.run_index
 
@@ -302,6 +394,7 @@ class AttackedSource(MixedSource):
         if self.labels_path:
             self.labels_path.parent.mkdir(parents=True, exist_ok=True)
             self.write_labels(self.labels_path)
+            self.write_lineage(self.labels_path.with_suffix(".lineage.csv"))
             emitted = {str(l.attack_id) for l in self.labels if l.is_attack}
             lo, hi = self.base.cycle_range
             lifecycle = [{"attack_id": i.attack_id, "attack_type": i.atype, "level": i.level,
@@ -309,7 +402,14 @@ class AttackedSource(MixedSource):
                           "emitted": str(i.attack_id) in emitted, "note": i.note,
                           "truncated_by_eof": any(c >= hi for o in i.objects for c in o.per_cycle)}
                          for i in self.instances]
+            plan_log = list(getattr(self.ctx, "plan_log", []) or [])
             self.labels_path.with_suffix(".instances.json").write_text(
                 json.dumps({"seed": self.seed, "run_index": self.run_index,
                             "requested_instances": self.ctx.cfg["attack"]["instances_per_run"],
-                            "planned_instances": lifecycle}, indent=2) + "\n", encoding="utf-8")
+                            "planned_instances": lifecycle, "lineage_version": LINEAGE_VERSION,
+                            "planner_version": getattr(scenarios_module(), "PLANNER_VERSION", 1),
+                            "planner_retries": int(self.ctx.cfg["attack"].get("planner_retries", 0)),
+                            "plan_log": plan_log, "dropped_slot_capacity": list(self.dropped),
+                            "planning_seconds": float(getattr(self.ctx, "plan_seconds", 0.0) or 0.0),
+                            "planner_note": getattr(self.ctx, "plan_note", None)}, indent=2) + "\n",
+                encoding="utf-8")
