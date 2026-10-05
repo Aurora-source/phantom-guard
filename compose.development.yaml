@@ -1,0 +1,14 @@
+# Explicit development choices; no server quota/cooling defaults.
+services:
+  prototype:
+    cpus: "${PHANTOMGUARD_DEV_CPUS:-4}"
+    mem_limit: "${PHANTOMGUARD_DEV_MEMORY:-4g}"
+    memswap_limit: "${PHANTOMGUARD_DEV_MEMORY_SWAP:-4g}"
+    pids_limit: ${PHANTOMGUARD_DEV_PIDS_LIMIT:-128}
+    environment:
+      PHANTOMGUARD_RUNTIME_PROFILE: development
+      PHANTOMGUARD_JOB_COOLDOWN: "0"
+      PHANTOMGUARD_WARM_WORKERS: "${PHANTOMGUARD_WARM_WORKERS:-1}"
+      OPENBLAS_NUM_THREADS: "${OPENBLAS_NUM_THREADS:-1}"
+      OMP_NUM_THREADS: "${OMP_NUM_THREADS:-1}"
+      MKL_NUM_THREADS: "${MKL_NUM_THREADS:-1}"

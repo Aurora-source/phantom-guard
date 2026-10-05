@@ -196,8 +196,9 @@ def test_real_api_clean_attack_independent_sessions_and_reset(tmp_path):
 
 
 @needs_data
-def test_actual_timeout_releases_worker(tmp_path):
-    app=Application(load_config(overrides={'output':tmp_path}),workers=1,job_seconds=1)
+@pytest.mark.parametrize("warm_workers", [False, True])
+def test_actual_timeout_releases_worker(tmp_path,warm_workers):
+    app=Application(load_config(overrides={'output':tmp_path}),workers=1,job_seconds=1,warm_workers=warm_workers)
     try:
         token=call(app,'/api/sessions','POST')[1]['token']
         job=call(app,'/api/jobs','POST',{'recording':'multiplePeopleChaotic.csv','attack':'T3','level':'A4','cycles':1100},token)[1]

@@ -70,8 +70,10 @@ def atomic_json(path, data):
 
 def replay_worker(cfg, request, directory):
     """Labels stay in a sidecar. All display data comes from real CycleResults."""
-    for k in ('OPENBLAS_NUM_THREADS','OMP_NUM_THREADS','MKL_NUM_THREADS'):
-        os.environ.setdefault(k,'1')
+    worker_entry_wall=time.monotonic()
+    worker_entry_cpu=time.process_time()
+    from phantomguard.web.runtime import numerical_policy
+    numerical_policy()
     from phantomguard.detect.pipeline import Detector, load_artifacts
     from phantomguard.eval.attack_adapter import attack_source
     from phantomguard.eval.metrics import assembly_stats, latency_stats, score
@@ -82,11 +84,13 @@ def replay_worker(cfg, request, directory):
     d = Path(directory)
     progress = d/'progress.json'
     started = time.monotonic()
+    cpu_started = time.process_time()
     try:
         atomic_json(progress, {'stage':'loading','completed':0})
         baseline = load_baseline(cfg=cfg)
         ae, library = load_artifacts(strict=True,cfg=cfg,baseline=baseline)
         artifacts_loaded = time.monotonic()
+        artifacts_cpu = time.process_time()
         source = ReplaySource(raw_path(cfg,request['recording']))
         bounds = time_block(len(source.cycles),cfg['splits']['train_frac'],cfg['splits']['val_frac'])
         lo,hi = bounds['test']
@@ -94,6 +98,7 @@ def replay_worker(cfg, request, directory):
             raise ValueError('Recording has an empty time-block test segment')
         source = ReplaySource(raw_path(cfg,request['recording']),(lo,hi))
         data_loaded = time.monotonic()
+        data_cpu = time.process_time()
         if request['attack']:
             atomic_json(progress, {'stage':'planning simulated attack','completed':0})
             source = attack_source(source,cfg,baseline,attack_type=request['attack'],level=request['level'],seed=request['seed'],
@@ -105,6 +110,7 @@ def replay_worker(cfg, request, directory):
             # the detector nor presentation reads attack labels.
             source = list(source)
         attack_planned = time.monotonic()
+        planned_cpu = time.process_time()
         detector = Detector(cfg,baseline,ae,library)
         results, display = [], []
         # Finishing the ordinary attacker iterator writes its complete final-index
@@ -123,6 +129,7 @@ def replay_worker(cfg, request, directory):
         if not results:
             raise ValueError('Empty replay; no cycles emitted')
         detected = time.monotonic()
+        detected_cpu = time.process_time()
         # Clip labels are not used for scene colors or detector behavior.
         # If the source iterator stopped early its sidecar is explicitly partial;
         # this browser job is never presented as an attack-evaluation run.
@@ -138,7 +145,13 @@ def replay_worker(cfg, request, directory):
                   'summary':{'alerting_cycles':sum(r.cycle_alert or any(v.alert for v in r.objects) for r in results),
                   'object_cycles':sum(len(r.objects) for r in results),'green_means':'not flagged; authenticity is not established'},
                   'elapsed_seconds':time.monotonic()-started}
-        output['timings'] = {'artifact_loading_seconds':artifacts_loaded-started,
+        output['timings'] = {'process_cpu_seconds':time.process_time()-worker_entry_cpu,
+            'worker_entry_to_result_seconds':time.monotonic()-worker_entry_wall,
+            'module_import_wall_seconds':started-worker_entry_wall,
+            'stage_process_cpu_seconds':{'artifact_loading':artifacts_cpu-cpu_started,'data_loading':data_cpu-artifacts_cpu,
+                'planning_and_materialization':planned_cpu-data_cpu,'detect_and_display':detected_cpu-planned_cpu,
+                'presentation_and_metrics':time.process_time()-detected_cpu},
+            'legacy_cpu_fields_clock':'perf_counter wall intervals, including scheduling/quota delays','artifact_loading_seconds':artifacts_loaded-started,
             'data_loading_seconds':data_loaded-artifacts_loaded,
             'attacker_planning_seconds':attack_planned-data_loaded,
             'detect_and_display_seconds':detected-attack_planned,
@@ -151,6 +164,94 @@ def replay_worker(cfg, request, directory):
                              'result_write_seconds':time.monotonic()-write_started})
     except Exception as exc:
         atomic_json(d/'error.json',{'error':str(exc),'type':type(exc).__name__})
+
+
+def warm_loop(connection,cfg):
+    """Retain only parsed tuples and immutable existing training pools per identity."""
+    from phantomguard.web.runtime import input_stamp, content_identity, numerical_policy
+    numerical_policy()
+    from phantomguard.io.replay import load_recorded_cycles
+    from phantomguard.attack import pools
+    from phantomguard.web.cache import freeze_pools, invalidate_input_caches
+    previous=None
+    identity=None
+    while True:
+        request,directory=connection.recv()
+        stamp=input_stamp(cfg)
+        if stamp!=previous:
+            invalidate_input_caches()
+            identity=content_identity(stamp)
+            previous=stamp
+        replay_worker(cfg,request,directory)
+        cache_info=freeze_pools(pools._cache)
+        progress=Path(directory)/'progress.json'
+        if progress.is_file():
+            snapshot=json.loads(progress.read_text())
+            snapshot['runtime_cache']={'identity':identity,**cache_info,'parsed_recordings':load_recorded_cycles.cache_info().currsize}
+            atomic_json(progress,snapshot)
+        # No model, Detector, RNG, attacker, labels or output lists are retained.
+        import gc
+        gc.collect()
+        connection.send('done')
+
+
+class WarmProcess:
+    """One scheduler-owned spawned worker; killed on cancel/deadline, recycled after 16 jobs.
+
+    RSS is additionally bounded at 384 MiB where /proc is available. Docker's
+    memory/PID limits remain enforced on all platforms. No automatic retries.
+    """
+    def __init__(self,context,cfg):
+        self.connection,child=context.Pipe()
+        self.process=context.Process(target=warm_loop,args=(child,cfg),daemon=True)
+        self.child=child
+        self.jobs=0
+        self.done=False
+        self.pending=None
+        self.idle_since=0
+
+    def assign(self,request,directory):
+        self.pending=(request,directory)
+        self.done=False
+
+    def start(self):
+        if self.process.pid is None:
+            self.process.start()
+            self.child.close()
+        self.connection.send(self.pending)
+        self.pending=None
+        self.jobs+=1
+
+    def is_alive(self):
+        if not self.process.is_alive():
+            return False
+        if not self.done and self.connection.poll():
+            try:
+                self.done=self.connection.recv()=='done'
+            except EOFError:
+                return False
+        return not self.done
+
+    @property
+    def exitcode(self):
+        return 0 if self.done else self.process.exitcode
+
+    def reusable(self):
+        if not self.done or self.jobs>=16:
+            return False
+        try:
+            status=Path(f'/proc/{self.process.pid}/status').read_text()
+            rss=int(next(l for l in status.splitlines() if l.startswith('VmRSS:')).split()[1])*1024
+            return rss<=384*1024**2
+        except (OSError,StopIteration):
+            return True
+
+    def terminate(self): self.process.terminate()
+    def kill(self): self.process.kill()
+    def join(self,timeout=None): self.process.join(timeout)
+    def close(self):
+        self.connection.close()
+        self.process.close()
 
 
 @dataclass
@@ -167,7 +268,7 @@ class Job:
 
 
 class JobManager:
-    def __init__(self,cfg,*,workers=2,max_cycles=1200,job_seconds=120,ttl=600,max_jobs=8,max_sessions=16,max_queued=4,output_mib=128,job_cooldown=0):
+    def __init__(self,cfg,*,workers=2,max_cycles=1200,job_seconds=120,ttl=600,max_jobs=8,max_sessions=16,max_queued=4,output_mib=128,job_cooldown=0,warm_workers=False):
         if not 1<=workers<=4 or not 1<=max_cycles<=1200 or not 1<=job_seconds<=300:
             raise ValueError('workers 1..4, max_cycles 1..1200 and job_seconds 1..300 required')
         if not 1<=max_queued<=4 or not 1<=max_jobs<=8 or not 1<=max_sessions<=16 or not 30<=ttl<=600 or not 8<=output_mib<=128:
@@ -191,6 +292,8 @@ class JobManager:
         self._orphan_scan_at=0
         self.lock=threading.RLock()
         self.stop=threading.Event()
+        self.warm_workers=warm_workers
+        self._idle=[]
         self.context=mp.get_context('spawn')
         self.thread=threading.Thread(target=self._monitor,daemon=True)
         self.thread.start()
@@ -241,7 +344,7 @@ class JobManager:
             progress=json.loads((job.directory/'progress.json').read_text(encoding='utf-8'))
         except (OSError,ValueError):
             pass
-        return {'id':job.id,'state':job.state,'request':job.request,'progress':progress,'error':job.error}
+        return {'runtime':{'queue_seconds':(job.started or time.monotonic())-job.created,'cooldown_remaining_seconds':max(0,self._next_start-time.monotonic()) if job.state=='queued' else 0},'id':job.id,'state':job.state,'request':job.request,'progress':progress,'error':job.error}
 
     def cancel(self,token,jid,*,remove=False):
         with self.lock:
@@ -257,10 +360,11 @@ class JobManager:
         if job.process is not None:
             if job.state=='running' and self.job_cooldown:
                 self._next_start=time.monotonic()+self.job_cooldown
-            if job.process.is_alive():
+            actual=job.process.process if isinstance(job.process,WarmProcess) else job.process
+            if actual.is_alive():
                 job.process.terminate()
             job.process.join(timeout=3)
-            if job.process.is_alive():
+            if actual.is_alive():
                 job.process.kill()
                 job.process.join(timeout=3)
             job.process.close()
@@ -301,6 +405,14 @@ class JobManager:
             with self.lock:
                 self._expire()
                 now=time.monotonic()
+                for worker in list(self._idle):
+                    if not worker.process.is_alive() or now-worker.idle_since>self.ttl:
+                        if worker.process.is_alive():worker.terminate()
+                        worker.join(timeout=3)
+                        if worker.process.is_alive():
+                            worker.kill();worker.join(timeout=3)
+                        worker.close()
+                        self._idle.remove(worker)
                 for job in self.jobs.values():
                     if job.state=='running':
                         if now-job.started>self.job_seconds:
@@ -308,7 +420,13 @@ class JobManager:
                             job.state,job.error='timed_out',f'Processing exceeded {self.job_seconds}s; shorten the clip or reduce concurrency'
                         elif not job.process.is_alive():
                             code=job.process.exitcode
-                            self._terminate(job)
+                            if isinstance(job.process, WarmProcess) and job.process.process.is_alive() and job.process.reusable():
+                                job.process.idle_since=now
+                                self._idle.append(job.process)
+                                job.process=None
+                                self._next_start=now+self.job_cooldown
+                            else:
+                                self._terminate(job)
                             if (job.directory/'result.json').is_file():
                                 job.state='complete'
                             else:
@@ -322,13 +440,18 @@ class JobManager:
                 running=sum(j.state=='running' for j in self.jobs.values())
                 for job in self.jobs.values():
                     if job.state=='queued' and running<self.workers and now>=self._next_start:
-                        job.process=self.context.Process(target=replay_worker,args=(self.cfg,job.request,str(job.directory)),daemon=True)
+                        if self.warm_workers:
+                            job.process=self._idle.pop() if self._idle else WarmProcess(self.context,self.cfg)
+                            job.process.assign(job.request,str(job.directory))
+                        else:
+                            job.process=self.context.Process(target=replay_worker,args=(self.cfg,job.request,str(job.directory)),daemon=True)
                         try:
                             job.process.start()
                             job.started=time.monotonic()
                             job.state='running'
                             running+=1
                         except OSError as exc:
+                            self._terminate(job)
                             job.process=None
                             job.state,job.error='failed',f'Cannot start replay worker: {exc}; reduce concurrency/resources'
 
@@ -338,3 +461,11 @@ class JobManager:
         with self.lock:
             for job in list(self.jobs.values()):
                 self._remove(job)
+            for worker in self._idle:
+                worker.terminate()
+                worker.join(timeout=3)
+                if worker.process.is_alive():
+                    worker.kill()
+                    worker.join(timeout=3)
+                worker.close()
+            self._idle.clear()

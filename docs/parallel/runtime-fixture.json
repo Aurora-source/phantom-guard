@@ -1,0 +1,43 @@
+{
+  "fixture_kind": "actual local staged result fragment, 2026-10-05",
+  "request": {
+    "recording": "onePersonMovingFrontAndBack.csv",
+    "attack": null,
+    "level": null,
+    "seed": 11,
+    "cycles": 600,
+    "motion": "moving",
+    "variant": "exact"
+  },
+  "timings": {
+    "process_cpu_seconds": 4.020390645,
+    "worker_entry_to_result_seconds": 17.208663527853787,
+    "module_import_wall_seconds": 0.37877274584025145,
+    "stage_process_cpu_seconds": {
+      "artifact_loading": 0.22229216699999998,
+      "data_loading": 1.096866103,
+      "planning_and_materialization": 4.4030000001527014e-06,
+      "detect_and_display": 2.5471091939999995,
+      "presentation_and_metrics": 0.061410595999999984
+    },
+    "legacy_cpu_fields_clock": "perf_counter wall intervals, including scheduling/quota delays",
+    "artifact_loading_seconds": 0.8915096502751112,
+    "data_loading_seconds": 4.448573972098529,
+    "attacker_planning_seconds": 6.701797246932983e-06,
+    "detect_and_display_seconds": 11.181777659803629,
+    "detector_cpu_seconds": 7.7552363481372595,
+    "assembly_cpu_seconds": 0.8949765767902136,
+    "presentation_and_metrics_seconds": 0.30833418667316437
+  },
+  "summary": {
+    "alerting_cycles": 20,
+    "object_cycles": 13218,
+    "green_means": "not flagged; authenticity is not established"
+  },
+  "provenance": {
+    "recording_sha256": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e",
+    "model_artifact_id": "2ad682efc017e2cf96d856772b20db898edd6c1e253947b3df013a671f067115",
+    "baseline_sha256": "b7f592bad60c25bfa4825c528cbb69d05b76239a5d2f500b755d41c933f82faf"
+  },
+  "measurement_scope": "Invocation timing starts at replay_worker entry; spawned-process startup, initial warm-worker content verification and scheduler queue/cooling are outside these process CPU fields. Cgroup counters include all application processes."
+}

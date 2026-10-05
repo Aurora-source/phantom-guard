@@ -346,3 +346,130 @@ This is recorded replay with simulated attacks, not live sensor ingestion.
 Thermal caps trade throughput for shared-host headroom. No stable service-level
 tail latency, all seeds/1,200-cycle combinations, or overnight thermal behavior
 is claimed. No models/artifacts are missing; no upload is required.
+
+
+# Staged runtime performance validation — 2026-10-05
+
+This report covers a staged build at the common merged-PR #7 anchor and the then-current candidate branch. The existing public container/tunnel remained live during the local 8766 stage. No other services were stopped, rebuilt, or pruned. Raw 5 s samples, cgroup counters, sanitized request records, screenshots, build proof and machine inventory are in the ignored `runs/server-performance/20261005/` directory; it includes no credentials or session tokens.
+
+## Host, prior state and artifacts
+
+- Linux Ubuntu 26.04, kernel 7.0.0-28-generic; Intel i5-4200M, two physical/four logical CPUs; 10.6 GiB RAM, 4 GiB swap and about 66 GiB disk free during the candidate build. Docker 29.1.3, Compose 2.40.3. Inventory is `runs/server-performance/20261005/inventory-before.json`.
+- 21 containers were up. The existing Phantom Guard container was healthy, ID `951436b551ee2bb22aaaf66716682e6e2bcb157c75e6b7c90a9d709e19bb3d91`; image ID `sha256:ea980f8c541d0ee381729e0c574b67ae34d2a65ce0f89f5c3b5d03acc0d393fb`. It has 2500/10000 CPU quota (0.25 logical CPU), 2 GiB memory and swap ceiling, 64 PIDs, read-only root/inputs/models, private `127.0.0.1:8765`, one worker, queue two, one numerical thread and 30 s cooling. No restarts/OOMs were observed. Host swap use was already about 1.9 GiB before the workload.
+- Host-running systemd `cloudflared` was active; the locally managed `rikon-home` ingress validates and still maps `demo.rikon-karmakar.quest` to `http://127.0.0.1:8765`. No tunnel/DNS configuration was changed in the staged work.
+- Bundle at `/home/lucifer/projects/Hacksprint-2026/phantomguard-c2cc251c6f4c.zip`: 10,319,138 bytes, SHA-256 `849dbd5c12410e75fd4d1ffc43aee45a7380756639548ac7d921dd7a65f90ad3`. Its 54 payload files match the manifest and all four restored recording hashes match the unchanged originals under `dataset/`. Candidate and prior service readiness both confirm AE ID `2ad682efc017e2cf96d856772b20db898edd6c1e253947b3df013a671f067115` and time-block baseline SHA-256 `b7f592bad60c25bfa4825c528cbb69d05b76239a5d2f500b755d41c933f82faf`. No artifact generation was run.
+
+## Method
+
+`server-sample.py` records host `/proc`, cgroup v2 usage/throttling/memory/OOM/PSI, disk counters, all Docker container health/restarts, output growth, existing service probe times, host swap rates and Intel core/package sensors every five seconds. It also samples host-running `cloudflared`. Docker CPU percentages are one-core units (100% = one logical CPU); host CPU is total over four logical CPUs. Container memory current/peak is actual resident cgroup memory, distinct from the 2 GiB configured ceiling. Sample counts and raw timestamps are retained.
+
+The identical real API benchmark uses clean front/back 600 cycles seed 11, T1/A2 front/back 600 seed 11, T2/A4 chaotic 600 seed 22, T3/A4 chaotic 1000 seed 11 translated, and T4/A4 side-to-side 900 seed 33. It runs ordinary idle health/readiness/evaluation/catalog polling, one client, two independent clients, a short four-client queue/overload/cancel/reset burst, then recovery. Expected unsupported T3/A0–A2 is never counted as a failure. Fixed outputs are canonicalized without `processing_ms`; source bytes/timestamps and finalized labels remain separate from detection.
+
+The before sampler has 223 rows from 06:49:17–07:09:35 UTC: idle 24 rows, one client 109, two clients 36, four-client burst 34, idle recovery 16. The workload completed all five one-client requests plus two-client clean and T1. The guarded four-client phase began but was stopped on a 180 s temperature mean of 80.0556°C at 07:05:05 UTC (instantaneous 76–78°C then, 7.0 GiB available RAM, zero swap-out); the benchmark deleted only its own sessions/jobs. This early stop is part of the evidence. The service stayed ready and all previously healthy existing containers remained up.
+
+## Baseline results
+
+| Stage | Host CPU mean | App CPU mean / peak (one-core %) | Actual app RAM mean / peak | Host available RAM | Swap-out | Temperature max / 180 s mean max |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Idle (24 samples) | 16.5% | 2.7 / 15.0 | 101 / 285 MiB | 6.78 GiB min | 0 MiB | 74 / 70°C |
+| One client (109) | 19.7% | 20.3 / 25.2 | 202 / 319 MiB | 6.62 GiB min | 0 MiB | 78 / 72.8°C |
+| Two clients (36; one pair) | 30.0% | 17.8 / 25.1 | 188 / 320 MiB | 6.67 GiB min | 0 MiB | 89 / 78.8°C |
+| Four-client burst (34; aborted) | 18.9% | 5.2 / 25.0 | 127 / 320 MiB | 6.79 GiB min | 0 MiB | 80 / 80.3°C |
+| Idle recovery (16) | 19.0% | 2.4 / 14.2 | 123 / 320 MiB | 6.82 GiB min | 0 MiB | 75 / 72.4°C |
+
+One-client submission-to-result wall seconds: clean 26.72; T1 124.67; T2 122.52; T3 134.03; T4 132.20. Observed queue starts were 2.4 s clean and 29.3–29.8 s for later jobs, consistent with the configured cooldown and status polling. Two clients completed clean in 53.2 s (29.4 s observed queue) and T1 in 178.0 s (82.0 s observed queue). App status GET latency is summarized in `before/summary.json`; service latency/status and I/O distributions are in the same raw-derived report.
+
+## Initial candidate checks (before the comparable workload)
+
+- Built the real pinned Debian/Python 3.11 image locally as `phantomguard-server:performance-candidate`, image manifest `sha256:8888d4f883a9dce7444b6cfff56f1a5baad102afc9cd451609e77acc1ba3befa`. BuildKit transferred a 772 KiB context. It started only in isolated Compose project `phantomguard-performance-stage`, with `127.0.0.1:8766`, 0.25 CPU, 2 GiB/no extra swap, 64 PIDs and its own runs volume. Existing server image/container was not restarted.
+- Startup artifact verification and `/healthz` `/readyz` passed; health was healthy, restart count zero, and the full verified runtime identity was `cb6d5e277c74af4ac18f47dc30d23292b66a8341681e0dd33c23dd53352ed877`. Startup full verification measured 4.49 s wall / 0.84 process CPU seconds. Repeated readiness used the identity cache.
+- Effective container environment: server profile, worker 1, warm worker enabled, queue 2, cooldown 30 s, OPENBLAS/OMP/MKL each 1. Waitress parent had 10 threads; live replay child was observed with one thread, and cgroup PIDs remained below the limit. The minimal serving lock intentionally does not install `threadpoolctl`; no dependency was added for observing this.
+- Candidate browser check at local port 8766 completed all five grouped checks with zero page errors and 121 private job responses: separate sessions/queueing/ownership, running and queued cancellation/reset, 150-cycle clean and fixed-seed T1/A2 replay, seek/playback, disabled unsupported choices, and `Cache-Control: no-store` without a cache hit.
+- Candidate browser stage briefly peaked at 89°C, then had a rolling average near 80.1°C. The next benchmark was stopped before submission at 07:20:51 UTC by the existing 180 s >80°C guard; memory available was 6.78 GiB and swap-out zero. At that point the candidate had not completed a comparable busy benchmark. The candidate stayed healthy and the public hostname kept serving the original live container.
+
+## Changes under evaluation
+
+The API no longer reruns the full doctor on every job admission. Startup and changed file metadata force full doctor/content verification; a cheap metadata stamp runs on readiness/admission, with a periodic full check after 300 s. Read-only input/model/config mounts are required; config changes require a service restart so the in-memory config is never stale. Reports are cached by manifest/report-file stamps, individual/filter selection, up to 16 entries and 512 KiB per entry. Warm mode is explicit and opt-in outside the server profile. It reuses process-local decoded recording tuples and only the existing real-training immutable pools. A bounded adapter caps retained pools at 64 MiB/two variants and makes cached arrays/track collections read-only; content/config/code/file metadata changes clear them. Model, detector/tracker/fusion histories, RNG, attacker, labels and output lists are newly made for every job. Workers recycle at 16 jobs, post-job RSS 384 MiB, or idle TTL, and cancellation/deadline kills that worker.
+
+True process CPU uses `process_time`; legacy detector/assembly `*_cpu_seconds` fields remain wall-clock intervals including scheduler/quota waits. The candidate also reports process CPU per real stage, scheduler queue age and estimated cooldown, without changing detector evidence or frame materialization.
+
+## Operations and rollback
+
+Use the branch worktree’s `scripts/server-compose` for every command. `.env.server` must be ignored/local, use absolute mounts for the already restored read-only raw/processed/models/config/reports, and keep the runs volume writable. Do not use the live checkout’s Compose files with this candidate; use the branch files and explicit project/env below.
+
+```bash
+APP=/home/lucifer/projects/Hacksprint-2026/phantom-guard-server-performance
+export PHANTOMGUARD_SERVER_ENV="$APP/.env.promote"
+export PHANTOMGUARD_COMPOSE_PROJECT=phantomguard-server
+"$APP/scripts/server-compose" config
+"$APP/scripts/server-compose" build --progress plain prototype
+"$APP/scripts/server-compose" up -d --no-build prototype
+"$APP/scripts/server-compose" ps
+curl -fsS http://127.0.0.1:8765/healthz
+curl -fsS http://127.0.0.1:8765/readyz
+"$APP/scripts/server-compose" logs --tail 100 prototype
+"$APP/scripts/server-compose" restart prototype
+"$APP/scripts/server-compose" stop prototype
+```
+
+For isolated staging set `PHANTOMGUARD_SERVER_ENV="$APP/.env.stage"`, `PHANTOMGUARD_COMPOSE_PROJECT=phantomguard-performance-stage`, and port 8766 before using the same wrapper. Save an ignored backup of `.env.server` and the old image tag before promotion. Rollback sets `PHANTOMGUARD_IMAGE=phantomguard-server:thermal-tuned`, then runs the same `config` and `up -d --no-build prototype` commands. This changes only the Phantom Guard service; it does not restart the host or unrelated containers. Never prune images or shared Docker resources.
+
+The original Docker image to retain is `phantomguard-server:c2cc251-before`, `sha256:f4ce6d3395f2764bca7887017eda5da1cfc07ff624ee1a5acbfbedf972738864`; prior thermal rollback image is `phantomguard-server:thermal-tuned`, `sha256:ea980f8c541d0ee381729e0c574b67ae34d2a65ce0f89f5c3b5d03acc0d393fb`.
+
+The accepted detector limitations remain visible: clean alert targets remain unmet (time-block 1.42/min, LOSO 3.409), and 18 eligible completed runs fully evaded scene detection. Deployment changes do not modify those results. Comparable candidate workload and subsequent public/restart checks are recorded below.
+
+## Completed comparable workload (16-job worker recycling)
+
+The final candidate source is `9dd938cbde46343c1c0ac942006ebe2f112bbed4`; image `phantomguard-server:performance-9dd938c`, Docker image identity `sha256:fba909d2252e5aff4bbb3f38c357afe7210ffca1d57bafa4d36fa88ac4efca83` (image config `sha256:2451377ba91ad16ff8cd1f2aa54dbbfa7e4e4b446b8a9938b6cda43ef7d070ea`). The only later changes are measurement/tests/docs. The 188-sample benchmark interval starts at 07:50:18 UTC and contains 24 idle, 59 one-client, 39 two-client, 33 burst and 33 recovery samples. Its raw-derived summary is `after-tuned/summary.json`; raw samples were filtered by the actual workload interval, excluding the earlier build/interrupted idle attempt.
+
+| Stage | Host CPU mean | App CPU mean (one-core %) | App RAM mean / lifetime cgroup peak MiB | Available RAM min GiB | Host swap-out MiB | Temp max / 180 s mean max °C |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Idle (24) | 27.82% | 2.02 | 28.8 / 41.8 | 6.70 | 7.95 | 88 / 77.7 |
+| One client (59) | 20.51% | 15.98 | 184.1 / 276.1 | 6.57 | 8.22 | 81 / 78.2 |
+| Two clients (39) | 20.06% | 11.53 | 256.4 / 287.2 | 6.52 | 0 | 80 / 73.9 |
+| Four-client burst (33) | 18.50% | 8.74 | 127.2 / 287.2 | 6.55 | 0 | 78 / 73.1 |
+| Recovery (33) | 17.71% | 2.31 | 140.5 / 287.2 | 6.70 | 0 | 78 / 71.7 |
+
+The shared host had 16.18 MiB swap-out in early idle/one-client intervals, including a separate native doctor verification. It did not grow during two-client/burst/recovery; there were no OOMs or restarts. Host aggregate temperature/load/swap also includes unrelated workloads and local validation processes, so it cannot all be attributed to the application. The 180 s mean stayed below 80°C throughout this complete run. Memory and swap reserves were maintained. Thresholds were 2 GiB available, >10 MiB/s swap-out, new OOM, instantaneous >=95°C or a sustained 180 s temperature mean >80°C; only this task's jobs are canceled on a breach.
+
+At the same quota/rest, one-client submission-to-result seconds were clean 25.23 (cold), T1 104.70 (first/cold pools), T2 48.04, T3 55.60 and T4 53.79. Active invocation wall/true process CPU seconds were respectively 17.21/4.02, 73.86/16.37, 17.53/3.86, 23.37/5.53 and 23.07/5.02 (values rounded; raw timings are authoritative). First T1 planning/materialization was 61.64 s wall; warm T2/T3/T4 planning was about 2–3 s. Cold spawn/input-identity verification precedes the invocation CPU timer; cgroup counters include it, and end-to-end timing includes it.
+
+Two independent clients completed clean/T1 in 42.61/88.06 s, with observed queue waits 29.65/72.72 s. Warm T1 active work was 14.02 s versus about 88 s previously: about 6× lower active wall time. The next T2/T3 pair completed in 46.87/104.62 s. The warm expensive-attack active wall goal of 2× is met (T2–T4 about 4–5×); first cold preparation still remains. Removing cooldown or increasing quota was not used to obtain these gains. An initial eight-job recycler prematurely lost the warm cache before the next client pair; the measured 16-job boundary corrects that while retaining RSS/TTL/cancellation bounds.
+
+Eleven jobs completed, none failed/timed out, and six queue overload responses occurred during two controlled bursts; accepted queued/running jobs were deleted and reset, and each recovery clean job succeeded. Every complete fixed-request detector output matched the prior deployment exactly after removing only `processing_ms`: all cycle/object/frame/track identities, timestamps, scores, reasons, flags and alerts are preserved. Raw comparison hashes are in `after-tuned/equivalence.json`. No detector frame was skipped. First usable output remains the complete immutable result.
+
+Status GET median was 4.29 ms over 1,442 responses (before 6.03 ms/1,596). Result GET median was 125.51 ms/11 responses (before 128.98 ms/7); these include transfer/JSON decode in the benchmark client and are small-sample observations, not stable tail latency. Cgroup throttled wall time accumulated 173.5 s in one-client and 82.8 s in two-client stages; quotas still impose latency. Detector processing and physical assembly delay remain separate in each saved result; legacy CPU-named detector fields use wall clocks, while added process CPU clocks measure actual CPU.
+
+Existing service probe statuses remained exactly at baseline (five services 200, the pre-existing portfolio route 404). Typical probe medians were 0.7–3.2 ms, with occasional 50–183 ms samples; no persistent degradation is established from these bounded samples. Host-running cloudflared used about 26.4 MiB RSS and 0.34/0.38% of one CPU in one/two-client stages (before ~26.7 MiB and 0.34/0.32%). No unrelated container identity/restart changes were made.
+
+The numerical/thread policy test and thirteen runtime checks passed; the existing restored-data API/browser tests passed (21), followed by two actual deadline cases covering cold and warm workers. Deadline termination released the worker and cleaned the request. Native Python 3.11 doctor --full passed all five artifact/baseline sets. Desktop/Ryzen/Windows measurements remain for Agent 2.
+
+Across the complete candidate interval, the application cgroup had zero swap/OOM events, at most 15 PIDs (including temporary checks), and no restart; the configured memory ceiling itself did not reduce RSS. Warm idle recovery retained more RAM than the earlier process-per-job idle (140.5 versus 123 MiB mean), a measured cache tradeoff. The peaks and queue policy leave substantial host reserve.
+
+The five full-stream probes (T1 seeds 11 and 22, T2/T3/T4) match exactly between the prior and candidate images: CAN bytes, ordered frame indices/timestamps, complete EOF labels CSV and sanitized scientific lifecycle sidecars. Raw hashes are in evidence-before.jsonl, evidence-after.jsonl and stream-equivalence.json. No detector labels were read or leaked. For the identical five-request one-client stage, directly measured cgroup CPU deltas were 109.106 core-seconds over a 539.578 s sampled interval before, versus 45.752 core-seconds over 285.947 s after (2.38× less actual aggregate application CPU). Intervals run from first to last five-second sample and omit their boundary fractions; they include API/health activity, not only detector CPU.
+
+## Promotion and public browser observation
+
+Only the production Phantom Guard service was replaced, using the same private origin port, artifact mounts, Docker network/runs volume and unchanged Cloudflare ingress. Local/public readiness and verified HTTPS returned 200; runtime identity matches staged verification. The stage container is stopped and rollback tags/env are retained. A strict public-browser check confirmed separate clients/owner 404 but exposed an existing frontend reset/poll race: a delayed status 404 after DELETE can overwrite the reset message. Backend removal succeeds; Agent 3 owns the required generation guards on awaited status/result and catch/finally UI updates. This observed failure is retained under public-browser/browser-events.json and documented in the interface handoff; it is not hidden by changing job access controls.
+
+The repeated strict public Chromium check passed all five grouped checks with zero page errors and 94 private responses: assets/readiness, two independent sessions, owner 404, queued/running cancel/reset, clean and T1/A2 playback/step/seek and unsupported choices. All private responses were no-store and Cloudflare DYNAMIC, never HIT. The prior intermittent reset-message race remains disclosed for Agent 3; a passing repeat does not erase it.
+
+The production application alone was deliberately restarted, regained local/public readiness (HTTP 200/TLS verified), and fresh public-browser clean plus T1/A2 150-cycle runs and stepping passed with no page errors. Docker reports healthy and zero automatic restarts. Initial post-restart harness sequencing was corrected to wait for the new POST/start state rather than mistake the prior Complete text for a new result; the successful evidence is post-restart-browser/checks.json. One young 51-byte status directory from the interrupted harness was retained within the configured 600 s orphan TTL and then automatically removed during observed idle expiry. The live browser output directory is empty after cleanup. No orphan active worker from that request survives the container restart.
+
+Fork branch publication succeeded. Upstream PR creation returned GitHub integration HTTP 403, Resource not accessible by integration; no PR was created. Exact title/body and compare/create link are saved in docs/parallel/server-pr.md. The service is deployed independently of that GitHub permission. Agent 2/3 integration and the frontend generation-guard correction await their completed reviewed branches/handoffs; no trained artifact upload is needed for this runtime release.
+
+Measured one-client timing detail (seconds unless marked; loading/planning include their I/O and quota waits):
+
+| Request | Queue observed | Input load wall | Plan/full materialization wall | Detect + display wall / true CPU | Detector processing p99 ms (wall) | Physical assembly p99 ms | API end-to-end |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Clean | 0.67 | 4.45 | 0.00 | 11.18 / 2.55 | 59.25 | 33.60 | 25.23 |
+| T1 | 29.80 | 0.01 | 61.64 | 11.94 / 2.74 | 49.35 | 33.60 | 104.70 |
+| T2 | 29.29 | 0.00 | 2.86 | 14.37 / 3.08 | 79.53 | 33.60 | 48.04 |
+| T3 | 29.61 | 0.00 | 2.41 | 20.49 / 4.84 | 39.33 | 33.60 | 55.60 |
+| T4 | 29.29 | 0.01 | 5.41 | 17.29 / 4.04 | 48.86 | 33.50 | 53.79 |
+
+The detector processing p99 excludes attacker preparation and browser rendering and is still wall time under the quota. Assembly delay is elapsed sensor ticks converted with the documented assumed tick duration; it is not CPU. Detect + display includes result object construction and per-25-cycle progress I/O. Exact JSON serialization/write, network delivery and polling are outside those stage fields; saved result GET latency and full API time include their respective work. A stage with total input loading near zero benefits from the existing immutable parser cache.
+
+Promotion/public/restart monitoring captured 180 five-second samples, peak 89°C and maximum 180 s temperature mean 78.0°C. This includes headless Chromium running locally on the server as a test client; its rendering CPU is host validation overhead and would ordinarily run on the visitor's computer. No unrelated container ID/restart change occurred relative to the initial inventory. Additional idle sampling is in recovery-host/; no overnight stability or larger public capacity is claimed. Effective merged development Compose was also verified: four adjustable CPUs, 4 GiB, two browser workers and zero cooldown, without the home-server fractional quota.
+
+Final idle recovery at about 08:29 UTC showed 66°C core/package temperature, zero swap-out, 6.55 GiB available RAM and about 194.5 MiB app cgroup memory after warm full-pool replay. This is higher idle RAM than the pre-cache process-per-job service, but safely below the measured peak and deliberate worker budget. Output/storage returned to zero after job reset and orphan TTL expiry. All existing health statuses remained at baseline.
