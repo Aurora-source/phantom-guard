@@ -11,6 +11,7 @@ import numpy as np
 
 from phantomguard.config import bval
 from phantomguard.detect.common import ObjVerdict
+from phantomguard.detect.evidence import support_record
 from phantomguard.stats.baseline import rcs_out_of_band
 from phantomguard.tracks import Track
 
@@ -43,20 +44,26 @@ class KinematicChecker:
         self.birth_nll = -np.log(counts / counts.sum())
 
     def check_value(self, o, v: ObjVerdict) -> None:
+        fi = [v.frame_index]
         if self.rcs_integer and o.rcs != round(o.rcs):
-            v.add("RCS_GRID")
+            v.note("RCS_GRID", frames=fi, observed=o.rcs, suspect_frames=fi,
+                   note="clean data holds only whole-dBsm RCS; the payload itself allows 0.5 dBsm steps")
         if not self.rcs_lo <= o.rcs <= self.rcs_hi:
-            v.add("RCS_RANGE")
+            v.note("RCS_RANGE", frames=fi, observed=o.rcs, lo=self.rcs_lo, hi=self.rcs_hi, suspect_frames=fi)
 
     def check_track(self, o, tr: Track, v: ObjVerdict) -> None:
         pts = tr.points
+        fi = [v.frame_index]
+        cyc = lambda n: (pts[-n].cycle_index, pts[-1].cycle_index)
         if o.speed > self.speed_max:
-            v.add("SPEED")
+            v.note("SPEED", frames=fi, observed=o.speed, hi=self.speed_max, suspect_frames=fi, suspect_track=tr.track_id,
+                   cycles=cyc(1))
         if tr.total_points == 1:
             i = min(max(int(np.searchsorted(self.birth_edges, o.range)) - 1, 0), len(self.birth_nll) - 1)
             v.scores["birth_nll"] = float(self.birth_nll[i])
             if tr.born_by_jump:
-                v.add("JUMP")
+                v.note("JUMP", frames=fi, observed=o.range, suspect_frames=fi, suspect_track=tr.track_id, cycles=cyc(1),
+                       note="slot reused with a position jump larger than the reassignment threshold")
         if len(pts) >= 2 and pts[-2].rng <= self.roi:
             a, b = pts[-2], pts[-1]
             dt = b.t_s - a.t_s
@@ -64,7 +71,9 @@ class KinematicChecker:
                 acc = math.hypot(b.vx - a.vx, b.vy - a.vy) / dt
                 v.scores["accel"] = acc
                 if acc > self.accel_hard:
-                    v.add("ACCEL")
+                    v.note("ACCEL", frames=[a.frame_index, b.frame_index], observed=acc, hi=self.accel_hard,
+                           suspect_frames=fi, suspect_track=tr.track_id, cycles=cyc(2),
+                           normalized=acc / self.accel_hard)
         if len(pts) >= self.w:
             win = list(pts)[-self.w:]
             if all(p.rng <= self.roi for p in win):
@@ -73,16 +82,23 @@ class KinematicChecker:
                 vr = np.fromiter((p.vr for p in win), float, self.w)
                 # The training envelope uses the same LSQ calculation on quantised frames.
                 # It therefore includes 0.2-position quantisation and held sensor values.
-                res = abs(lsq_rate(t, r) - self.rr_scale * vr.mean())
+                rate = lsq_rate(t, r)
+                expected = self.rr_scale * vr.mean()
+                res = abs(rate - expected)
                 v.scores["rr_resid"] = res
                 if res > self.rr_hard:
-                    v.add("RR_RESID")
+                    v.note("RR_RESID", frames=[p.frame_index for p in win], observed=rate, expected=expected,
+                           lo=expected - self.rr_hard, hi=expected + self.rr_hard, normalized=res / self.rr_hard,
+                           suspect_frames=fi, suspect_track=tr.track_id, cycles=(win[0].cycle_index, win[-1].cycle_index),
+                           note="radial range-rate versus integrated reported radial velocity")
                 T = t[-1] - t[0]
                 if T > 0:
                     ps = math.hypot(win[-1].x - win[0].x, win[-1].y - win[0].y) / T
                     v.scores["pos_speed"] = ps
                     if ps > self.pos_speed_hard:
-                        v.add("POS_SPEED")
+                        v.note("POS_SPEED", frames=[win[0].frame_index, win[-1].frame_index], observed=ps,
+                               hi=self.pos_speed_hard, normalized=ps / self.pos_speed_hard, suspect_frames=fi,
+                               suspect_track=tr.track_id, cycles=(win[0].cycle_index, win[-1].cycle_index))
         if len(pts) >= self.wr:
             win = list(pts)[-self.wr:]
             if all(p.rng <= self.roi for p in win):
@@ -90,9 +106,16 @@ class KinematicChecker:
                 sd = float(rc.std())
                 v.scores["rcs_std"] = sd
                 if sd > self.rcs_std_hard:
-                    v.add("RCS_STD")
+                    v.note("RCS_STD", frames=[p.frame_index for p in win], observed=sd, hi=self.rcs_std_hard,
+                           normalized=sd / self.rcs_std_hard, suspect_frames=fi, suspect_track=tr.track_id,
+                           cycles=(win[0].cycle_index, win[-1].cycle_index))
         if rcs_out_of_band(o.range, o.rcs, self.rcs_band):
-            v.add("RCS_BAND")
+            edges, bands = self.rcs_band["edges"], self.rcs_band["bands"]
+            i = min(max(int(np.searchsorted(edges, o.range, side="left")) - 1, 0), len(bands) - 1)
+            lo, hi, n = bands[i]
+            v.note("RCS_BAND", frames=fi, observed=o.rcs, lo=lo, hi=hi, suspect_frames=fi, suspect_track=tr.track_id,
+                   cycles=cyc(1), support=support_record(n, "supported" if n >= 200 else "global_fallback",
+                                                         range_bin=[edges[i], edges[i + 1]]))
 
     def check_colocation(self, items: list[tuple]) -> None:
         """items: (x, y, track_age, verdict) for in-ROI objects; flags the younger of a too-close pair."""
@@ -101,5 +124,10 @@ class KinematicChecker:
             xi, yi, ai, vi = items[i]
             for j in range(i + 1, n):
                 xj, yj, aj, vj = items[j]
-                if math.hypot(xi - xj, yi - yj) < self.coloc:
-                    (vi if ai < aj else vj).add("COLOC")
+                d = math.hypot(xi - xj, yi - yj)
+                if d < self.coloc:
+                    younger, older = (vi, vj) if ai < aj else (vj, vi)
+                    pair = [vi.frame_index, vj.frame_index]
+                    younger.note("COLOC", frames=pair, observed=d, lo=self.coloc, suspect_frames=pair,
+                                 suspect_basis="colocated_pair",
+                                 note="the younger track is flagged; track age does not show which object is forged")

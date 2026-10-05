@@ -96,7 +96,7 @@ class Detector:
                    cfg["replay"]["k_gram"] + 1, cfg["learned"]["window_cycles"] + 1)
         self.tracks = TrackManager(bval(baseline, "reassign_jump"), cfg["units"]["tick_seconds"], self.thr,
                                    history=hist, max_gap_cycles=cfg["tracks"]["max_gap_cycles"])
-        self.fusion = Fusion(effective_cfg(cfg, baseline), self.layers)
+        self.fusion = Fusion(effective_cfg(cfg, baseline), self.layers, emit_evidence=True)
         # Every layer runs so reasons and scores are always reported; fusion uses only enabled layers.
 
     def process_cycle(self, cycle: Cycle) -> CycleResult:
@@ -126,7 +126,10 @@ class Detector:
             coloc.append((o.x, o.y, tr.total_points, v))
             hit, src = self.replay.check(tr, cycle.index)
             if hit:
-                v.add("REPLAY")
+                win = list(tr.points)[-(self.replay.k + 1):]
+                v.note("REPLAY", frames=[p.frame_index for p in win], cycles=(win[0].cycle_index, win[-1].cycle_index),
+                       suspect_frames=[v.frame_index], suspect_track=tr.track_id,
+                       note=f"trajectory fingerprint also seen in {src.replace('_', ' ')}")
                 v.scores["replay_src"] = {"library": 1.0, "earlier_stream": 2.0, "concurrent": 3.0}[src]
             if self.learned is not None:
                 w, moving, status = self.learned.window_outcome(tr.points)
@@ -143,8 +146,11 @@ class Detector:
             errs = self.learned.score(windows)
             for (v, moving), e in zip(wverd, errs):
                 v.scores["ae"] = float(e)
-                if e > self.learned.thr[1 if moving else 0]:
-                    v.add("LEARNED")
+                thr = self.learned.thr[1 if moving else 0]
+                if e > thr:
+                    v.note("LEARNED", frames=[v.frame_index], observed=float(e), hi=float(thr), normalized=float(e) / thr if thr else None,
+                           suspect_frames=[v.frame_index], suspect_track=v.track_id,
+                           note="window reconstruction error; correlated with the physics residuals, not independent proof")
         frames = {}
         if cycle.header_frame_index is not None and cycle.header_t is not None:
             header_reasons = [r for r in cyc_reasons if r not in {"BAD_ID", "FRAME_LEN"}]
@@ -163,7 +169,8 @@ class Detector:
         delay = cycle.closed_t - cycle.header_t if cycle.closed_t is not None and cycle.header_t is not None else None
         res = CycleResult(cycle.index, cycle.header_t, verdicts, cyc_reasons, frames=sorted(frames.values(),
             key=lambda f: f.frame_index), header_frame_index=cycle.header_frame_index, closed_t=cycle.closed_t,
-            assembly_delay_ticks=delay, layer_status=dict(self.layer_status), learned_windows=captured)
+            assembly_delay_ticks=delay, layer_status=dict(self.layer_status), learned_windows=captured,
+            cycle_evidence=list(self.protocol.cycle_evidence))
         self.fusion.apply(res, active_track_ids={tr.track_id for tr in self.tracks.active.values()})
         res.latency_ms = (time.perf_counter() - t0) * 1000.0
         res.detector_cpu_ms = res.latency_ms

@@ -14,10 +14,13 @@ from __future__ import annotations
 from collections import deque
 
 from phantomguard.detect.common import CycleResult, is_hard, layer_of
+from phantomguard.detect.evidence import STATUS_PERSISTENT, make_evidence
 
 
 class Fusion:
-    def __init__(self, cfg: dict, layers: tuple[str, ...]):
+    def __init__(self, cfg: dict, layers: tuple[str, ...], *, emit_evidence: bool = False):
+        self.emit_evidence = emit_evidence
+        self.votes: dict[int, deque] = {}  # track id -> (cycle, frame, codes) of flagged cycles (evidence only)
         self.m, self.n = cfg["fusion"]["m"], cfg["fusion"]["n"]
         if not 1 <= self.m <= self.n:
             raise ValueError("fusion requires 1 <= m <= n")
@@ -64,11 +67,29 @@ class Fusion:
             # record associates multiple duplicate-slot verdicts with that same ID.
             h.append(any(v.flagged for v, _ in group))
             persistent = sum(h) >= self.m
+            if self.emit_evidence:
+                vv = self.votes.setdefault(tid, deque(maxlen=self.n))
+                flagged = [v for v, _ in group if v.flagged]
+                if flagged:
+                    vv.append((res.index, flagged[0].frame_index, tuple(dict.fromkeys(c for v in flagged for c in v.reasons))))
+                else:
+                    vv.append(None)
             for v, hard in group:
                 v.alert = hard or persistent
+                if self.emit_evidence and persistent and not hard:
+                    flagged_votes = [x for x in self.votes[tid] if x is not None]
+                    v.evidence.append(make_evidence(
+                        "PERSISTENCE", scope="track", status=STATUS_PERSISTENT, rule_class="fusion",
+                        frames=[x[1] for x in flagged_votes], cycles=(flagged_votes[0][0], flagged_votes[-1][0]),
+                        observed=len(flagged_votes), expected=self.m, hi=self.n, suspect_frames=[v.frame_index],
+                        suspect_track=tid, note=f"{len(flagged_votes)} of the last {self.n} cycles flagged: "
+                        + ", ".join(sorted({c for x in flagged_votes for c in x[2]}))))
         for tid in [t for t in self.hist if t not in live]:
             self.hist[tid].append(False)
+            if self.emit_evidence:
+                self.votes.setdefault(tid, deque(maxlen=self.n)).append(None)
             ended = active_track_ids is not None and tid not in active_track_ids
             expired = active_track_ids is None and len(self.hist[tid]) == self.n and not any(self.hist[tid])
             if ended or expired:
                 del self.hist[tid]
+                self.votes.pop(tid, None)

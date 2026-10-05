@@ -9,6 +9,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
+from phantomguard.detect.evidence import make_evidence
+
 # Reason code -> (layer, hard?)
 REASONS: dict[str, tuple[str, bool]] = {
     # protocol, cycle level
@@ -74,10 +76,17 @@ class ObjVerdict:
     alert: bool = False
     timestamp_ticks: int | None = None
     score_status: dict[str, str] = field(default_factory=dict)
+    # Additive, JSON-compatible per-reason evidence (see detect/evidence.py). Optional for consumers.
+    evidence: list[dict] = field(default_factory=list)
 
     def add(self, code: str) -> None:
         if code not in self.reasons:
             self.reasons.append(code)
+
+    def note(self, code: str, **fields) -> None:
+        """Add ``code`` (once) and attach an evidence record for it."""
+        self.add(code)
+        self.evidence.append(make_evidence(code, **fields))
 
 
 @dataclass(frozen=True)
@@ -106,3 +115,4 @@ class CycleResult:
     learned_windows: dict[int, tuple[tuple[float, ...], bool]] = field(default_factory=dict)
     assembly_cpu_ms: float = 0.0
     detector_cpu_ms: float = 0.0
+    cycle_evidence: list[dict] = field(default_factory=list)
