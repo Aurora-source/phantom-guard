@@ -1,0 +1,12 @@
+attack_type,level,paired_instances,before_identified,before_identification_rate,before_detected,before_exact_frame_recall,before_real_excess_alert_frames,before_undetected_right_censored,after_identified,after_identification_rate,after_detected,after_exact_frame_recall,after_real_excess_alert_frames,after_undetected_right_censored,gained_identified,lost_identified
+T1,A2,180,180,1.0,180,0.7822,3746,0,180,1.0,180,0.7822,3718,0,0,0
+T1,A3,178,119,0.6685,122,0.3977,295,1,128,0.7191,135,0.3517,609,0,28,19
+T1,A4,184,162,0.8804,165,0.38,357,0,161,0.875,164,0.4668,647,0,8,9
+T2,A2,192,192,1.0,192,0.687,11369,0,192,1.0,192,0.6498,9852,0,0,0
+T2,A3,192,192,1.0,192,0.3511,3959,0,192,1.0,192,0.3739,378,0,0,0
+T2,A4,192,192,1.0,192,0.362,3205,0,192,1.0,192,0.4547,408,0,0,0
+T3,A3,468,332,0.7094,341,0.4147,166,0,348,0.7436,361,0.4659,287,0,23,7
+T3,A4,468,332,0.7094,341,0.4147,166,0,348,0.7436,361,0.4659,287,0,23,7
+T4,A2,63,17,0.2698,18,0.1517,70,0,25,0.3968,25,0.2515,70,0,8,0
+T4,A3,63,14,0.2222,14,0.0651,0,0,23,0.3651,23,0.1809,0,0,9,0
+T4,A4,63,14,0.2222,14,0.0651,0,0,23,0.3651,23,0.1809,0,0,9,0

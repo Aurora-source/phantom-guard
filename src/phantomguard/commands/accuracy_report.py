@@ -51,7 +51,9 @@ def main(argv=None) -> int:
     ap.add_argument("--out", type=Path, required=True)
     for name in ("final", "dev", "dev-relaxed", "rule-audit", "learned", "t4"):
         ap.add_argument(f"--{name}", type=Path)
-    ap.add_argument("--latency", type=Path)
+    ap.add_argument("--latency", type=Path, action="append", default=[],
+                    help="latency JSON(s); the first is the headline, every one is copied (e.g. Windows, Linux, legacy)")
+    ap.add_argument("--final-heldback", type=Path, help="comparison on held-back seeds (test part)")
     ap.add_argument("--equivalence", type=Path)
     ap.add_argument("--coverage", type=Path)
     ap.add_argument("--ledger-before", type=Path, help="clean-episode ledger of the legacy profile (test part)")
@@ -65,6 +67,7 @@ def main(argv=None) -> int:
     missing, sections = [], []
     cmp_files = ("comparison.md", "comparison_cells.csv", "comparison_regressions.csv", "comparison_gains.csv", "comparison.json")
     for label, src, sub in (("Final fixed-seed matrix (test part)", args.final, "final"),
+                            ("Held-back seeds (test part)", args.final_heldback, "final-heldback"),
                             ("Development comparison (validation part)", args.dev, "dev"),
                             ("Alternative operating point: relaxed v2 (validation part)", args.dev_relaxed, "dev-relaxed")):
         if src is None:
@@ -83,8 +86,11 @@ def main(argv=None) -> int:
             continue
         copied = _copy(src, out, names)
         sections.append(f"- **{label}**: " + ", ".join(f"[{n}]({n})" for n in copied))
-    for label, src, name in (("Latency benchmark", args.latency, "latency.json"),
-                             ("Windows/Linux equivalence", args.equivalence, "equivalence.json"),
+    for lat in args.latency:
+        if lat.is_file():
+            shutil.copyfile(lat, out / lat.name)
+            sections.append(f"- **Latency benchmark**: [{lat.name}]({lat.name})")
+    for label, src, name in (("Windows/Linux equivalence", args.equivalence, "equivalence.json"),
                              ("Coverage matrix (final run)", args.coverage, "coverage_matrix.csv")):
         if src is None or not src.is_file():
             missing.append(label)
@@ -100,15 +106,17 @@ def main(argv=None) -> int:
             for split, v in pooled(res["clean"][tag]).items():
                 headline.append(f"| {'legacy' if tag == 'before' else 'v2'} | {split} | {v['events']} | {v['minutes']} | "
                                 f"{v['per_minute']} | {v['ci95']} | {v['max_recording_per_minute']} |")
-    if args.latency and args.latency.is_file():
-        lat = json.loads(args.latency.read_text(encoding="utf-8"))
-        latency_line = (f"Detector p99 (worst stream): wall {lat['worst_stream_wall_detector_p99_ms']} ms, thread CPU "
+    latency_lines = []
+    for path in args.latency:
+        if not path.is_file():
+            continue
+        lat = json.loads(path.read_text(encoding="utf-8"))
+        latency_lines.append(f"- `{path.name}` ({lat['profile']}): " + (f"Detector p99 (worst stream): wall {lat['worst_stream_wall_detector_p99_ms']} ms, thread CPU "
                         f"{lat['worst_stream_thread_cpu_detector_p99_ms']} ms (CPU percentiles valid: "
                         f"{lat['clocks']['thread_cpu_percentiles_valid']}); budget {lat['budget_ms']} ms met on "
                         f"{lat['budget_met_on']}: {lat['budget_met']}. Hardware: {lat['hardware']['processor'] or lat['hardware']['machine']}, "
-                        f"{lat['hardware']['logical_cpus']} logical CPUs, {lat['hardware']['platform']}.")
-    else:
-        latency_line = "Latency benchmark not supplied."
+                        f"{lat['hardware']['logical_cpus']} logical CPUs, {lat['hardware']['platform']}."))
+    latency_line = "\n".join(latency_lines) or "Latency benchmark not supplied."
     boot_lines = []
     for name, d in (("legacy", args.ledger_before), ("v2", args.ledger_after)):
         if d is None:

@@ -1,0 +1,204 @@
+{
+  "schema": "phantomguard.latency/1",
+  "tag": "timeblock",
+  "baseline": "D:\\Hacksprint\\phantom-guard-detector-accuracy\\configs\\baseline.json",
+  "profile": "v2",
+  "hardware": {
+    "platform": "Windows-10-10.0.26200-SP0",
+    "processor": "AMD64 Family 25 Model 97 Stepping 2, AuthenticAMD",
+    "machine": "AMD64",
+    "logical_cpus": 32,
+    "python": "3.11.9",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1",
+    "blas_threads": "1"
+  },
+  "clocks": {
+    "thread_time_resolution_ms": 9.999999999999999e-05,
+    "thread_time_effective_resolution_ms": 15.625,
+    "thread_cpu_percentiles_valid": false,
+    "wall": "perf_counter; includes preemption"
+  },
+  "warmup_cycles_excluded_per_stream": 50,
+  "streams": [
+    {
+      "stream": "clean:emptyRoom.csv",
+      "cycles": 4328,
+      "objects_per_cycle": {
+        "p50": 24.0,
+        "p99": 26.0,
+        "max": 28.0,
+        "mean": 24.0663
+      },
+      "wall_detector_plus_assembly_ms": {
+        "p50": 1.0106,
+        "p95": 1.2219,
+        "p99": 1.5323,
+        "p99.9": 1.8141,
+        "max": 2.1831,
+        "mean": 1.0404
+      },
+      "wall_detector_ms": {
+        "p50": 0.8756,
+        "p95": 1.0677,
+        "p99": 1.3339,
+        "p99.9": 1.5994,
+        "max": 1.8682,
+        "mean": 0.9021
+      },
+      "thread_cpu_mean_ms_per_cycle": 1.0686,
+      "cpu_to_wall_ratio": 0.9966,
+      "wall_detector_ms_busiest_decile_p99": 1.2678
+    },
+    {
+      "stream": "clean:onePersonMovingFrontAndBack.csv",
+      "cycles": 4077,
+      "objects_per_cycle": {
+        "p50": 23.0,
+        "p99": 28.0,
+        "max": 29.0,
+        "mean": 22.6186
+      },
+      "wall_detector_plus_assembly_ms": {
+        "p50": 0.9848,
+        "p95": 1.3901,
+        "p99": 1.6983,
+        "p99.9": 2.001,
+        "max": 2.7048,
+        "mean": 1.0082
+      },
+      "wall_detector_ms": {
+        "p50": 0.8475,
+        "p95": 1.2162,
+        "p99": 1.4705,
+        "p99.9": 1.7602,
+        "max": 2.4419,
+        "mean": 0.8712
+      },
+      "thread_cpu_mean_ms_per_cycle": 1.0386,
+      "cpu_to_wall_ratio": 0.9967,
+      "wall_detector_ms_busiest_decile_p99": 1.7439
+    },
+    {
+      "stream": "clean:onePersonMovingSideToSide.csv",
+      "cycles": 4943,
+      "objects_per_cycle": {
+        "p50": 23.0,
+        "p99": 28.0,
+        "max": 29.0,
+        "mean": 22.7283
+      },
+      "wall_detector_plus_assembly_ms": {
+        "p50": 1.0448,
+        "p95": 1.4954,
+        "p99": 1.8472,
+        "p99.9": 2.0737,
+        "max": 13.5378,
+        "mean": 1.0931
+      },
+      "wall_detector_ms": {
+        "p50": 0.91,
+        "p95": 1.3119,
+        "p99": 1.633,
+        "p99.9": 1.8457,
+        "max": 13.4161,
+        "mean": 0.9525
+      },
+      "thread_cpu_mean_ms_per_cycle": 1.1253,
+      "cpu_to_wall_ratio": 0.9982,
+      "wall_detector_ms_busiest_decile_p99": 1.708
+    },
+    {
+      "stream": "clean:multiplePeopleChaotic.csv",
+      "cycles": 5547,
+      "objects_per_cycle": {
+        "p50": 23.0,
+        "p99": 29.0,
+        "max": 32.0,
+        "mean": 23.2787
+      },
+      "wall_detector_plus_assembly_ms": {
+        "p50": 1.0629,
+        "p95": 1.6156,
+        "p99": 1.9178,
+        "p99.9": 2.1163,
+        "max": 18.583,
+        "mean": 1.1215
+      },
+      "wall_detector_ms": {
+        "p50": 0.9244,
+        "p95": 1.418,
+        "p99": 1.7029,
+        "p99.9": 1.8966,
+        "max": 18.377,
+        "mean": 0.9775
+      },
+      "thread_cpu_mean_ms_per_cycle": 1.1549,
+      "cpu_to_wall_ratio": 0.9992,
+      "wall_detector_ms_busiest_decile_p99": 1.7752
+    },
+    {
+      "stream": "attacked:T2:A3:moving:multiplePeopleChaotic.csv",
+      "cycles": 1070,
+      "objects_per_cycle": {
+        "p50": 25.0,
+        "p99": 42.31,
+        "max": 49.0,
+        "mean": 25.7206
+      },
+      "wall_detector_plus_assembly_ms": {
+        "p50": 1.1765,
+        "p95": 1.9196,
+        "p99": 2.2428,
+        "p99.9": 18.3091,
+        "max": 50.0957,
+        "mean": 1.3166
+      },
+      "wall_detector_ms": {
+        "p50": 1.0277,
+        "p95": 1.6906,
+        "p99": 1.9736,
+        "p99.9": 18.1913,
+        "max": 49.9768,
+        "mean": 1.1615
+      },
+      "thread_cpu_mean_ms_per_cycle": 1.6647,
+      "cpu_to_wall_ratio": 0.9985,
+      "wall_detector_ms_busiest_decile_p99": 2.1307
+    },
+    {
+      "stream": "attacked:T1:A4:moving:multiplePeopleChaotic.csv",
+      "cycles": 1070,
+      "objects_per_cycle": {
+        "p50": 25.0,
+        "p99": 30.0,
+        "max": 32.0,
+        "mean": 24.572
+      },
+      "wall_detector_plus_assembly_ms": {
+        "p50": 1.1608,
+        "p95": 1.5903,
+        "p99": 1.8904,
+        "p99.9": 2.4878,
+        "max": 31.6325,
+        "mean": 1.2248
+      },
+      "wall_detector_ms": {
+        "p50": 1.0144,
+        "p95": 1.4249,
+        "p99": 1.6916,
+        "p99.9": 2.2597,
+        "max": 31.4868,
+        "mean": 1.0765
+      },
+      "thread_cpu_mean_ms_per_cycle": 1.5625,
+      "cpu_to_wall_ratio": 0.9965,
+      "wall_detector_ms_busiest_decile_p99": 1.7819
+    }
+  ],
+  "budget_ms": 10.0,
+  "worst_stream_wall_detector_p99_ms": 1.9736,
+  "worst_stream_thread_cpu_detector_p99_ms": null,
+  "budget_met_on": "wall (CPU clock too coarse on this platform)",
+  "budget_met": true
+}

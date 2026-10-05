@@ -1,0 +1,251 @@
+{
+  "schema": "phantomguard.latency/1",
+  "tag": "timeblock",
+  "baseline": "/workspace/configs/baseline.json",
+  "profile": "v2",
+  "hardware": {
+    "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.36",
+    "processor": "",
+    "machine": "x86_64",
+    "logical_cpus": 32,
+    "python": "3.11.17",
+    "numpy": "2.4.6",
+    "scipy": "1.17.1",
+    "blas_threads": "1"
+  },
+  "clocks": {
+    "thread_time_resolution_ms": 1.0000000000000002e-06,
+    "thread_cpu_percentiles_valid": true,
+    "wall": "perf_counter; includes preemption"
+  },
+  "warmup_cycles_excluded_per_stream": 50,
+  "streams": [
+    {
+      "stream": "clean:emptyRoom.csv",
+      "cycles": 4328,
+      "objects_per_cycle": {
+        "p50": 24.0,
+        "p99": 26.0,
+        "max": 28.0,
+        "mean": 24.0663
+      },
+      "wall_detector_plus_assembly_ms": {
+        "p50": 0.9338,
+        "p95": 1.0299,
+        "p99": 1.0906,
+        "p99.9": 1.3501,
+        "max": 1.457,
+        "mean": 0.9347
+      },
+      "wall_detector_ms": {
+        "p50": 0.8049,
+        "p95": 0.899,
+        "p99": 0.956,
+        "p99.9": 1.1936,
+        "max": 1.2616,
+        "mean": 0.8067
+      },
+      "thread_cpu_mean_ms_per_cycle": 0.9669,
+      "cpu_to_wall_ratio": 0.9998,
+      "thread_cpu_detector_ms": {
+        "p50": 0.8055,
+        "p95": 0.8997,
+        "p99": 0.9555,
+        "p99.9": 1.1946,
+        "max": 1.2626,
+        "mean": 0.8072
+      },
+      "wall_detector_ms_busiest_decile_p99": 0.9632
+    },
+    {
+      "stream": "clean:onePersonMovingFrontAndBack.csv",
+      "cycles": 4077,
+      "objects_per_cycle": {
+        "p50": 23.0,
+        "p99": 28.0,
+        "max": 29.0,
+        "mean": 22.6186
+      },
+      "wall_detector_plus_assembly_ms": {
+        "p50": 0.897,
+        "p95": 1.073,
+        "p99": 1.1679,
+        "p99.9": 1.5517,
+        "max": 1.6699,
+        "mean": 0.8917
+      },
+      "wall_detector_ms": {
+        "p50": 0.7712,
+        "p95": 0.934,
+        "p99": 1.0233,
+        "p99.9": 1.3258,
+        "max": 1.4429,
+        "mean": 0.7677
+      },
+      "thread_cpu_mean_ms_per_cycle": 0.925,
+      "cpu_to_wall_ratio": 0.9999,
+      "thread_cpu_detector_ms": {
+        "p50": 0.7717,
+        "p95": 0.9348,
+        "p99": 1.0242,
+        "p99.9": 1.3261,
+        "max": 1.4431,
+        "mean": 0.7683
+      },
+      "wall_detector_ms_busiest_decile_p99": 1.0679
+    },
+    {
+      "stream": "clean:onePersonMovingSideToSide.csv",
+      "cycles": 4943,
+      "objects_per_cycle": {
+        "p50": 23.0,
+        "p99": 28.0,
+        "max": 29.0,
+        "mean": 22.7283
+      },
+      "wall_detector_plus_assembly_ms": {
+        "p50": 0.9367,
+        "p95": 1.1286,
+        "p99": 1.2291,
+        "p99.9": 1.4776,
+        "max": 13.3989,
+        "mean": 0.9446
+      },
+      "wall_detector_ms": {
+        "p50": 0.8134,
+        "p95": 0.9931,
+        "p99": 1.0809,
+        "p99.9": 1.3105,
+        "max": 13.2491,
+        "mean": 0.8205
+      },
+      "thread_cpu_mean_ms_per_cycle": 0.9779,
+      "cpu_to_wall_ratio": 0.9998,
+      "thread_cpu_detector_ms": {
+        "p50": 0.814,
+        "p95": 0.9939,
+        "p99": 1.0817,
+        "p99.9": 1.3115,
+        "max": 13.2504,
+        "mean": 0.8211
+      },
+      "wall_detector_ms_busiest_decile_p99": 1.1586
+    },
+    {
+      "stream": "clean:multiplePeopleChaotic.csv",
+      "cycles": 5547,
+      "objects_per_cycle": {
+        "p50": 23.0,
+        "p99": 29.0,
+        "max": 32.0,
+        "mean": 23.2787
+      },
+      "wall_detector_plus_assembly_ms": {
+        "p50": 0.9485,
+        "p95": 1.1478,
+        "p99": 1.2548,
+        "p99.9": 1.5279,
+        "max": 15.2129,
+        "mean": 0.9564
+      },
+      "wall_detector_ms": {
+        "p50": 0.8206,
+        "p95": 1.0068,
+        "p99": 1.1088,
+        "p99.9": 1.3425,
+        "max": 15.092,
+        "mean": 0.8289
+      },
+      "thread_cpu_mean_ms_per_cycle": 0.9894,
+      "cpu_to_wall_ratio": 0.9999,
+      "thread_cpu_detector_ms": {
+        "p50": 0.8213,
+        "p95": 1.0077,
+        "p99": 1.1094,
+        "p99.9": 1.3433,
+        "max": 15.0935,
+        "mean": 0.8296
+      },
+      "wall_detector_ms_busiest_decile_p99": 1.1561
+    },
+    {
+      "stream": "attacked:T2:A3:moving:multiplePeopleChaotic.csv",
+      "cycles": 1070,
+      "objects_per_cycle": {
+        "p50": 25.0,
+        "p99": 42.31,
+        "max": 49.0,
+        "mean": 25.7206
+      },
+      "wall_detector_plus_assembly_ms": {
+        "p50": 1.074,
+        "p95": 1.6877,
+        "p99": 2.1623,
+        "p99.9": 17.7463,
+        "max": 44.6367,
+        "mean": 1.1964
+      },
+      "wall_detector_ms": {
+        "p50": 0.938,
+        "p95": 1.4954,
+        "p99": 1.9305,
+        "p99.9": 17.5942,
+        "max": 44.4948,
+        "mean": 1.0551
+      },
+      "thread_cpu_mean_ms_per_cycle": 1.5039,
+      "cpu_to_wall_ratio": 0.9999,
+      "thread_cpu_detector_ms": {
+        "p50": 0.9391,
+        "p95": 1.4957,
+        "p99": 1.9308,
+        "p99.9": 17.5954,
+        "max": 44.4953,
+        "mean": 1.0557
+      },
+      "wall_detector_ms_busiest_decile_p99": 2.586
+    },
+    {
+      "stream": "attacked:T1:A4:moving:multiplePeopleChaotic.csv",
+      "cycles": 1070,
+      "objects_per_cycle": {
+        "p50": 25.0,
+        "p99": 30.0,
+        "max": 32.0,
+        "mean": 24.572
+      },
+      "wall_detector_plus_assembly_ms": {
+        "p50": 1.0396,
+        "p95": 1.2534,
+        "p99": 1.986,
+        "p99.9": 2.6428,
+        "max": 39.4517,
+        "mean": 1.0854
+      },
+      "wall_detector_ms": {
+        "p50": 0.9048,
+        "p95": 1.1043,
+        "p99": 1.8486,
+        "p99.9": 2.499,
+        "max": 39.3081,
+        "mean": 0.9523
+      },
+      "thread_cpu_mean_ms_per_cycle": 1.3732,
+      "cpu_to_wall_ratio": 0.999,
+      "thread_cpu_detector_ms": {
+        "p50": 0.9058,
+        "p95": 1.1038,
+        "p99": 1.8083,
+        "p99.9": 2.4969,
+        "max": 39.309,
+        "mean": 0.9515
+      },
+      "wall_detector_ms_busiest_decile_p99": 2.095
+    }
+  ],
+  "budget_ms": 10.0,
+  "worst_stream_wall_detector_p99_ms": 1.9305,
+  "worst_stream_thread_cpu_detector_p99_ms": 1.9308,
+  "budget_met_on": "thread_cpu",
+  "budget_met": true
+}

@@ -1,0 +1,53 @@
+{
+  "tag": "loso",
+  "profile": "v2",
+  "minutes": 10.561,
+  "object_cycles": 442724,
+  "cycles": 19095,
+  "per_file": {
+    "emptyRoom.csv": {
+      "object_cycles": 105377,
+      "cycles": 4378,
+      "minutes": 2.421,
+      "ARRIVAL_POS": 1,
+      "JUMP": 3
+    },
+    "onePersonMovingFrontAndBack.csv": {
+      "object_cycles": 93424,
+      "cycles": 4127,
+      "minutes": 2.282,
+      "ARRIVAL_POS": 1,
+      "LEARNED": 65,
+      "ACCEL": 5,
+      "DRIFT": 20,
+      "COLOC": 1,
+      "DRIFT_STATIC": 8,
+      "RCS_STD": 10,
+      "CADENCE": 1
+    },
+    "onePersonMovingSideToSide.csv": {
+      "object_cycles": 113581,
+      "cycles": 4993,
+      "minutes": 2.762,
+      "LEARNED": 1,
+      "ACCEL": 6,
+      "DRIFT": 5,
+      "REPLAY": 5
+    },
+    "multiplePeopleChaotic.csv": {
+      "object_cycles": 130342,
+      "cycles": 5597,
+      "minutes": 3.096,
+      "ARRIVAL_POS": 1,
+      "ACCEL": 131,
+      "JUMP": 2,
+      "DRIFT": 2,
+      "LEARNED": 63,
+      "RR_RESID": 15,
+      "RCS_ENV": 5,
+      "COLOC": 10,
+      "REPLAY": 13
+    }
+  },
+  "caveat": "all recordings were inspected while designing these rules: descriptive counts, not a held-out test"
+}

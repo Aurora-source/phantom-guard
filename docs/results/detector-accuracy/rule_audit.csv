@@ -1,0 +1,34 @@
+code,layer,class,hard_in_fusion,evaluated,calibrated_threshold,trial,clean_firings,trials,rate,cp95_upper_rate,cp95_upper_firings_per_minute,provenance
+COUNT_MISMATCH,protocol,structural,True,True,,cycle,0,19095,0.0,0.00015687338528820949,0.28362968929115334,protocol: header object count vs frames received
+COUNT_RANGE,protocol,empirical_tail,False,True,,cycle,0,19095,0.0,0.00015687338528820949,0.28362968929115334,learned: objects-per-cycle range with tolerance
+COUNTER,protocol,structural,True,True,,cycle,0,19095,0.0,0.00015687338528820949,0.28362968929115334,protocol: measurement counter +1 per cycle (16-bit wrap)
+CADENCE,protocol,empirical_tail,False,True,,cycle,1,19095,5.2369730295888974e-05,0.0002484105520012918,0.4491304089047778,learned: cycle period range (baseline cadence_lo/hi)
+STATUS,protocol,exact_regularity,True,True,,cycle,0,19095,0.0,0.00015687338528820949,0.28362968929115334,measured: header status byte always 0x01
+BAD_ID,protocol,structural,True,True,,cycle,0,19095,0.0,0.00015687338528820949,0.28362968929115334,protocol: CAN id other than the radar header/object ids
+SHORT_HEADER,protocol,structural,True,True,,cycle,0,19095,0.0,0.00015687338528820949,0.28362968929115334,protocol: header payload shorter than the fields decoded
+HEADER_LEN,protocol,structural,True,True,,cycle,0,19095,0.0,0.00015687338528820949,0.28362968929115334,"protocol (assumed DLC; CSVs do not store it, config protocol.header_len)"
+NO_HEADER,protocol,structural,True,True,,cycle,0,19095,0.0,0.00015687338528820949,0.28362968929115334,protocol: object frames without a cycle header
+FRAME_LEN,protocol,structural,True,True,,object-cycle,0,442724,0.0,6.766568196278486e-06,0.28365097891665414,protocol: 0x60B payload must be 8 bytes
+ARRIVAL,protocol,empirical_tail,False,False,,object-cycle,0,442724,0.0,6.766568196278486e-06,0.28365097891665414,learned: arrival offset window (legacy)
+BURST_GAP,protocol,exact_regularity,True,True,,object-cycle,0,442724,0.0,6.766568196278486e-06,0.28365097891665414,measured: object frames arrive back to back (serial CAN spacing)
+RANGE_ORDER,protocol,exact_regularity,True,True,,object-cycle,0,442724,0.0,6.766568196278486e-06,0.28365097891665414,measured: objects of a cycle arrive sorted by range
+DUP_SLOT,protocol,structural,True,True,,object-cycle,0,442724,0.0,6.766568196278486e-06,0.28365097891665414,protocol/measured: a slot never repeats within a cycle
+SLOT_RANGE,protocol,empirical_tail,False,True,1.0,object-cycle,0,442724,0.0,6.766568196278486e-06,0.28365097891665414,"learned: maximum slot id seen in training, calibrated exceedance"
+FIXED_FIELD,protocol,exact_regularity,True,True,,object-cycle,0,442724,0.0,6.766568196278486e-06,0.28365097891665414,"measured: unused bits (byte 6, bits 4-3) always zero"
+RCS_GRID,kinematic,exact_regularity,True,True,,object-cycle,0,442724,0.0,6.766568196278486e-06,0.28365097891665414,measured: clean RCS always on an integer-dB grid (payload grid is 0.5 dB)
+RCS_RANGE,kinematic,empirical_tail,False,False,,object-cycle,0,442724,0.0,6.766568196278486e-06,0.28365097891665414,learned: RCS min/max (legacy)
+SPEED,kinematic,empirical_tail,False,True,1.0,object-cycle,0,442724,0.0,6.766568196278486e-06,0.28365097891665414,"learned: speed envelope, calibrated exceedance in v2"
+ACCEL,kinematic,empirical_tail,False,True,2.0,object-cycle,142,442724,0.0003207415906975904,0.0003686666524698727,15.454312117111117,"learned: acceleration quantile, calibrated exceedance in v2"
+RR_RESID,kinematic,empirical_tail,False,True,1.0,object-cycle,15,442724,3.388115394692856e-05,5.217001685965193e-05,2.1869396602663884,learned: range-rate residual quantile
+POS_SPEED,kinematic,empirical_tail,False,True,4.0,object-cycle,0,442724,0.0,6.766568196278486e-06,0.28365097891665414,learned: position-speed quantile
+RCS_STD,kinematic,empirical_tail,False,True,0.5,object-cycle,10,442724,2.258743596461904e-05,3.831300282556826e-05,1.606060922091342,learned: RCS std (v2: range-conditional)
+RCS_BAND,kinematic,empirical_tail,False,False,,object-cycle,0,442724,0.0,6.766568196278486e-06,0.28365097891665414,learned: per-range RCS band (legacy)
+JUMP,kinematic,empirical_tail,False,True,,object-cycle,5,442724,1.129371798230952e-05,2.374610242926938e-05,0.9954241210813309,learned: reassignment jump
+COLOC,kinematic,empirical_tail,False,True,0.2,object-cycle,11,442724,2.4846179561080945e-05,4.1125771456607536e-05,1.7239707033153235,learned: minimum co-location distance
+ARRIVAL_POS,protocol,empirical_tail,False,True,0.0,object-cycle,3,442724,6.776230789385712e-06,1.7513428007973766e-05,0.7341536883320366,"learned: offset vs burst position line (v2), calibrated exceedance"
+RCS_ENV,kinematic,empirical_tail,False,True,1.0,object-cycle,5,442724,1.129371798230952e-05,2.374610242926938e-05,0.9954241210813309,learned: range-conditional RCS envelope (v2)
+DRIFT,kinematic,motion_evidence,False,True,8.0,object-cycle,27,442724,6.098607710447141e-05,8.410145309013116e-05,3.525488668014744,"learned: drift model (fitted B, MAD scales), calibrated z"
+DRIFT_STATIC,kinematic,motion_evidence,False,True,32.0,object-cycle,8,442724,1.806994877169523e-05,3.2603935673445746e-05,1.3667398305975618,"learned: drift model, static windows, calibrated z"
+DRIFT_EWMA,kinematic,motion_evidence,False,True,6.0,object-cycle,0,442724,0.0,6.766568196278486e-06,0.28365097891665414,
+REPLAY,replay,replay,False,True,2.0,object-cycle,18,442724,4.065738473631427e-05,6.028927344767381e-05,2.5272946249195987,learned: training fingerprint library + stream history; v2 calibrated run length
+LEARNED,learned,learned,False,True,,object-cycle,129,442724,0.0002913779239435856,0.00033723464313696437,14.136698822161932,learned: window autoencoder threshold (corroborating only unless a route is configured)

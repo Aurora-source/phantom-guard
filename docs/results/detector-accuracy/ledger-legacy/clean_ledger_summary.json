@@ -1,0 +1,188 @@
+{
+  "pooled": {
+    "loso": {
+      "episodes": 36,
+      "minutes": 10.561296666666667,
+      "per_minute": 3.408672356834972
+    },
+    "timeblock": {
+      "episodes": 3,
+      "minutes": 2.112296666666667,
+      "per_minute": 1.4202550462450823
+    }
+  },
+  "segments": [
+    {
+      "split": "timeblock",
+      "part": "test",
+      "file": "emptyRoom.csv",
+      "cycles": 876,
+      "object_cycles": 20838,
+      "minutes": 0.48418833333333333,
+      "episodes": 0,
+      "by": {
+        "episodes": 0,
+        "cycles": 876,
+        "object_cycles": 20838,
+        "minutes": 0.48418833333333333,
+        "by_first_reason": {},
+        "by_first_class": {},
+        "episodes_per_minute": 0.0
+      }
+    },
+    {
+      "split": "timeblock",
+      "part": "test",
+      "file": "onePersonMovingFrontAndBack.csv",
+      "cycles": 826,
+      "object_cycles": 18355,
+      "minutes": 0.4565466666666667,
+      "episodes": 2,
+      "by": {
+        "episodes": 2,
+        "cycles": 826,
+        "object_cycles": 18355,
+        "minutes": 0.4565466666666667,
+        "by_first_reason": {
+          "RCS_STD": 2
+        },
+        "by_first_class": {
+          "empirical_tail": 2
+        },
+        "episodes_per_minute": 4.380713180105721
+      }
+    },
+    {
+      "split": "timeblock",
+      "part": "test",
+      "file": "onePersonMovingSideToSide.csv",
+      "cycles": 999,
+      "object_cycles": 21862,
+      "minutes": 0.5522933333333333,
+      "episodes": 0,
+      "by": {
+        "episodes": 0,
+        "cycles": 999,
+        "object_cycles": 21862,
+        "minutes": 0.5522933333333333,
+        "by_first_reason": {},
+        "by_first_class": {},
+        "episodes_per_minute": 0.0
+      }
+    },
+    {
+      "split": "timeblock",
+      "part": "test",
+      "file": "multiplePeopleChaotic.csv",
+      "cycles": 1120,
+      "object_cycles": 27159,
+      "minutes": 0.6192683333333334,
+      "episodes": 1,
+      "by": {
+        "episodes": 1,
+        "cycles": 1120,
+        "object_cycles": 27159,
+        "minutes": 0.6192683333333334,
+        "by_first_reason": {
+          "RR_RESID": 1
+        },
+        "by_first_class": {
+          "empirical_tail": 1
+        },
+        "episodes_per_minute": 1.6148088739130315
+      }
+    },
+    {
+      "split": "loso",
+      "part": "test",
+      "file": "emptyRoom.csv",
+      "cycles": 4378,
+      "object_cycles": 105377,
+      "minutes": 2.421116666666667,
+      "episodes": 0,
+      "by": {
+        "episodes": 0,
+        "cycles": 4378,
+        "object_cycles": 105377,
+        "minutes": 2.421116666666667,
+        "by_first_reason": {},
+        "by_first_class": {},
+        "episodes_per_minute": 0.0
+      }
+    },
+    {
+      "split": "loso",
+      "part": "test",
+      "file": "onePersonMovingFrontAndBack.csv",
+      "cycles": 4127,
+      "object_cycles": 93424,
+      "minutes": 2.28222,
+      "episodes": 4,
+      "by": {
+        "episodes": 4,
+        "cycles": 4127,
+        "object_cycles": 93424,
+        "minutes": 2.28222,
+        "by_first_reason": {
+          "CADENCE": 1,
+          "SLOT_RANGE": 1,
+          "RCS_STD": 2
+        },
+        "by_first_class": {
+          "empirical_tail": 4
+        },
+        "episodes_per_minute": 1.7526794086459674
+      }
+    },
+    {
+      "split": "loso",
+      "part": "test",
+      "file": "onePersonMovingSideToSide.csv",
+      "cycles": 4993,
+      "object_cycles": 113581,
+      "minutes": 2.7618533333333337,
+      "episodes": 2,
+      "by": {
+        "episodes": 2,
+        "cycles": 4993,
+        "object_cycles": 113581,
+        "minutes": 2.7618533333333337,
+        "by_first_reason": {
+          "RCS_RANGE": 1,
+          "REPLAY": 1
+        },
+        "by_first_class": {
+          "empirical_tail": 1,
+          "replay": 1
+        },
+        "episodes_per_minute": 0.7241514152332491
+      }
+    },
+    {
+      "split": "loso",
+      "part": "test",
+      "file": "multiplePeopleChaotic.csv",
+      "cycles": 5597,
+      "object_cycles": 130342,
+      "minutes": 3.0961066666666666,
+      "episodes": 30,
+      "by": {
+        "episodes": 30,
+        "cycles": 5597,
+        "object_cycles": 130342,
+        "minutes": 3.0961066666666666,
+        "by_first_reason": {
+          "RCS_BAND": 19,
+          "ARRIVAL": 9,
+          "SPEED": 1,
+          "REPLAY": 1
+        },
+        "by_first_class": {
+          "empirical_tail": 29,
+          "replay": 1
+        },
+        "episodes_per_minute": 9.689588644663406
+      }
+    }
+  ]
+}

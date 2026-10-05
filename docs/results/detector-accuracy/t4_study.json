@@ -1,0 +1,46 @@
+{
+  "clean_tracks": 208,
+  "t4_instances": 135,
+  "stats": {
+    "drift_z": {
+      "clean_tracks_scored": 106,
+      "clean_max": 8.878431896892359,
+      "clean_p99_track": 8.734750863458263,
+      "t4_above_clean_max": 0.28888888888888886,
+      "t4_above_clean_p99": 0.28888888888888886,
+      "t4_unscored": 3
+    },
+    "ewma_0.25": {
+      "clean_tracks_scored": 208,
+      "clean_max": 9.811203963329543,
+      "clean_p99_track": 8.927602147306374,
+      "t4_above_clean_max": 0.0,
+      "t4_above_clean_p99": 0.044444444444444446,
+      "t4_unscored": 0
+    },
+    "ewma_0.125": {
+      "clean_tracks_scored": 208,
+      "clean_max": 8.798000871600804,
+      "clean_p99_track": 7.33555053703156,
+      "t4_above_clean_max": 0.044444444444444446,
+      "t4_above_clean_p99": 0.13333333333333333,
+      "t4_unscored": 0
+    },
+    "ewma_0.0625": {
+      "clean_tracks_scored": 208,
+      "clean_max": 7.452549689710563,
+      "clean_p99_track": 6.009718883273382,
+      "t4_above_clean_max": 0.2222222222222222,
+      "t4_above_clean_p99": 0.37777777777777777,
+      "t4_unscored": 0
+    },
+    "ewma_0.03125": {
+      "clean_tracks_scored": 208,
+      "clean_max": 5.77387372219048,
+      "clean_p99_track": 5.414414172180117,
+      "t4_above_clean_max": 0.28888888888888886,
+      "t4_above_clean_p99": 0.37777777777777777,
+      "t4_unscored": 0
+    }
+  }
+}

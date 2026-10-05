@@ -1,0 +1,1084 @@
+{
+  "rows": [
+    {
+      "attack_type": "T1",
+      "level": "A0",
+      "paired_instances": 184,
+      "before_identified": 184,
+      "before_identification_rate": 1.0,
+      "before_detected": 184,
+      "before_exact_frame_recall": 0.9999,
+      "before_real_excess_alert_frames": 7372,
+      "before_undetected_right_censored": 0,
+      "after_identified": 184,
+      "after_identification_rate": 1.0,
+      "after_detected": 184,
+      "after_exact_frame_recall": 0.9959,
+      "after_real_excess_alert_frames": 7378,
+      "after_undetected_right_censored": 0,
+      "gained_identified": 0,
+      "lost_identified": 0
+    },
+    {
+      "attack_type": "T1",
+      "level": "A1",
+      "paired_instances": 180,
+      "before_identified": 180,
+      "before_identification_rate": 1.0,
+      "before_detected": 180,
+      "before_exact_frame_recall": 0.7822,
+      "before_real_excess_alert_frames": 3746,
+      "before_undetected_right_censored": 0,
+      "after_identified": 180,
+      "after_identification_rate": 1.0,
+      "after_detected": 180,
+      "after_exact_frame_recall": 0.7822,
+      "after_real_excess_alert_frames": 3718,
+      "after_undetected_right_censored": 0,
+      "gained_identified": 0,
+      "lost_identified": 0
+    },
+    {
+      "attack_type": "T1",
+      "level": "A2",
+      "paired_instances": 180,
+      "before_identified": 180,
+      "before_identification_rate": 1.0,
+      "before_detected": 180,
+      "before_exact_frame_recall": 0.7822,
+      "before_real_excess_alert_frames": 3746,
+      "before_undetected_right_censored": 0,
+      "after_identified": 180,
+      "after_identification_rate": 1.0,
+      "after_detected": 180,
+      "after_exact_frame_recall": 0.7822,
+      "after_real_excess_alert_frames": 3718,
+      "after_undetected_right_censored": 0,
+      "gained_identified": 0,
+      "lost_identified": 0
+    },
+    {
+      "attack_type": "T1",
+      "level": "A3",
+      "paired_instances": 178,
+      "before_identified": 119,
+      "before_identification_rate": 0.6685,
+      "before_detected": 122,
+      "before_exact_frame_recall": 0.3977,
+      "before_real_excess_alert_frames": 295,
+      "before_undetected_right_censored": 1,
+      "after_identified": 108,
+      "after_identification_rate": 0.6067,
+      "after_detected": 111,
+      "after_exact_frame_recall": 0.2672,
+      "after_real_excess_alert_frames": 356,
+      "after_undetected_right_censored": 0,
+      "gained_identified": 16,
+      "lost_identified": 27
+    },
+    {
+      "attack_type": "T1",
+      "level": "A4",
+      "paired_instances": 184,
+      "before_identified": 162,
+      "before_identification_rate": 0.8804,
+      "before_detected": 165,
+      "before_exact_frame_recall": 0.38,
+      "before_real_excess_alert_frames": 357,
+      "before_undetected_right_censored": 0,
+      "after_identified": 152,
+      "after_identification_rate": 0.8261,
+      "after_detected": 155,
+      "after_exact_frame_recall": 0.3769,
+      "after_real_excess_alert_frames": 447,
+      "after_undetected_right_censored": 0,
+      "gained_identified": 2,
+      "lost_identified": 12
+    },
+    {
+      "attack_type": "T2",
+      "level": "A0",
+      "paired_instances": 192,
+      "before_identified": 192,
+      "before_identification_rate": 1.0,
+      "before_detected": 192,
+      "before_exact_frame_recall": 0.9995,
+      "before_real_excess_alert_frames": 14936,
+      "before_undetected_right_censored": 0,
+      "after_identified": 192,
+      "after_identification_rate": 1.0,
+      "after_detected": 192,
+      "after_exact_frame_recall": 0.9954,
+      "after_real_excess_alert_frames": 14932,
+      "after_undetected_right_censored": 0,
+      "gained_identified": 0,
+      "lost_identified": 0
+    },
+    {
+      "attack_type": "T2",
+      "level": "A1",
+      "paired_instances": 192,
+      "before_identified": 192,
+      "before_identification_rate": 1.0,
+      "before_detected": 192,
+      "before_exact_frame_recall": 0.687,
+      "before_real_excess_alert_frames": 11369,
+      "before_undetected_right_censored": 0,
+      "after_identified": 192,
+      "after_identification_rate": 1.0,
+      "after_detected": 192,
+      "after_exact_frame_recall": 0.6498,
+      "after_real_excess_alert_frames": 9847,
+      "after_undetected_right_censored": 0,
+      "gained_identified": 0,
+      "lost_identified": 0
+    },
+    {
+      "attack_type": "T2",
+      "level": "A2",
+      "paired_instances": 192,
+      "before_identified": 192,
+      "before_identification_rate": 1.0,
+      "before_detected": 192,
+      "before_exact_frame_recall": 0.687,
+      "before_real_excess_alert_frames": 11369,
+      "before_undetected_right_censored": 0,
+      "after_identified": 192,
+      "after_identification_rate": 1.0,
+      "after_detected": 192,
+      "after_exact_frame_recall": 0.6498,
+      "after_real_excess_alert_frames": 9847,
+      "after_undetected_right_censored": 0,
+      "gained_identified": 0,
+      "lost_identified": 0
+    },
+    {
+      "attack_type": "T2",
+      "level": "A3",
+      "paired_instances": 192,
+      "before_identified": 192,
+      "before_identification_rate": 1.0,
+      "before_detected": 192,
+      "before_exact_frame_recall": 0.3511,
+      "before_real_excess_alert_frames": 3959,
+      "before_undetected_right_censored": 0,
+      "after_identified": 192,
+      "after_identification_rate": 1.0,
+      "after_detected": 192,
+      "after_exact_frame_recall": 0.2861,
+      "after_real_excess_alert_frames": 163,
+      "after_undetected_right_censored": 0,
+      "gained_identified": 0,
+      "lost_identified": 0
+    },
+    {
+      "attack_type": "T2",
+      "level": "A4",
+      "paired_instances": 192,
+      "before_identified": 192,
+      "before_identification_rate": 1.0,
+      "before_detected": 192,
+      "before_exact_frame_recall": 0.362,
+      "before_real_excess_alert_frames": 3205,
+      "before_undetected_right_censored": 0,
+      "after_identified": 192,
+      "after_identification_rate": 1.0,
+      "after_detected": 192,
+      "after_exact_frame_recall": 0.3807,
+      "after_real_excess_alert_frames": 217,
+      "after_undetected_right_censored": 0,
+      "gained_identified": 0,
+      "lost_identified": 0
+    },
+    {
+      "attack_type": "T3",
+      "level": "A3",
+      "paired_instances": 468,
+      "before_identified": 332,
+      "before_identification_rate": 0.7094,
+      "before_detected": 341,
+      "before_exact_frame_recall": 0.4147,
+      "before_real_excess_alert_frames": 166,
+      "before_undetected_right_censored": 0,
+      "after_identified": 336,
+      "after_identification_rate": 0.7179,
+      "after_detected": 346,
+      "after_exact_frame_recall": 0.3821,
+      "after_real_excess_alert_frames": 194,
+      "after_undetected_right_censored": 0,
+      "gained_identified": 16,
+      "lost_identified": 12
+    },
+    {
+      "attack_type": "T3",
+      "level": "A4",
+      "paired_instances": 468,
+      "before_identified": 332,
+      "before_identification_rate": 0.7094,
+      "before_detected": 341,
+      "before_exact_frame_recall": 0.4147,
+      "before_real_excess_alert_frames": 166,
+      "before_undetected_right_censored": 0,
+      "after_identified": 336,
+      "after_identification_rate": 0.7179,
+      "after_detected": 346,
+      "after_exact_frame_recall": 0.3821,
+      "after_real_excess_alert_frames": 194,
+      "after_undetected_right_censored": 0,
+      "gained_identified": 16,
+      "lost_identified": 12
+    },
+    {
+      "attack_type": "T4",
+      "level": "A0",
+      "paired_instances": 63,
+      "before_identified": 63,
+      "before_identification_rate": 1.0,
+      "before_detected": 63,
+      "before_exact_frame_recall": 1.0,
+      "before_real_excess_alert_frames": 2784,
+      "before_undetected_right_censored": 0,
+      "after_identified": 63,
+      "after_identification_rate": 1.0,
+      "after_detected": 63,
+      "after_exact_frame_recall": 1.0,
+      "after_real_excess_alert_frames": 2789,
+      "after_undetected_right_censored": 0,
+      "gained_identified": 0,
+      "lost_identified": 0
+    },
+    {
+      "attack_type": "T4",
+      "level": "A1",
+      "paired_instances": 63,
+      "before_identified": 63,
+      "before_identification_rate": 1.0,
+      "before_detected": 63,
+      "before_exact_frame_recall": 1.0,
+      "before_real_excess_alert_frames": 3034,
+      "before_undetected_right_censored": 0,
+      "after_identified": 63,
+      "after_identification_rate": 1.0,
+      "after_detected": 63,
+      "after_exact_frame_recall": 1.0,
+      "after_real_excess_alert_frames": 3039,
+      "after_undetected_right_censored": 0,
+      "gained_identified": 0,
+      "lost_identified": 0
+    },
+    {
+      "attack_type": "T4",
+      "level": "A2",
+      "paired_instances": 63,
+      "before_identified": 17,
+      "before_identification_rate": 0.2698,
+      "before_detected": 18,
+      "before_exact_frame_recall": 0.1517,
+      "before_real_excess_alert_frames": 70,
+      "before_undetected_right_censored": 0,
+      "after_identified": 20,
+      "after_identification_rate": 0.3175,
+      "after_detected": 22,
+      "after_exact_frame_recall": 0.2284,
+      "after_real_excess_alert_frames": 70,
+      "after_undetected_right_censored": 0,
+      "gained_identified": 5,
+      "lost_identified": 2
+    },
+    {
+      "attack_type": "T4",
+      "level": "A3",
+      "paired_instances": 63,
+      "before_identified": 14,
+      "before_identification_rate": 0.2222,
+      "before_detected": 14,
+      "before_exact_frame_recall": 0.0651,
+      "before_real_excess_alert_frames": 0,
+      "before_undetected_right_censored": 0,
+      "after_identified": 15,
+      "after_identification_rate": 0.2381,
+      "after_detected": 15,
+      "after_exact_frame_recall": 0.1414,
+      "after_real_excess_alert_frames": 0,
+      "after_undetected_right_censored": 0,
+      "gained_identified": 5,
+      "lost_identified": 4
+    },
+    {
+      "attack_type": "T4",
+      "level": "A4",
+      "paired_instances": 63,
+      "before_identified": 14,
+      "before_identification_rate": 0.2222,
+      "before_detected": 14,
+      "before_exact_frame_recall": 0.0651,
+      "before_real_excess_alert_frames": 0,
+      "before_undetected_right_censored": 0,
+      "after_identified": 15,
+      "after_identification_rate": 0.2381,
+      "after_detected": 15,
+      "after_exact_frame_recall": 0.1414,
+      "after_real_excess_alert_frames": 0,
+      "after_undetected_right_censored": 0,
+      "gained_identified": 5,
+      "lost_identified": 4
+    }
+  ],
+  "unpaired_before": 0,
+  "unpaired_after": 0,
+  "layer_sets": [
+    "all",
+    "all-minus-COLOC",
+    "all-minus-DRIFT",
+    "all-minus-DRIFT_EWMA",
+    "all-minus-RCS_BAND",
+    "all-minus-RCS_ENV",
+    "all-minus-REPLAY",
+    "all-minus-kinematic",
+    "all-minus-learned",
+    "all-minus-protocol",
+    "all-minus-replay",
+    "kinematic",
+    "learned",
+    "protocol",
+    "replay"
+  ],
+  "clean": {
+    "before": [
+      {
+        "split": "timeblock",
+        "fold": "timeblock",
+        "file": "emptyRoom.csv",
+        "events": 0,
+        "minutes": 0.484,
+        "per_minute": 0.0,
+        "ci95": [
+          0.0,
+          7.619
+        ]
+      },
+      {
+        "split": "timeblock",
+        "fold": "timeblock",
+        "file": "onePersonMovingFrontAndBack.csv",
+        "events": 0,
+        "minutes": 0.456,
+        "per_minute": 0.0,
+        "ci95": [
+          0.0,
+          8.09
+        ]
+      },
+      {
+        "split": "timeblock",
+        "fold": "timeblock",
+        "file": "onePersonMovingSideToSide.csv",
+        "events": 0,
+        "minutes": 0.552,
+        "per_minute": 0.0,
+        "ci95": [
+          0.0,
+          6.679
+        ]
+      },
+      {
+        "split": "timeblock",
+        "fold": "timeblock",
+        "file": "multiplePeopleChaotic.csv",
+        "events": 0,
+        "minutes": 0.619,
+        "per_minute": 0.0,
+        "ci95": [
+          0.0,
+          5.962
+        ]
+      },
+      {
+        "split": "loso",
+        "fold": "emptyRoom.csv",
+        "file": "onePersonMovingFrontAndBack.csv",
+        "events": 1,
+        "minutes": 0.457,
+        "per_minute": 2.19,
+        "ci95": [
+          0.055,
+          12.204
+        ]
+      },
+      {
+        "split": "loso",
+        "fold": "emptyRoom.csv",
+        "file": "onePersonMovingSideToSide.csv",
+        "events": 0,
+        "minutes": 0.552,
+        "per_minute": 0.0,
+        "ci95": [
+          0.0,
+          6.679
+        ]
+      },
+      {
+        "split": "loso",
+        "fold": "emptyRoom.csv",
+        "file": "multiplePeopleChaotic.csv",
+        "events": 0,
+        "minutes": 0.619,
+        "per_minute": 0.0,
+        "ci95": [
+          0.0,
+          5.957
+        ]
+      },
+      {
+        "split": "loso",
+        "fold": "onePersonMovingFrontAndBack.csv",
+        "file": "emptyRoom.csv",
+        "events": 0,
+        "minutes": 0.484,
+        "per_minute": 0.0,
+        "ci95": [
+          0.0,
+          7.619
+        ]
+      },
+      {
+        "split": "loso",
+        "fold": "onePersonMovingFrontAndBack.csv",
+        "file": "onePersonMovingSideToSide.csv",
+        "events": 0,
+        "minutes": 0.552,
+        "per_minute": 0.0,
+        "ci95": [
+          0.0,
+          6.679
+        ]
+      },
+      {
+        "split": "loso",
+        "fold": "onePersonMovingFrontAndBack.csv",
+        "file": "multiplePeopleChaotic.csv",
+        "events": 0,
+        "minutes": 0.619,
+        "per_minute": 0.0,
+        "ci95": [
+          0.0,
+          5.957
+        ]
+      },
+      {
+        "split": "loso",
+        "fold": "onePersonMovingSideToSide.csv",
+        "file": "emptyRoom.csv",
+        "events": 0,
+        "minutes": 0.484,
+        "per_minute": 0.0,
+        "ci95": [
+          0.0,
+          7.619
+        ]
+      },
+      {
+        "split": "loso",
+        "fold": "onePersonMovingSideToSide.csv",
+        "file": "onePersonMovingFrontAndBack.csv",
+        "events": 2,
+        "minutes": 0.457,
+        "per_minute": 4.381,
+        "ci95": [
+          0.531,
+          15.825
+        ]
+      },
+      {
+        "split": "loso",
+        "fold": "onePersonMovingSideToSide.csv",
+        "file": "multiplePeopleChaotic.csv",
+        "events": 1,
+        "minutes": 0.619,
+        "per_minute": 1.615,
+        "ci95": [
+          0.041,
+          8.997
+        ]
+      },
+      {
+        "split": "loso",
+        "fold": "multiplePeopleChaotic.csv",
+        "file": "emptyRoom.csv",
+        "events": 0,
+        "minutes": 0.484,
+        "per_minute": 0.0,
+        "ci95": [
+          0.0,
+          7.619
+        ]
+      },
+      {
+        "split": "loso",
+        "fold": "multiplePeopleChaotic.csv",
+        "file": "onePersonMovingFrontAndBack.csv",
+        "events": 1,
+        "minutes": 0.457,
+        "per_minute": 2.19,
+        "ci95": [
+          0.055,
+          12.204
+        ]
+      },
+      {
+        "split": "loso",
+        "fold": "multiplePeopleChaotic.csv",
+        "file": "onePersonMovingSideToSide.csv",
+        "events": 0,
+        "minutes": 0.552,
+        "per_minute": 0.0,
+        "ci95": [
+          0.0,
+          6.679
+        ]
+      }
+    ],
+    "after": [
+      {
+        "split": "timeblock",
+        "fold": "timeblock",
+        "file": "emptyRoom.csv",
+        "events": 0,
+        "minutes": 0.484,
+        "per_minute": 0.0,
+        "ci95": [
+          0.0,
+          7.619
+        ]
+      },
+      {
+        "split": "timeblock",
+        "fold": "timeblock",
+        "file": "onePersonMovingFrontAndBack.csv",
+        "events": 0,
+        "minutes": 0.456,
+        "per_minute": 0.0,
+        "ci95": [
+          0.0,
+          8.09
+        ]
+      },
+      {
+        "split": "timeblock",
+        "fold": "timeblock",
+        "file": "onePersonMovingSideToSide.csv",
+        "events": 0,
+        "minutes": 0.552,
+        "per_minute": 0.0,
+        "ci95": [
+          0.0,
+          6.679
+        ]
+      },
+      {
+        "split": "timeblock",
+        "fold": "timeblock",
+        "file": "multiplePeopleChaotic.csv",
+        "events": 0,
+        "minutes": 0.619,
+        "per_minute": 0.0,
+        "ci95": [
+          0.0,
+          5.962
+        ]
+      },
+      {
+        "split": "loso",
+        "fold": "emptyRoom.csv",
+        "file": "onePersonMovingFrontAndBack.csv",
+        "events": 0,
+        "minutes": 0.457,
+        "per_minute": 0.0,
+        "ci95": [
+          0.0,
+          8.08
+        ]
+      },
+      {
+        "split": "loso",
+        "fold": "emptyRoom.csv",
+        "file": "onePersonMovingSideToSide.csv",
+        "events": 0,
+        "minutes": 0.552,
+        "per_minute": 0.0,
+        "ci95": [
+          0.0,
+          6.679
+        ]
+      },
+      {
+        "split": "loso",
+        "fold": "emptyRoom.csv",
+        "file": "multiplePeopleChaotic.csv",
+        "events": 0,
+        "minutes": 0.619,
+        "per_minute": 0.0,
+        "ci95": [
+          0.0,
+          5.957
+        ]
+      },
+      {
+        "split": "loso",
+        "fold": "onePersonMovingFrontAndBack.csv",
+        "file": "emptyRoom.csv",
+        "events": 0,
+        "minutes": 0.484,
+        "per_minute": 0.0,
+        "ci95": [
+          0.0,
+          7.619
+        ]
+      },
+      {
+        "split": "loso",
+        "fold": "onePersonMovingFrontAndBack.csv",
+        "file": "onePersonMovingSideToSide.csv",
+        "events": 0,
+        "minutes": 0.552,
+        "per_minute": 0.0,
+        "ci95": [
+          0.0,
+          6.679
+        ]
+      },
+      {
+        "split": "loso",
+        "fold": "onePersonMovingFrontAndBack.csv",
+        "file": "multiplePeopleChaotic.csv",
+        "events": 0,
+        "minutes": 0.619,
+        "per_minute": 0.0,
+        "ci95": [
+          0.0,
+          5.957
+        ]
+      },
+      {
+        "split": "loso",
+        "fold": "onePersonMovingSideToSide.csv",
+        "file": "emptyRoom.csv",
+        "events": 0,
+        "minutes": 0.484,
+        "per_minute": 0.0,
+        "ci95": [
+          0.0,
+          7.619
+        ]
+      },
+      {
+        "split": "loso",
+        "fold": "onePersonMovingSideToSide.csv",
+        "file": "onePersonMovingFrontAndBack.csv",
+        "events": 0,
+        "minutes": 0.457,
+        "per_minute": 0.0,
+        "ci95": [
+          0.0,
+          8.08
+        ]
+      },
+      {
+        "split": "loso",
+        "fold": "onePersonMovingSideToSide.csv",
+        "file": "multiplePeopleChaotic.csv",
+        "events": 0,
+        "minutes": 0.619,
+        "per_minute": 0.0,
+        "ci95": [
+          0.0,
+          5.957
+        ]
+      },
+      {
+        "split": "loso",
+        "fold": "multiplePeopleChaotic.csv",
+        "file": "emptyRoom.csv",
+        "events": 0,
+        "minutes": 0.484,
+        "per_minute": 0.0,
+        "ci95": [
+          0.0,
+          7.619
+        ]
+      },
+      {
+        "split": "loso",
+        "fold": "multiplePeopleChaotic.csv",
+        "file": "onePersonMovingFrontAndBack.csv",
+        "events": 0,
+        "minutes": 0.457,
+        "per_minute": 0.0,
+        "ci95": [
+          0.0,
+          8.08
+        ]
+      },
+      {
+        "split": "loso",
+        "fold": "multiplePeopleChaotic.csv",
+        "file": "onePersonMovingSideToSide.csv",
+        "events": 0,
+        "minutes": 0.552,
+        "per_minute": 0.0,
+        "ci95": [
+          0.0,
+          6.679
+        ]
+      }
+    ]
+  },
+  "ablations": {
+    "before": {
+      "all": {
+        "T1|A0": 184,
+        "T1|A1": 180,
+        "T1|A2": 180,
+        "T1|A3": 119,
+        "T1|A4": 162,
+        "T2|A0": 192,
+        "T2|A1": 192,
+        "T2|A2": 192,
+        "T2|A3": 192,
+        "T2|A4": 192,
+        "T3|A3": 332,
+        "T3|A4": 332,
+        "T4|A0": 63,
+        "T4|A1": 63,
+        "T4|A2": 17,
+        "T4|A3": 14,
+        "T4|A4": 14
+      },
+      "all-minus-protocol": {
+        "T1|A0": 16,
+        "T1|A1": 4,
+        "T1|A2": 4,
+        "T1|A3": 119,
+        "T1|A4": 162,
+        "T2|A0": 96,
+        "T2|A1": 16,
+        "T2|A2": 16,
+        "T2|A3": 192,
+        "T2|A4": 192,
+        "T3|A3": 332,
+        "T3|A4": 332,
+        "T4|A0": 0,
+        "T4|A1": 1,
+        "T4|A2": 14,
+        "T4|A3": 14,
+        "T4|A4": 14
+      },
+      "all-minus-kinematic": {
+        "T1|A0": 184,
+        "T1|A1": 180,
+        "T1|A2": 180,
+        "T1|A3": 0,
+        "T1|A4": 89,
+        "T2|A0": 192,
+        "T2|A1": 192,
+        "T2|A2": 192,
+        "T2|A3": 0,
+        "T2|A4": 87,
+        "T3|A3": 198,
+        "T3|A4": 198,
+        "T4|A0": 63,
+        "T4|A1": 63,
+        "T4|A2": 10,
+        "T4|A3": 0,
+        "T4|A4": 0
+      },
+      "all-minus-replay": {
+        "T1|A0": 184,
+        "T1|A1": 180,
+        "T1|A2": 180,
+        "T1|A3": 119,
+        "T1|A4": 100,
+        "T2|A0": 192,
+        "T2|A1": 192,
+        "T2|A2": 192,
+        "T2|A3": 192,
+        "T2|A4": 192,
+        "T3|A3": 227,
+        "T3|A4": 227,
+        "T4|A0": 63,
+        "T4|A1": 63,
+        "T4|A2": 17,
+        "T4|A3": 14,
+        "T4|A4": 14
+      },
+      "all-minus-learned": {
+        "T1|A0": 184,
+        "T1|A1": 180,
+        "T1|A2": 180,
+        "T1|A3": 119,
+        "T1|A4": 162,
+        "T2|A0": 192,
+        "T2|A1": 192,
+        "T2|A2": 192,
+        "T2|A3": 192,
+        "T2|A4": 192,
+        "T3|A3": 332,
+        "T3|A4": 332,
+        "T4|A0": 63,
+        "T4|A1": 63,
+        "T4|A2": 17,
+        "T4|A3": 14,
+        "T4|A4": 14
+      },
+      "all-minus-COLOC": {
+        "T1|A0": 184,
+        "T1|A1": 180,
+        "T1|A2": 180,
+        "T1|A3": 65,
+        "T1|A4": 89,
+        "T2|A0": 192,
+        "T2|A1": 192,
+        "T2|A2": 192,
+        "T2|A3": 192,
+        "T2|A4": 90,
+        "T3|A3": 238,
+        "T3|A4": 238,
+        "T4|A0": 63,
+        "T4|A1": 63,
+        "T4|A2": 17,
+        "T4|A3": 14,
+        "T4|A4": 14
+      },
+      "all-minus-RCS_BAND": {
+        "T1|A0": 184,
+        "T1|A1": 180,
+        "T1|A2": 180,
+        "T1|A3": 94,
+        "T1|A4": 162,
+        "T2|A0": 192,
+        "T2|A1": 192,
+        "T2|A2": 192,
+        "T2|A3": 188,
+        "T2|A4": 192,
+        "T3|A3": 315,
+        "T3|A4": 315,
+        "T4|A0": 63,
+        "T4|A1": 63,
+        "T4|A2": 17,
+        "T4|A3": 14,
+        "T4|A4": 14
+      },
+      "all-minus-REPLAY": {
+        "T1|A0": 184,
+        "T1|A1": 180,
+        "T1|A2": 180,
+        "T1|A3": 119,
+        "T1|A4": 100,
+        "T2|A0": 192,
+        "T2|A1": 192,
+        "T2|A2": 192,
+        "T2|A3": 192,
+        "T2|A4": 192,
+        "T3|A3": 227,
+        "T3|A4": 227,
+        "T4|A0": 63,
+        "T4|A1": 63,
+        "T4|A2": 17,
+        "T4|A3": 14,
+        "T4|A4": 14
+      }
+    },
+    "after": {
+      "all": {
+        "T1|A0": 184,
+        "T1|A1": 180,
+        "T1|A2": 180,
+        "T1|A3": 108,
+        "T1|A4": 152,
+        "T2|A0": 192,
+        "T2|A1": 192,
+        "T2|A2": 192,
+        "T2|A3": 192,
+        "T2|A4": 192,
+        "T3|A3": 336,
+        "T3|A4": 336,
+        "T4|A0": 63,
+        "T4|A1": 63,
+        "T4|A2": 20,
+        "T4|A3": 15,
+        "T4|A4": 15
+      },
+      "all-minus-protocol": {
+        "T1|A0": 8,
+        "T1|A1": 7,
+        "T1|A2": 7,
+        "T1|A3": 108,
+        "T1|A4": 152,
+        "T2|A0": 64,
+        "T2|A1": 18,
+        "T2|A2": 18,
+        "T2|A3": 192,
+        "T2|A4": 192,
+        "T3|A3": 336,
+        "T3|A4": 336,
+        "T4|A0": 2,
+        "T4|A1": 3,
+        "T4|A2": 15,
+        "T4|A3": 15,
+        "T4|A4": 15
+      },
+      "all-minus-kinematic": {
+        "T1|A0": 184,
+        "T1|A1": 180,
+        "T1|A2": 180,
+        "T1|A3": 0,
+        "T1|A4": 79,
+        "T2|A0": 192,
+        "T2|A1": 192,
+        "T2|A2": 192,
+        "T2|A3": 0,
+        "T2|A4": 87,
+        "T3|A3": 201,
+        "T3|A4": 201,
+        "T4|A0": 63,
+        "T4|A1": 63,
+        "T4|A2": 10,
+        "T4|A3": 0,
+        "T4|A4": 0
+      },
+      "all-minus-replay": {
+        "T1|A0": 184,
+        "T1|A1": 180,
+        "T1|A2": 180,
+        "T1|A3": 108,
+        "T1|A4": 103,
+        "T2|A0": 192,
+        "T2|A1": 192,
+        "T2|A2": 192,
+        "T2|A3": 192,
+        "T2|A4": 192,
+        "T3|A3": 213,
+        "T3|A4": 213,
+        "T4|A0": 63,
+        "T4|A1": 63,
+        "T4|A2": 20,
+        "T4|A3": 15,
+        "T4|A4": 15
+      },
+      "all-minus-learned": {
+        "T1|A0": 184,
+        "T1|A1": 180,
+        "T1|A2": 180,
+        "T1|A3": 108,
+        "T1|A4": 152,
+        "T2|A0": 192,
+        "T2|A1": 192,
+        "T2|A2": 192,
+        "T2|A3": 192,
+        "T2|A4": 192,
+        "T3|A3": 336,
+        "T3|A4": 336,
+        "T4|A0": 63,
+        "T4|A1": 63,
+        "T4|A2": 20,
+        "T4|A3": 15,
+        "T4|A4": 15
+      },
+      "all-minus-COLOC": {
+        "T1|A0": 184,
+        "T1|A1": 180,
+        "T1|A2": 180,
+        "T1|A3": 12,
+        "T1|A4": 79,
+        "T2|A0": 192,
+        "T2|A1": 192,
+        "T2|A2": 192,
+        "T2|A3": 58,
+        "T2|A4": 87,
+        "T3|A3": 219,
+        "T3|A4": 219,
+        "T4|A0": 63,
+        "T4|A1": 63,
+        "T4|A2": 20,
+        "T4|A3": 15,
+        "T4|A4": 15
+      },
+      "all-minus-REPLAY": {
+        "T1|A0": 184,
+        "T1|A1": 180,
+        "T1|A2": 180,
+        "T1|A3": 108,
+        "T1|A4": 103,
+        "T2|A0": 192,
+        "T2|A1": 192,
+        "T2|A2": 192,
+        "T2|A3": 192,
+        "T2|A4": 192,
+        "T3|A3": 213,
+        "T3|A4": 213,
+        "T4|A0": 63,
+        "T4|A1": 63,
+        "T4|A2": 20,
+        "T4|A3": 15,
+        "T4|A4": 15
+      },
+      "all-minus-DRIFT": {
+        "T1|A0": 184,
+        "T1|A1": 180,
+        "T1|A2": 180,
+        "T1|A3": 105,
+        "T1|A4": 152,
+        "T2|A0": 192,
+        "T2|A1": 192,
+        "T2|A2": 192,
+        "T2|A3": 192,
+        "T2|A4": 192,
+        "T3|A3": 329,
+        "T3|A4": 329,
+        "T4|A0": 63,
+        "T4|A1": 63,
+        "T4|A2": 16,
+        "T4|A3": 11,
+        "T4|A4": 11
+      },
+      "all-minus-DRIFT_EWMA": {
+        "T1|A0": 184,
+        "T1|A1": 180,
+        "T1|A2": 180,
+        "T1|A3": 108,
+        "T1|A4": 152,
+        "T2|A0": 192,
+        "T2|A1": 192,
+        "T2|A2": 192,
+        "T2|A3": 192,
+        "T2|A4": 192,
+        "T3|A3": 336,
+        "T3|A4": 336,
+        "T4|A0": 63,
+        "T4|A1": 63,
+        "T4|A2": 20,
+        "T4|A3": 14,
+        "T4|A4": 14
+      },
+      "all-minus-RCS_ENV": {
+        "T1|A0": 184,
+        "T1|A1": 180,
+        "T1|A2": 180,
+        "T1|A3": 106,
+        "T1|A4": 152,
+        "T2|A0": 192,
+        "T2|A1": 192,
+        "T2|A2": 192,
+        "T2|A3": 191,
+        "T2|A4": 192,
+        "T3|A3": 333,
+        "T3|A4": 333,
+        "T4|A0": 63,
+        "T4|A1": 63,
+        "T4|A2": 20,
+        "T4|A3": 15,
+        "T4|A4": 15
+      }
+    }
+  }
+}

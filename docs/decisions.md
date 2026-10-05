@@ -627,3 +627,12 @@ Code that sees an unknown profile/schema refuses to run it.
   (0.95/min), LOSO 14 in 10.56 min (1.33/min; chaotic held out 9 in 3.10 min). Legacy on the same
   intervals: 3 (1.42/min) and 36 (3.41/min). The <1/min target is therefore met on the time-block split
   only narrowly and **not met in LOSO**; thresholds were not changed in response.
+- Final attack matrix (test part, seeds 11/22/33 x 3, paired; docs/results/detector-accuracy/final): no
+  instance lost at A0-A2; collateral alert frames on real objects in T2 A3/A4 fell ~94%; exact
+  identification T1 A3 67.4% -> 58.6%, T3 80.1% -> 78.0%, T1 A4 and T4 unchanged within 0.5 points.
+  Held-back seeds 101/202 agree. v2 trades a few points of A3 recall for far fewer clean and collateral
+  alarms; it is not a recall gain at equal clean budget, and the DRIFT_EWMA gain seen on validation did not
+  appear on test. Reported as is; nothing was changed after these results.
+- Latency: Windows `time.thread_time` advertises 100 ns resolution but advances in 15.6 ms ticks, so the
+  benchmark now measures the effective resolution from samples and reports CPU percentiles only where valid
+  (Linux container: detector CPU p99 <= 1.93 ms; Windows wall p99 1.97 ms).

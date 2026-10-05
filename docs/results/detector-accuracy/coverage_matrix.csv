@@ -1,0 +1,56 @@
+schema,attack_type,level,motion_case,replay_provenance,replay_variant,detector_layers,requested_runs,supported_runs,unsupported_runs,blocked_runs,not_executed_runs,executed_runs,eligible_runs,no_eligible_attack_runs,unsupported_reason,requested_instances,scheduled_instances,scheduled_unobserved_instances,unscheduled_no_material_instances,planner_no_source_material_instances,planner_exhausted_instances,planner_window_exhausted_instances,planner_retried_instances,slot_capacity_dropped_instances,slot_capacity_partial_instances,attack_instances,right_censored_instances,emitted_instance_fraction,planning_seconds_total,planning_seconds_p95,planner_versions
+phantomguard.coverage/1,T1,A0,moving,not_applicable,not_applicable,all,72,72,0,0,0,72,72,0,,432,416,0,16,0,0,16,0,0,0,416,9,0.9629629629629629,0.0206,0.0004,2
+phantomguard.coverage/1,T1,A0,static,not_applicable,not_applicable,all,72,72,0,0,0,72,72,0,,432,416,0,16,0,0,16,0,0,0,416,9,0.9629629629629629,0.0208,0.0004,2
+phantomguard.coverage/1,T1,A1,moving,not_applicable,not_applicable,all,72,72,0,0,0,72,72,0,,432,413,0,19,0,0,19,0,0,0,413,5,0.9560185185185185,1.2345,0.0262,2
+phantomguard.coverage/1,T1,A1,static,not_applicable,not_applicable,all,72,72,0,0,0,72,72,0,,432,417,0,15,0,0,15,0,0,0,417,8,0.9652777777777778,0.8536,0.0187,2
+phantomguard.coverage/1,T1,A2,moving,not_applicable,not_applicable,all,72,72,0,0,0,72,72,0,,432,413,0,19,0,0,19,0,0,0,413,5,0.9560185185185185,1.1761,0.0248,2
+phantomguard.coverage/1,T1,A2,static,not_applicable,not_applicable,all,72,72,0,0,0,72,72,0,,432,417,0,15,0,0,15,0,0,0,417,8,0.9652777777777778,0.8484,0.0185,2
+phantomguard.coverage/1,T1,A3,moving,not_applicable,not_applicable,all,72,72,0,0,0,72,72,0,,432,415,0,17,0,0,17,18,0,0,415,5,0.9606481481481481,0.6172,0.0125,2
+phantomguard.coverage/1,T1,A3,static,not_applicable,not_applicable,all,72,72,0,0,0,72,72,0,,432,420,0,12,0,0,12,0,0,0,420,2,0.9722222222222222,0.0394,0.0007,2
+phantomguard.coverage/1,T1,A4,moving,not_applicable,not_applicable,all,72,72,0,0,0,72,72,0,,432,431,0,1,0,0,1,0,0,0,431,0,0.9976851851851852,0.2961,0.0057,2
+phantomguard.coverage/1,T1,A4,static,not_applicable,not_applicable,all,72,72,0,0,0,72,72,0,,432,420,0,12,0,0,12,0,0,0,420,2,0.9722222222222222,0.4565,0.0101,2
+phantomguard.coverage/1,T2,A0,moving,not_applicable,not_applicable,all,72,72,0,0,0,72,72,0,,432,432,0,0,0,0,0,0,0,0,432,0,1.0,0.08,0.0015,2
+phantomguard.coverage/1,T2,A0,static,not_applicable,not_applicable,all,72,72,0,0,0,72,72,0,,432,432,0,0,0,0,0,0,0,0,432,0,1.0,0.0799,0.0016,2
+phantomguard.coverage/1,T2,A1,moving,not_applicable,not_applicable,all,72,72,0,0,0,72,72,0,,432,432,0,0,0,0,0,0,0,10,432,0,1.0,2.7353,0.0545,2
+phantomguard.coverage/1,T2,A1,static,not_applicable,not_applicable,all,72,72,0,0,0,72,72,0,,432,432,0,0,0,0,0,0,0,11,432,0,1.0,1.8048,0.0382,2
+phantomguard.coverage/1,T2,A2,moving,not_applicable,not_applicable,all,72,72,0,0,0,72,72,0,,432,432,0,0,0,0,0,0,0,10,432,0,1.0,2.7402,0.0532,2
+phantomguard.coverage/1,T2,A2,static,not_applicable,not_applicable,all,72,72,0,0,0,72,72,0,,432,432,0,0,0,0,0,0,0,11,432,0,1.0,1.873,0.0376,2
+phantomguard.coverage/1,T2,A3,moving,not_applicable,not_applicable,all,72,72,0,0,0,72,72,0,,432,432,0,0,0,0,0,6,0,3,432,0,1.0,1.5768,0.0296,2
+phantomguard.coverage/1,T2,A3,static,not_applicable,not_applicable,all,72,72,0,0,0,72,72,0,,432,432,0,0,0,0,0,0,0,5,432,0,1.0,0.3742,0.006,2
+phantomguard.coverage/1,T2,A4,moving,not_applicable,not_applicable,all,72,72,0,0,0,72,72,0,,432,432,0,0,0,0,0,0,0,4,432,0,1.0,1.548,0.0302,2
+phantomguard.coverage/1,T2,A4,static,not_applicable,not_applicable,all,72,72,0,0,0,72,72,0,,432,432,0,0,0,0,0,0,0,5,432,0,1.0,4.2878,0.1098,2
+phantomguard.coverage/1,T3,A0,moving,earlier_stream,exact,all,72,0,72,0,0,0,0,0,T3 recorded-track replay is documented as inherently A3/A4,0,0,0,0,0,0,0,0,0,0,0,0,,,,
+phantomguard.coverage/1,T3,A0,moving,earlier_stream,translated,all,72,0,72,0,0,0,0,0,T3 recorded-track replay is documented as inherently A3/A4,0,0,0,0,0,0,0,0,0,0,0,0,,,,
+phantomguard.coverage/1,T3,A0,moving,training,exact,all,72,0,72,0,0,0,0,0,T3 recorded-track replay is documented as inherently A3/A4,0,0,0,0,0,0,0,0,0,0,0,0,,,,
+phantomguard.coverage/1,T3,A0,moving,training,translated,all,72,0,72,0,0,0,0,0,T3 recorded-track replay is documented as inherently A3/A4,0,0,0,0,0,0,0,0,0,0,0,0,,,,
+phantomguard.coverage/1,T3,A0,moving,unseen,exact,all,72,0,72,0,0,0,0,0,T3 recorded-track replay is documented as inherently A3/A4,0,0,0,0,0,0,0,0,0,0,0,0,,,,
+phantomguard.coverage/1,T3,A0,moving,unseen,translated,all,72,0,72,0,0,0,0,0,T3 recorded-track replay is documented as inherently A3/A4,0,0,0,0,0,0,0,0,0,0,0,0,,,,
+phantomguard.coverage/1,T3,A1,moving,earlier_stream,exact,all,72,0,72,0,0,0,0,0,T3 recorded-track replay is documented as inherently A3/A4,0,0,0,0,0,0,0,0,0,0,0,0,,,,
+phantomguard.coverage/1,T3,A1,moving,earlier_stream,translated,all,72,0,72,0,0,0,0,0,T3 recorded-track replay is documented as inherently A3/A4,0,0,0,0,0,0,0,0,0,0,0,0,,,,
+phantomguard.coverage/1,T3,A1,moving,training,exact,all,72,0,72,0,0,0,0,0,T3 recorded-track replay is documented as inherently A3/A4,0,0,0,0,0,0,0,0,0,0,0,0,,,,
+phantomguard.coverage/1,T3,A1,moving,training,translated,all,72,0,72,0,0,0,0,0,T3 recorded-track replay is documented as inherently A3/A4,0,0,0,0,0,0,0,0,0,0,0,0,,,,
+phantomguard.coverage/1,T3,A1,moving,unseen,exact,all,72,0,72,0,0,0,0,0,T3 recorded-track replay is documented as inherently A3/A4,0,0,0,0,0,0,0,0,0,0,0,0,,,,
+phantomguard.coverage/1,T3,A1,moving,unseen,translated,all,72,0,72,0,0,0,0,0,T3 recorded-track replay is documented as inherently A3/A4,0,0,0,0,0,0,0,0,0,0,0,0,,,,
+phantomguard.coverage/1,T3,A2,moving,earlier_stream,exact,all,72,0,72,0,0,0,0,0,T3 recorded-track replay is documented as inherently A3/A4,0,0,0,0,0,0,0,0,0,0,0,0,,,,
+phantomguard.coverage/1,T3,A2,moving,earlier_stream,translated,all,72,0,72,0,0,0,0,0,T3 recorded-track replay is documented as inherently A3/A4,0,0,0,0,0,0,0,0,0,0,0,0,,,,
+phantomguard.coverage/1,T3,A2,moving,training,exact,all,72,0,72,0,0,0,0,0,T3 recorded-track replay is documented as inherently A3/A4,0,0,0,0,0,0,0,0,0,0,0,0,,,,
+phantomguard.coverage/1,T3,A2,moving,training,translated,all,72,0,72,0,0,0,0,0,T3 recorded-track replay is documented as inherently A3/A4,0,0,0,0,0,0,0,0,0,0,0,0,,,,
+phantomguard.coverage/1,T3,A2,moving,unseen,exact,all,72,0,72,0,0,0,0,0,T3 recorded-track replay is documented as inherently A3/A4,0,0,0,0,0,0,0,0,0,0,0,0,,,,
+phantomguard.coverage/1,T3,A2,moving,unseen,translated,all,72,0,72,0,0,0,0,0,T3 recorded-track replay is documented as inherently A3/A4,0,0,0,0,0,0,0,0,0,0,0,0,,,,
+phantomguard.coverage/1,T3,A3,moving,earlier_stream,exact,all,72,72,0,0,0,72,54,18,,432,291,0,141,141,0,0,0,0,0,291,0,0.6736111111111112,218.5648,6.3431,2
+phantomguard.coverage/1,T3,A3,moving,earlier_stream,translated,all,72,72,0,0,0,72,54,18,,432,291,0,141,141,0,0,0,0,0,291,0,0.6736111111111112,219.0254,6.3895,2
+phantomguard.coverage/1,T3,A3,moving,training,exact,all,72,72,0,0,0,72,72,0,,432,432,0,0,0,0,0,6,0,0,432,0,1.0,0.1574,0.0033,2
+phantomguard.coverage/1,T3,A3,moving,training,translated,all,72,72,0,0,0,72,72,0,,432,432,0,0,0,0,0,0,0,0,432,0,1.0,0.1777,0.0038,2
+phantomguard.coverage/1,T3,A3,moving,unseen,exact,all,72,72,0,0,0,72,63,9,,432,378,0,54,54,0,0,1,0,0,378,0,0.875,0.1776,0.0039,2
+phantomguard.coverage/1,T3,A3,moving,unseen,translated,all,72,72,0,0,0,72,63,9,,432,378,0,54,54,0,0,0,0,0,378,0,0.875,0.1938,0.0048,2
+phantomguard.coverage/1,T3,A4,moving,earlier_stream,exact,all,72,72,0,0,0,72,54,18,,432,291,0,141,141,0,0,0,0,0,291,0,0.6736111111111112,216.8298,6.2731,2
+phantomguard.coverage/1,T3,A4,moving,earlier_stream,translated,all,72,72,0,0,0,72,54,18,,432,291,0,141,141,0,0,0,0,0,291,0,0.6736111111111112,218.522,6.4311,2
+phantomguard.coverage/1,T3,A4,moving,training,exact,all,72,72,0,0,0,72,72,0,,432,432,0,0,0,0,0,6,0,0,432,0,1.0,0.1639,0.0035,2
+phantomguard.coverage/1,T3,A4,moving,training,translated,all,72,72,0,0,0,72,72,0,,432,432,0,0,0,0,0,0,0,0,432,0,1.0,0.1757,0.0034,2
+phantomguard.coverage/1,T3,A4,moving,unseen,exact,all,72,72,0,0,0,72,63,9,,432,378,0,54,54,0,0,1,0,0,378,0,0.875,0.1846,0.0042,2
+phantomguard.coverage/1,T3,A4,moving,unseen,translated,all,72,72,0,0,0,72,63,9,,432,378,0,54,54,0,0,0,0,0,378,0,0.875,0.1815,0.0044,2
+phantomguard.coverage/1,T4,A0,moving,not_applicable,not_applicable,all,72,72,0,0,0,72,54,18,,432,248,0,184,184,0,0,0,0,0,248,0,0.5740740740740741,15.6489,0.2679,2
+phantomguard.coverage/1,T4,A1,moving,not_applicable,not_applicable,all,72,72,0,0,0,72,54,18,,432,248,0,184,184,0,0,0,0,0,248,0,0.5740740740740741,15.7424,0.2752,2
+phantomguard.coverage/1,T4,A2,moving,not_applicable,not_applicable,all,72,72,0,0,0,72,54,18,,432,248,0,184,184,0,0,0,0,0,248,0,0.5740740740740741,15.1049,0.2459,2
+phantomguard.coverage/1,T4,A3,moving,not_applicable,not_applicable,all,72,72,0,0,0,72,54,18,,432,248,0,184,184,0,0,0,0,0,248,0,0.5740740740740741,15.2493,0.2518,2
+phantomguard.coverage/1,T4,A4,moving,not_applicable,not_applicable,all,72,72,0,0,0,72,54,18,,432,248,0,184,184,0,0,0,0,0,248,0,0.5740740740740741,15.3015,0.2579,2

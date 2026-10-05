@@ -1,0 +1,1141 @@
+{
+  "summary": {
+    "overall": [
+      "ae+independent               instances  2243 identified  1749 detected  1776 +id   13 -id    0 +det   12",
+      "ae+joint                     instances  2243 identified  1736 detected  1764 +id    0 -id    0 +det    0",
+      "physics                      instances  2243 identified  1736 detected  1764 +id    0 -id    0 +det    0",
+      "physics-minus-kinematic      instances  2243 identified   950 detected  1184 +id    0 -id  786 +det    0",
+      "physics-minus-protocol       instances  2243 identified  1383 detected  1409 +id    0 -id  353 +det    0",
+      "physics-minus-replay         instances  2243 identified  1441 detected  1485 +id    0 -id  295 +det    0",
+      "pred+independent             instances  2243 identified  1736 detected  1764 +id    0 -id    0 +det    0",
+      "pred+joint                   instances  2243 identified  1736 detected  1764 +id    0 -id    0 +det    0",
+      "resid+independent            instances  2243 identified  1740 detected  1768 +id    4 -id    0 +det    4",
+      "resid+joint                  instances  2243 identified  1736 detected  1764 +id    0 -id    0 +det    0"
+    ],
+    "totals": {
+      "physics": {
+        "instances": 2243,
+        "identified": 1736,
+        "detected": 1764,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "physics-minus-protocol": {
+        "instances": 2243,
+        "identified": 1383,
+        "detected": 1409,
+        "gained_identified": 0,
+        "lost_identified": 353,
+        "gained_detected": 0
+      },
+      "physics-minus-kinematic": {
+        "instances": 2243,
+        "identified": 950,
+        "detected": 1184,
+        "gained_identified": 0,
+        "lost_identified": 786,
+        "gained_detected": 0
+      },
+      "physics-minus-replay": {
+        "instances": 2243,
+        "identified": 1441,
+        "detected": 1485,
+        "gained_identified": 0,
+        "lost_identified": 295,
+        "gained_detected": 0
+      },
+      "ae+independent": {
+        "instances": 2243,
+        "identified": 1749,
+        "detected": 1776,
+        "gained_identified": 13,
+        "lost_identified": 0,
+        "gained_detected": 12
+      },
+      "ae+joint": {
+        "instances": 2243,
+        "identified": 1736,
+        "detected": 1764,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "pred+independent": {
+        "instances": 2243,
+        "identified": 1736,
+        "detected": 1764,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "pred+joint": {
+        "instances": 2243,
+        "identified": 1736,
+        "detected": 1764,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "resid+independent": {
+        "instances": 2243,
+        "identified": 1740,
+        "detected": 1768,
+        "gained_identified": 4,
+        "lost_identified": 0,
+        "gained_detected": 4
+      },
+      "resid+joint": {
+        "instances": 2243,
+        "identified": 1736,
+        "detected": 1764,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      }
+    },
+    "by_type_level": {
+      "ae+independent|T1|A2": {
+        "instances": 180,
+        "identified": 180,
+        "detected": 180,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "ae+independent|T1|A3": {
+        "instances": 178,
+        "identified": 108,
+        "detected": 111,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "ae+independent|T1|A4": {
+        "instances": 184,
+        "identified": 152,
+        "detected": 155,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "ae+independent|T2|A2": {
+        "instances": 192,
+        "identified": 192,
+        "detected": 192,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "ae+independent|T2|A3": {
+        "instances": 192,
+        "identified": 192,
+        "detected": 192,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "ae+independent|T2|A4": {
+        "instances": 192,
+        "identified": 192,
+        "detected": 192,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "ae+independent|T3|A3": {
+        "instances": 468,
+        "identified": 338,
+        "detected": 348,
+        "gained_identified": 2,
+        "lost_identified": 0,
+        "gained_detected": 2
+      },
+      "ae+independent|T3|A4": {
+        "instances": 468,
+        "identified": 338,
+        "detected": 348,
+        "gained_identified": 2,
+        "lost_identified": 0,
+        "gained_detected": 2
+      },
+      "ae+independent|T4|A2": {
+        "instances": 63,
+        "identified": 21,
+        "detected": 22,
+        "gained_identified": 1,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "ae+independent|T4|A3": {
+        "instances": 63,
+        "identified": 18,
+        "detected": 18,
+        "gained_identified": 4,
+        "lost_identified": 0,
+        "gained_detected": 4
+      },
+      "ae+independent|T4|A4": {
+        "instances": 63,
+        "identified": 18,
+        "detected": 18,
+        "gained_identified": 4,
+        "lost_identified": 0,
+        "gained_detected": 4
+      },
+      "ae+joint|T1|A2": {
+        "instances": 180,
+        "identified": 180,
+        "detected": 180,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "ae+joint|T1|A3": {
+        "instances": 178,
+        "identified": 108,
+        "detected": 111,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "ae+joint|T1|A4": {
+        "instances": 184,
+        "identified": 152,
+        "detected": 155,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "ae+joint|T2|A2": {
+        "instances": 192,
+        "identified": 192,
+        "detected": 192,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "ae+joint|T2|A3": {
+        "instances": 192,
+        "identified": 192,
+        "detected": 192,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "ae+joint|T2|A4": {
+        "instances": 192,
+        "identified": 192,
+        "detected": 192,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "ae+joint|T3|A3": {
+        "instances": 468,
+        "identified": 336,
+        "detected": 346,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "ae+joint|T3|A4": {
+        "instances": 468,
+        "identified": 336,
+        "detected": 346,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "ae+joint|T4|A2": {
+        "instances": 63,
+        "identified": 20,
+        "detected": 22,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "ae+joint|T4|A3": {
+        "instances": 63,
+        "identified": 14,
+        "detected": 14,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "ae+joint|T4|A4": {
+        "instances": 63,
+        "identified": 14,
+        "detected": 14,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "physics|T1|A2": {
+        "instances": 180,
+        "identified": 180,
+        "detected": 180,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "physics|T1|A3": {
+        "instances": 178,
+        "identified": 108,
+        "detected": 111,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "physics|T1|A4": {
+        "instances": 184,
+        "identified": 152,
+        "detected": 155,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "physics|T2|A2": {
+        "instances": 192,
+        "identified": 192,
+        "detected": 192,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "physics|T2|A3": {
+        "instances": 192,
+        "identified": 192,
+        "detected": 192,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "physics|T2|A4": {
+        "instances": 192,
+        "identified": 192,
+        "detected": 192,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "physics|T3|A3": {
+        "instances": 468,
+        "identified": 336,
+        "detected": 346,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "physics|T3|A4": {
+        "instances": 468,
+        "identified": 336,
+        "detected": 346,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "physics|T4|A2": {
+        "instances": 63,
+        "identified": 20,
+        "detected": 22,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "physics|T4|A3": {
+        "instances": 63,
+        "identified": 14,
+        "detected": 14,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "physics|T4|A4": {
+        "instances": 63,
+        "identified": 14,
+        "detected": 14,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "physics-minus-kinematic|T1|A2": {
+        "instances": 180,
+        "identified": 180,
+        "detected": 180,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "physics-minus-kinematic|T1|A3": {
+        "instances": 178,
+        "identified": 0,
+        "detected": 0,
+        "gained_identified": 0,
+        "lost_identified": 108,
+        "gained_detected": 0
+      },
+      "physics-minus-kinematic|T1|A4": {
+        "instances": 184,
+        "identified": 79,
+        "detected": 79,
+        "gained_identified": 0,
+        "lost_identified": 73,
+        "gained_detected": 0
+      },
+      "physics-minus-kinematic|T2|A2": {
+        "instances": 192,
+        "identified": 192,
+        "detected": 192,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "physics-minus-kinematic|T2|A3": {
+        "instances": 192,
+        "identified": 0,
+        "detected": 153,
+        "gained_identified": 0,
+        "lost_identified": 192,
+        "gained_detected": 0
+      },
+      "physics-minus-kinematic|T2|A4": {
+        "instances": 192,
+        "identified": 87,
+        "detected": 163,
+        "gained_identified": 0,
+        "lost_identified": 105,
+        "gained_detected": 0
+      },
+      "physics-minus-kinematic|T3|A3": {
+        "instances": 468,
+        "identified": 201,
+        "detected": 201,
+        "gained_identified": 0,
+        "lost_identified": 135,
+        "gained_detected": 0
+      },
+      "physics-minus-kinematic|T3|A4": {
+        "instances": 468,
+        "identified": 201,
+        "detected": 201,
+        "gained_identified": 0,
+        "lost_identified": 135,
+        "gained_detected": 0
+      },
+      "physics-minus-kinematic|T4|A2": {
+        "instances": 63,
+        "identified": 10,
+        "detected": 15,
+        "gained_identified": 0,
+        "lost_identified": 10,
+        "gained_detected": 0
+      },
+      "physics-minus-kinematic|T4|A3": {
+        "instances": 63,
+        "identified": 0,
+        "detected": 0,
+        "gained_identified": 0,
+        "lost_identified": 14,
+        "gained_detected": 0
+      },
+      "physics-minus-kinematic|T4|A4": {
+        "instances": 63,
+        "identified": 0,
+        "detected": 0,
+        "gained_identified": 0,
+        "lost_identified": 14,
+        "gained_detected": 0
+      },
+      "physics-minus-protocol|T1|A2": {
+        "instances": 180,
+        "identified": 7,
+        "detected": 7,
+        "gained_identified": 0,
+        "lost_identified": 173,
+        "gained_detected": 0
+      },
+      "physics-minus-protocol|T1|A3": {
+        "instances": 178,
+        "identified": 108,
+        "detected": 111,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "physics-minus-protocol|T1|A4": {
+        "instances": 184,
+        "identified": 152,
+        "detected": 155,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "physics-minus-protocol|T2|A2": {
+        "instances": 192,
+        "identified": 18,
+        "detected": 18,
+        "gained_identified": 0,
+        "lost_identified": 174,
+        "gained_detected": 0
+      },
+      "physics-minus-protocol|T2|A3": {
+        "instances": 192,
+        "identified": 192,
+        "detected": 192,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "physics-minus-protocol|T2|A4": {
+        "instances": 192,
+        "identified": 192,
+        "detected": 192,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "physics-minus-protocol|T3|A3": {
+        "instances": 468,
+        "identified": 336,
+        "detected": 346,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "physics-minus-protocol|T3|A4": {
+        "instances": 468,
+        "identified": 336,
+        "detected": 346,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "physics-minus-protocol|T4|A2": {
+        "instances": 63,
+        "identified": 14,
+        "detected": 14,
+        "gained_identified": 0,
+        "lost_identified": 6,
+        "gained_detected": 0
+      },
+      "physics-minus-protocol|T4|A3": {
+        "instances": 63,
+        "identified": 14,
+        "detected": 14,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "physics-minus-protocol|T4|A4": {
+        "instances": 63,
+        "identified": 14,
+        "detected": 14,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "physics-minus-replay|T1|A2": {
+        "instances": 180,
+        "identified": 180,
+        "detected": 180,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "physics-minus-replay|T1|A3": {
+        "instances": 178,
+        "identified": 108,
+        "detected": 111,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "physics-minus-replay|T1|A4": {
+        "instances": 184,
+        "identified": 103,
+        "detected": 112,
+        "gained_identified": 0,
+        "lost_identified": 49,
+        "gained_detected": 0
+      },
+      "physics-minus-replay|T2|A2": {
+        "instances": 192,
+        "identified": 192,
+        "detected": 192,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "physics-minus-replay|T2|A3": {
+        "instances": 192,
+        "identified": 192,
+        "detected": 192,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "physics-minus-replay|T2|A4": {
+        "instances": 192,
+        "identified": 192,
+        "detected": 192,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "physics-minus-replay|T3|A3": {
+        "instances": 468,
+        "identified": 213,
+        "detected": 228,
+        "gained_identified": 0,
+        "lost_identified": 123,
+        "gained_detected": 0
+      },
+      "physics-minus-replay|T3|A4": {
+        "instances": 468,
+        "identified": 213,
+        "detected": 228,
+        "gained_identified": 0,
+        "lost_identified": 123,
+        "gained_detected": 0
+      },
+      "physics-minus-replay|T4|A2": {
+        "instances": 63,
+        "identified": 20,
+        "detected": 22,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "physics-minus-replay|T4|A3": {
+        "instances": 63,
+        "identified": 14,
+        "detected": 14,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "physics-minus-replay|T4|A4": {
+        "instances": 63,
+        "identified": 14,
+        "detected": 14,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "pred+independent|T1|A2": {
+        "instances": 180,
+        "identified": 180,
+        "detected": 180,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "pred+independent|T1|A3": {
+        "instances": 178,
+        "identified": 108,
+        "detected": 111,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "pred+independent|T1|A4": {
+        "instances": 184,
+        "identified": 152,
+        "detected": 155,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "pred+independent|T2|A2": {
+        "instances": 192,
+        "identified": 192,
+        "detected": 192,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "pred+independent|T2|A3": {
+        "instances": 192,
+        "identified": 192,
+        "detected": 192,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "pred+independent|T2|A4": {
+        "instances": 192,
+        "identified": 192,
+        "detected": 192,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "pred+independent|T3|A3": {
+        "instances": 468,
+        "identified": 336,
+        "detected": 346,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "pred+independent|T3|A4": {
+        "instances": 468,
+        "identified": 336,
+        "detected": 346,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "pred+independent|T4|A2": {
+        "instances": 63,
+        "identified": 20,
+        "detected": 22,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "pred+independent|T4|A3": {
+        "instances": 63,
+        "identified": 14,
+        "detected": 14,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "pred+independent|T4|A4": {
+        "instances": 63,
+        "identified": 14,
+        "detected": 14,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "pred+joint|T1|A2": {
+        "instances": 180,
+        "identified": 180,
+        "detected": 180,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "pred+joint|T1|A3": {
+        "instances": 178,
+        "identified": 108,
+        "detected": 111,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "pred+joint|T1|A4": {
+        "instances": 184,
+        "identified": 152,
+        "detected": 155,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "pred+joint|T2|A2": {
+        "instances": 192,
+        "identified": 192,
+        "detected": 192,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "pred+joint|T2|A3": {
+        "instances": 192,
+        "identified": 192,
+        "detected": 192,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "pred+joint|T2|A4": {
+        "instances": 192,
+        "identified": 192,
+        "detected": 192,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "pred+joint|T3|A3": {
+        "instances": 468,
+        "identified": 336,
+        "detected": 346,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "pred+joint|T3|A4": {
+        "instances": 468,
+        "identified": 336,
+        "detected": 346,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "pred+joint|T4|A2": {
+        "instances": 63,
+        "identified": 20,
+        "detected": 22,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "pred+joint|T4|A3": {
+        "instances": 63,
+        "identified": 14,
+        "detected": 14,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "pred+joint|T4|A4": {
+        "instances": 63,
+        "identified": 14,
+        "detected": 14,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "resid+independent|T1|A2": {
+        "instances": 180,
+        "identified": 180,
+        "detected": 180,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "resid+independent|T1|A3": {
+        "instances": 178,
+        "identified": 108,
+        "detected": 111,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "resid+independent|T1|A4": {
+        "instances": 184,
+        "identified": 152,
+        "detected": 155,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "resid+independent|T2|A2": {
+        "instances": 192,
+        "identified": 192,
+        "detected": 192,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "resid+independent|T2|A3": {
+        "instances": 192,
+        "identified": 192,
+        "detected": 192,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "resid+independent|T2|A4": {
+        "instances": 192,
+        "identified": 192,
+        "detected": 192,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "resid+independent|T3|A3": {
+        "instances": 468,
+        "identified": 338,
+        "detected": 348,
+        "gained_identified": 2,
+        "lost_identified": 0,
+        "gained_detected": 2
+      },
+      "resid+independent|T3|A4": {
+        "instances": 468,
+        "identified": 338,
+        "detected": 348,
+        "gained_identified": 2,
+        "lost_identified": 0,
+        "gained_detected": 2
+      },
+      "resid+independent|T4|A2": {
+        "instances": 63,
+        "identified": 20,
+        "detected": 22,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "resid+independent|T4|A3": {
+        "instances": 63,
+        "identified": 14,
+        "detected": 14,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "resid+independent|T4|A4": {
+        "instances": 63,
+        "identified": 14,
+        "detected": 14,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "resid+joint|T1|A2": {
+        "instances": 180,
+        "identified": 180,
+        "detected": 180,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "resid+joint|T1|A3": {
+        "instances": 178,
+        "identified": 108,
+        "detected": 111,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "resid+joint|T1|A4": {
+        "instances": 184,
+        "identified": 152,
+        "detected": 155,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "resid+joint|T2|A2": {
+        "instances": 192,
+        "identified": 192,
+        "detected": 192,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "resid+joint|T2|A3": {
+        "instances": 192,
+        "identified": 192,
+        "detected": 192,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "resid+joint|T2|A4": {
+        "instances": 192,
+        "identified": 192,
+        "detected": 192,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "resid+joint|T3|A3": {
+        "instances": 468,
+        "identified": 336,
+        "detected": 346,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "resid+joint|T3|A4": {
+        "instances": 468,
+        "identified": 336,
+        "detected": 346,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "resid+joint|T4|A2": {
+        "instances": 63,
+        "identified": 20,
+        "detected": 22,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "resid+joint|T4|A3": {
+        "instances": 63,
+        "identified": 14,
+        "detected": 14,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      },
+      "resid+joint|T4|A4": {
+        "instances": 63,
+        "identified": 14,
+        "detected": 14,
+        "gained_identified": 0,
+        "lost_identified": 0,
+        "gained_detected": 0
+      }
+    }
+  },
+  "models": {
+    "timeblock": {
+      "pred": {
+        "kind": "pred",
+        "scale": [
+          0.05,
+          0.05,
+          0.05,
+          0.05,
+          0.05
+        ],
+        "n": 10,
+        "lam": 0.01,
+        "train_windows": 107838
+      },
+      "resid": {
+        "kind": "resid",
+        "bx": 0.6796779510799219,
+        "by": 0.7601448613019652,
+        "dt": 0.0332,
+        "scale": [
+          0.05,
+          0.05,
+          0.05
+        ],
+        "n": 10,
+        "train_windows": 107838
+      }
+    },
+    "loso_emptyRoom": {
+      "pred": {
+        "kind": "pred",
+        "scale": [
+          0.05,
+          0.05,
+          0.05,
+          0.05,
+          0.05
+        ],
+        "n": 10,
+        "lam": 0.01,
+        "train_windows": 108602
+      },
+      "resid": {
+        "kind": "resid",
+        "bx": 0.7032704347495123,
+        "by": 0.7683842208350615,
+        "dt": 0.0332,
+        "scale": [
+          0.05,
+          0.05,
+          0.05
+        ],
+        "n": 10,
+        "train_windows": 108602
+      }
+    },
+    "loso_onePersonMovingFrontAndBack": {
+      "pred": {
+        "kind": "pred",
+        "scale": [
+          0.05,
+          0.05,
+          0.05,
+          0.05,
+          0.05
+        ],
+        "n": 10,
+        "lam": 0.01,
+        "train_windows": 114540
+      },
+      "resid": {
+        "kind": "resid",
+        "bx": 0.7228016974927252,
+        "by": 0.7897624347124328,
+        "dt": 0.0332,
+        "scale": [
+          0.05,
+          0.05,
+          0.05
+        ],
+        "n": 10,
+        "train_windows": 114540
+      }
+    },
+    "loso_onePersonMovingSideToSide": {
+      "pred": {
+        "kind": "pred",
+        "scale": [
+          0.05,
+          0.05,
+          0.05,
+          0.05,
+          0.05
+        ],
+        "n": 10,
+        "lam": 0.01,
+        "train_windows": 105368
+      },
+      "resid": {
+        "kind": "resid",
+        "bx": 0.6637938028478763,
+        "by": 0.7649468948181272,
+        "dt": 0.0332,
+        "scale": [
+          0.05,
+          0.05,
+          0.05
+        ],
+        "n": 10,
+        "train_windows": 105368
+      }
+    },
+    "loso_multiplePeopleChaotic": {
+      "pred": {
+        "kind": "pred",
+        "scale": [
+          0.05,
+          0.05,
+          0.05,
+          0.05,
+          0.05
+        ],
+        "n": 10,
+        "lam": 0.01,
+        "train_windows": 101633
+      },
+      "resid": {
+        "kind": "resid",
+        "bx": 0.7636178516884436,
+        "by": 0.7271311103661787,
+        "dt": 0.0332,
+        "scale": [
+          0.05,
+          0.05,
+          0.05
+        ],
+        "n": 10,
+        "train_windows": 101633
+      }
+    }
+  },
+  "routes": {
+    "independent": {
+      "mode": "independent",
+      "m": 4,
+      "n": 6
+    },
+    "joint": {
+      "mode": "joint",
+      "weight": 0.5
+    }
+  },
+  "grid_quantiles": [
+    0.99,
+    0.995,
+    0.999,
+    0.9995,
+    0.9999,
+    1.0
+  ]
+}

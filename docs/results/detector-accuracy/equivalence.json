@@ -1,0 +1,81 @@
+{
+  "platforms": [
+    "Windows-10-10.0.26200-SP0",
+    "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.36"
+  ],
+  "streams": {
+    "attacked:T1:A3:moving:multiplePeopleChaotic.csv": {
+      "cycles": [
+        1119,
+        1119
+      ],
+      "decisions_identical": true,
+      "max_abs_score_diff": 0.0,
+      "score_keys_missing_on_one_side": 0
+    },
+    "attacked:T2:A3:static:multiplePeopleChaotic.csv": {
+      "cycles": [
+        1119,
+        1119
+      ],
+      "decisions_identical": true,
+      "max_abs_score_diff": 0.0,
+      "score_keys_missing_on_one_side": 0
+    },
+    "attacked:T3:A4:moving:multiplePeopleChaotic.csv": {
+      "cycles": [
+        1119,
+        1119
+      ],
+      "decisions_identical": true,
+      "max_abs_score_diff": 0.0,
+      "score_keys_missing_on_one_side": 0
+    },
+    "attacked:T4:A3:moving:multiplePeopleChaotic.csv": {
+      "cycles": [
+        1119,
+        1119
+      ],
+      "decisions_identical": true,
+      "max_abs_score_diff": 0.0,
+      "score_keys_missing_on_one_side": 0
+    },
+    "clean:emptyRoom.csv": {
+      "cycles": [
+        4378,
+        4378
+      ],
+      "decisions_identical": true,
+      "max_abs_score_diff": 0.0,
+      "score_keys_missing_on_one_side": 0
+    },
+    "clean:multiplePeopleChaotic.csv": {
+      "cycles": [
+        5597,
+        5597
+      ],
+      "decisions_identical": true,
+      "max_abs_score_diff": 0.0,
+      "score_keys_missing_on_one_side": 0
+    },
+    "clean:onePersonMovingFrontAndBack.csv": {
+      "cycles": [
+        4127,
+        4127
+      ],
+      "decisions_identical": true,
+      "max_abs_score_diff": 0.0,
+      "score_keys_missing_on_one_side": 0
+    },
+    "clean:onePersonMovingSideToSide.csv": {
+      "cycles": [
+        4993,
+        4993
+      ],
+      "decisions_identical": true,
+      "max_abs_score_diff": 0.0,
+      "score_keys_missing_on_one_side": 0
+    }
+  },
+  "ok": true
+}

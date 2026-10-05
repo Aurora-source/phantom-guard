@@ -63,6 +63,15 @@ def measure(detector: Detector, source, warmup: int) -> dict:
             "total_thread_cpu_s": time.thread_time() - started_cpu, "total_wall_s": time.perf_counter() - started_wall}
 
 
+def effective_resolution_ms(samples) -> float:
+    """Smallest positive step between distinct per-cycle CPU samples. get_clock_info may report 100 ns on
+    Windows while GetThreadTimes only advances in ~15.6 ms scheduler ticks; the samples reveal that."""
+    vals = np.unique(np.round(np.asarray(samples, dtype=float), 6))
+    steps = np.diff(vals)
+    steps = steps[steps > 0]
+    return float(steps.min()) if len(steps) else float("inf")
+
+
 def summarize(name: str, m: dict, cpu_valid: bool) -> dict:
     objs = np.asarray(m["objects"])
     out = {"stream": name, "cycles": m["cycles"], "objects_per_cycle": pct(objs, (50, 99)),
@@ -94,10 +103,14 @@ def main(argv=None) -> int:
     baseline = load_baseline(bpath)
     ae, lib = load_artifacts(args.tag, strict=True, cfg=cfg, baseline=baseline)
     res = time.get_clock_info("thread_time").resolution * 1000
-    cpu_valid = res <= args.max_cpu_resolution_ms
+    # Calibrate validity on the first clean stream: reported resolution is not trusted on its own.
+    probe = measure(Detector(cfg, baseline, ae, lib), ReplaySource(raw_path(cfg, cfg["data"]["files"][0])), args.warmup)
+    eff = effective_resolution_ms(probe["cpu"])
+    cpu_valid = max(res, eff) <= args.max_cpu_resolution_ms
     streams = []
     for f in cfg["data"]["files"]:
-        m = measure(Detector(cfg, baseline, ae, lib), ReplaySource(raw_path(cfg, f)), args.warmup)
+        m = probe if f == cfg["data"]["files"][0] else measure(Detector(cfg, baseline, ae, lib),
+                                                               ReplaySource(raw_path(cfg, f)), args.warmup)
         streams.append(summarize(f"clean:{f}", m, cpu_valid))
         print(f"clean {f}: wall p99 {streams[-1]['wall_detector_ms']['p99']} ms", flush=True)
     from phantomguard.commands.run_attack_eval import split_contexts
@@ -127,7 +140,8 @@ def main(argv=None) -> int:
               "hardware": {"platform": platform.platform(), "processor": platform.processor(), "machine": platform.machine(),
                            "logical_cpus": os.cpu_count(), "python": platform.python_version(), **versions,
                            "blas_threads": os.environ.get("OPENBLAS_NUM_THREADS")},
-              "clocks": {"thread_time_resolution_ms": res, "thread_cpu_percentiles_valid": cpu_valid,
+              "clocks": {"thread_time_resolution_ms": res, "thread_time_effective_resolution_ms": round(eff, 6),
+                         "thread_cpu_percentiles_valid": cpu_valid,
                          "wall": "perf_counter; includes preemption"},
               "warmup_cycles_excluded_per_stream": args.warmup, "streams": streams,
               "budget_ms": budget, "worst_stream_wall_detector_p99_ms": worst_wall,
