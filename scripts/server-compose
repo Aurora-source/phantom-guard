@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+env_file="${PHANTOMGUARD_SERVER_ENV:-$root/.env.server}"
+if [[ ! -f "$env_file" ]]; then
+  echo "Copy deploy/server.env.example to $env_file and choose server limits." >&2
+  exit 1
+fi
+exec docker compose --project-directory "$root" --project-name phantomguard-server \
+  --env-file "$env_file" -f "$root/compose.yaml" -f "$root/compose.server.yaml" "$@"

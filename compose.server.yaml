@@ -1,0 +1,27 @@
+# Apply with compose.yaml using scripts/server-compose and an ignored .env.server.
+services:
+  prototype:
+    image: "${PHANTOMGUARD_IMAGE:-phantomguard-server:local}"
+    # 2.5 ms CPU per 10 ms period = 0.25 logical CPU. Short periods avoid
+    # the long pauses of a fractional quota in the default 100 ms period.
+    cpus: !reset null
+    cpu_period: ${PHANTOMGUARD_CPU_PERIOD:-10000}
+    cpu_quota: ${PHANTOMGUARD_CPU_QUOTA:-2500}
+    mem_limit: "${PHANTOMGUARD_MEMORY:-2g}"
+    memswap_limit: "${PHANTOMGUARD_MEMORY_SWAP:-2g}"
+    pids_limit: 64
+    environment:
+      OPENBLAS_NUM_THREADS: "1"
+      OMP_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      PHANTOMGUARD_MAX_QUEUED: "${PHANTOMGUARD_MAX_QUEUED:-2}"
+      PHANTOMGUARD_MAX_JOBS: "${PHANTOMGUARD_MAX_JOBS:-6}"
+      PHANTOMGUARD_MAX_SESSIONS: "${PHANTOMGUARD_MAX_SESSIONS:-16}"
+      PHANTOMGUARD_TTL: "${PHANTOMGUARD_TTL:-600}"
+      PHANTOMGUARD_OUTPUT_MIB: "${PHANTOMGUARD_OUTPUT_MIB:-64}"
+      PHANTOMGUARD_JOB_COOLDOWN: "${PHANTOMGUARD_JOB_COOLDOWN:-30}"
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "2"

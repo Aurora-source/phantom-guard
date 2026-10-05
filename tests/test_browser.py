@@ -79,6 +79,84 @@ def test_job_ownership_cancel_cleanup_and_capacity(tmp_path):
     finally:manager.close()
 
 
+def test_configured_queue_bound(tmp_path):
+    manager=JobManager(load_config(root=tmp_path),workers=1,max_queued=1)
+    try:
+        with manager.lock:
+            a,b=manager.session(),manager.session()
+            job=manager.create(a,{'recording':'emptyRoom.csv'})
+            with pytest.raises(RequestError,match='capacity'):
+                manager.create(b,{'recording':'emptyRoom.csv'})
+            manager.cancel(a,job['id'],remove=True)
+            assert manager.create(b,{'recording':'emptyRoom.csv'})['state']=='queued'
+    finally:manager.close()
+
+
+def test_result_preserves_bytes_and_private_ownership(tmp_path):
+    app=Application(load_config(root=tmp_path),workers=1)
+    try:
+        with app.manager.lock:
+            a,b=app.manager.session(),app.manager.session()
+            created=app.manager.create(a,{'recording':'emptyRoom.csv'})
+            job=app.manager.get(a,created['id'])
+            original=b'{"cycles":[],"score":0.12345678901234567}\n'
+            (job.directory/'result.json').write_bytes(original)
+            job.state='complete'
+            e={'REQUEST_METHOD':'GET','PATH_INFO':'/api/jobs/'+job.id+'/result','HTTP_AUTHORIZATION':'Bearer '+a}
+            responses=[]
+            assert b''.join(app(e,lambda status,headers:responses.append((status,dict(headers)))))==original
+            assert responses[0][1]['Cache-Control']=='no-store'
+            assert call(app,e['PATH_INFO'],token=b)[0]==404
+            assert call(app,'/api/jobs/'+job.id,'DELETE',token=a)[0]==200
+            assert call(app,e['PATH_INFO'],token=a)[0]==404
+    finally:app.close()
+
+
+def test_restart_orphans_expire_after_startup(tmp_path,monkeypatch):
+    import os
+    import uuid
+    cfg=load_config(root=tmp_path)
+    directory=paths(cfg).output/'browser'/uuid.uuid4().hex
+    directory.mkdir(parents=True)
+    (directory/'progress.json').write_text('{"stage":"loading"}')
+    manager=JobManager(cfg,workers=1,ttl=30)
+    try:
+        with manager.lock:
+            assert directory.exists() # fresh crash output survives startup
+            os.utime(directory,(time.time()-31,time.time()-31))
+            clock=time.monotonic()
+            monkeypatch.setattr(time,'monotonic',lambda:clock+31)
+            manager._expire()
+            assert not directory.exists()
+    finally:manager.close()
+
+
+def test_cooldown_queues_next_job(tmp_path,monkeypatch):
+    manager=JobManager(load_config(root=tmp_path),workers=1,job_cooldown=30)
+    started=[]
+    class Process:
+        def __init__(self,**kw):self.alive=False
+        def start(self):self.alive=True;started.append(True)
+        def is_alive(self):return self.alive
+        def terminate(self):self.alive=False
+        def join(self,timeout=None):pass
+        def close(self):pass
+    monkeypatch.setattr(manager.context,'Process',Process)
+    try:
+        with manager.lock:
+            token=manager.session()
+            manager._next_start=time.monotonic()+30
+            jid=manager.create(token,{'recording':'emptyRoom.csv'})['id']
+        time.sleep(.3)
+        assert not started and manager.get(token,jid).state=='queued'
+        with manager.lock:manager._next_start=0
+        time.sleep(.3)
+        assert started and manager.get(token,jid).state=='running'
+        manager.cancel(token,jid,remove=True)
+        assert manager._next_start>time.monotonic()+25
+    finally:manager.close()
+
+
 def wait_complete(app,token,jid,deadline=90):
     until=time.monotonic()+deadline
     while time.monotonic()<until:

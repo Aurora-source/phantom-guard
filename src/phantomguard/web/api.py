@@ -36,7 +36,7 @@ class Application:
             status,data,content_type=exc.status,{'error':str(exc)},'application/json'
         except (OSError,ValueError,KeyError,TypeError) as exc:
             status,data,content_type=503,{'error':str(exc),'next':'Run phantomguard doctor; restore compatible data/artifacts'},'application/json'
-        if content_type=='application/json':
+        if content_type=='application/json' and not isinstance(data,bytes):
             body=json.dumps(data,allow_nan=False).encode('utf-8')
         else:
             body=data
@@ -92,7 +92,9 @@ class Application:
                 if method=='GET' and len(parts)==4 and parts[3]=='result':
                     if job.state!='complete':
                         raise RequestError(f'Result unavailable: {job.state}; {job.error}',409)
-                    return 200,json.loads((job.directory/'result.json').read_text(encoding='utf-8')),'application/json'
+                    # Workers write finite, complete JSON atomically. Preserve those
+                    # bytes instead of allocating and encoding the entire clip again.
+                    return 200,(job.directory/'result.json').read_bytes(),'application/json'
         raise RequestError('Unknown endpoint or method',404)
 
     def evaluation(self,e,individual=False):

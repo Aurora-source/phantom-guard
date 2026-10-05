@@ -41,6 +41,12 @@ def main(argv=None) -> int:
             p.add_argument("--workers", type=int, default=int(os.environ.get("PHANTOMGUARD_WORKERS", "2")))
             p.add_argument("--max-cycles", type=int, default=int(os.environ.get("PHANTOMGUARD_MAX_CYCLES", "1200")))
             p.add_argument("--job-seconds", type=int, default=int(os.environ.get("PHANTOMGUARD_JOB_SECONDS", "120")))
+            p.add_argument("--max-queued", type=int, default=int(os.environ.get("PHANTOMGUARD_MAX_QUEUED", "4")))
+            p.add_argument("--max-jobs", type=int, default=int(os.environ.get("PHANTOMGUARD_MAX_JOBS", "8")))
+            p.add_argument("--max-sessions", type=int, default=int(os.environ.get("PHANTOMGUARD_MAX_SESSIONS", "16")))
+            p.add_argument("--ttl", type=int, default=int(os.environ.get("PHANTOMGUARD_TTL", "600")))
+            p.add_argument("--output-mib", type=int, default=int(os.environ.get("PHANTOMGUARD_OUTPUT_MIB", "128")))
+            p.add_argument("--job-cooldown", type=float, default=float(os.environ.get("PHANTOMGUARD_JOB_COOLDOWN", "0")))
     for name in commands:
         subs.add_parser(name, help="see phantomguard " + name + " --help")
     args = parser.parse_args(argv)
@@ -48,7 +54,9 @@ def main(argv=None) -> int:
         cfg = config_from_args(args)
         if args.command == "serve":
             from phantomguard.web.api import serve
-            serve(cfg, host=args.host, port=args.port, workers=args.workers, max_cycles=args.max_cycles, job_seconds=args.job_seconds)
+            serve(cfg, host=args.host, port=args.port, workers=args.workers, max_cycles=args.max_cycles, job_seconds=args.job_seconds,
+                  max_queued=args.max_queued,max_jobs=args.max_jobs,max_sessions=args.max_sessions,ttl=args.ttl,output_mib=args.output_mib,
+                  job_cooldown=args.job_cooldown)
             return 0
         from phantomguard import workspace
         if args.command == "init":
