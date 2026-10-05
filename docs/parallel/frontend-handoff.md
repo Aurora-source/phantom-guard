@@ -51,11 +51,17 @@ Primary implementation references inspected:
 
 Implementation tested at `5c09bb524df008b84a7b626eb13323ec742e659e` on
 `codex/frontend-experience`; documentation/test-only delivery commits follow it.
-PR URL is recorded below after creation. The supplied ZIP SHA-256 matches
+Upstream PR: [#8](https://github.com/Krishna-Gunjan/phantom-guard/pull/8).
+The supplied ZIP SHA-256 matches
 `849dbd5c12410e75fd4d1ffc43aee45a7380756639548ac7d921dd7a65f90ad3`.
 Models/config/caches/outputs and Python/frontend environments are isolated here.
 Raw recordings are shared read-only. Completed measurements, screenshots,
 build commands, dependency notices, final source SHA and PR will be recorded below.
+
+Delivery completed: `codex/frontend-experience` is pushed only to the user's fork,
+and upstream PR #8 is open for review. The GitHub connector's PR creation request
+returned 403; the machine's existing Git authentication successfully created the
+same authorized PR through GitHub's API. No credentials were printed or stored.
 
 ## Completed experience
 

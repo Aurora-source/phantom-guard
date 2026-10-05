@@ -1,5 +1,7 @@
 # Prepared upstream pull request
 
+Created: [upstream PR #8](https://github.com/Krishna-Gunjan/phantom-guard/pull/8).
+
 Title: Add guided radar replay lab with synchronized browser 3D and evidence inspection
 
 Base: `Krishna-Gunjan/phantom-guard:main`
