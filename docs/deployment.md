@@ -2,6 +2,8 @@
 
 This prepares a local P31 browser prototype; it does not deploy to the owner's
 server. Use the tested Git SHA and verified bundle from [server handoff](server-handoff.md).
+For the executed home-server deployment, measured limits, temperature policy,
+Cloudflare route and exact operations, see [server validation](server-validation.md).
 Docker uses **Python 3.11.17 on Debian bookworm**, with an immutable image digest
 and pinned NumPy/SciPy/PyYAML/Waitress runtime. Ubuntu 26.04's system Python is
 not used. Native Ubuntu 26.04.1 WSL validation is separately reported; a WSL
