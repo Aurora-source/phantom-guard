@@ -125,6 +125,7 @@ def detect_stream(cfg: dict, baseline: dict, tag: str, source, *, with_iforest: 
 
 
 _CONTROL_CACHE: dict = {}
+_CONTROL_CACHE_SIZE = 2   # per worker: full-recording LOSO controls are large; jobs arrive grouped by interval
 
 
 def control_for(cfg: dict, baseline: dict, context: dict, segment: Segment, scoring_cfg: dict,
@@ -135,6 +136,8 @@ def control_for(cfg: dict, baseline: dict, context: dict, segment: Segment, scor
         source = ReplaySource(raw_path(cfg, segment.file), (segment.lo, segment.hi))
         cycles = detect_stream(cfg, baseline, context["tag"], source, with_iforest=False)
         lineage = replay_lineage(source)
+        while len(_CONTROL_CACHE) >= _CONTROL_CACHE_SIZE:
+            _CONTROL_CACHE.pop(next(iter(_CONTROL_CACHE)))      # bounded memo; results are unchanged
         _CONTROL_CACHE[key] = {name: control_alerts(cycles, lineage, vcfg, layers)
                                for name, (layers, vcfg) in variants(scoring_cfg, ablate).items()}
     return _CONTROL_CACHE[key]
