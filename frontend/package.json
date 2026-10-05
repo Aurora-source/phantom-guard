@@ -6,7 +6,8 @@
   "scripts": {
     "build": "node build.mjs",
     "test": "node --test tests/model.test.mjs",
-    "test:browser": "node tests/browser.mjs"
+    "test:browser": "node tests/browser.mjs",
+    "test:polish": "node --test tests/polish.test.mjs && node tests/polish-browser.mjs"
   },
   "dependencies": {
     "three": "0.180.0"

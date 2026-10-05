@@ -1,5 +1,5 @@
 import { build } from "esbuild";
-import { copyFile, stat, readFile } from "node:fs/promises";
+import { copyFile, stat, readFile, mkdir } from "node:fs/promises";
 import { gzipSync } from "node:zlib";
 const out = new URL("../src/phantomguard/web/static/", import.meta.url);
 const license = await readFile(
@@ -22,7 +22,12 @@ await build({
 });
 for (const name of ["index.html", "style.css"])
   await copyFile(new URL(`src/${name}`, import.meta.url), new URL(name, out));
-for (const name of ["index.html", "app.js", "style.css"]) {
+await mkdir(new URL("assets/", out), { recursive: true });
+await copyFile(
+  new URL("src/theme-boot.js", import.meta.url),
+  new URL("assets/theme.js", out),
+);
+for (const name of ["index.html", "app.js", "style.css", "assets/theme.js"]) {
   const data = await readFile(new URL(name, out));
   console.log(
     `${name}: ${(await stat(new URL(name, out))).size} bytes; gzip ${gzipSync(data).length} bytes`,

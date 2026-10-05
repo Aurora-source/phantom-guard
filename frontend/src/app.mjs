@@ -10,6 +10,10 @@ import {
   correspondence,
 } from "./model.mjs";
 import { plan, extent, OrbitView } from "./render.mjs";
+import { initLoading, inlineWait } from "./loading.mjs";
+import { initTheme } from "./theme.mjs";
+import { trackChart } from "./chart.mjs";
+import { initIllustrations } from "./illustrations.mjs";
 const $ = (id) => document.getElementById(id),
   text = (id, v) => {
     $(id).textContent = String(v);
@@ -28,6 +32,7 @@ let token = null,
   cursor = 0,
   selected = null,
   selectedFrame = null,
+  replayVisible = true,
   playing = false,
   playTimer = null,
   pollController = null,
@@ -136,6 +141,7 @@ function showError(e) {
       "The request was rejected by the queue/session limit. Retry when capacity is available. " +
       message;
   text("progress", message);
+  loading.clear(message);
 }
 const recordingCopy = {
   emptyRoom: {
@@ -232,11 +238,11 @@ function setBusy(value) {
 function pause() {
   playing = false;
   clearTimeout(playTimer);
-  text("play", "Play");
+  text("play", "Play replay");
 }
 function schedule() {
   clearTimeout(playTimer);
-  if (!playing || !current || document.hidden) return;
+  if (!playing || !current || document.hidden || !replayVisible) return;
   playTimer = setTimeout(
     () => {
       if (cursor >= current.views.length - 1) {
@@ -262,13 +268,6 @@ function destroyOrbit() {
   }
 }
 function switchView(next) {
-  if (next === "3d" && !current) {
-    text(
-      "view-note",
-      "Run a recorded clip first; 3D uses the same completed cycle data.",
-    );
-    return;
-  }
   destroyOrbit();
   view = next;
   $("scene").hidden = next === "3d";
@@ -311,6 +310,10 @@ function switchView(next) {
     view === "3d"
       ? "ILLUSTRATIVE HEIGHT / RECORDED PLANAR COORDINATES"
       : "PLAN VIEW / PROVISIONAL COORDINATE UNITS",
+  );
+  text(
+    "active-view",
+    `Selected view: ${view === "3d" ? "3D orbit" : "2D plan"}${current ? "" : " · Awaiting replay"}`,
   );
   render();
 }
@@ -510,7 +513,9 @@ function render() {
   if (document.hidden) return;
   const start = performance.now();
   if (!current) {
-    hits = plan($("scene"), null, 0, null, bounds);
+    if (view === "3d" && orbit) orbit.update(null, 0, null);
+    else hits = plan($("scene"), null, 0, null, bounds);
+    trackChart($("track-chart"), $("track-chart-note"), null, null, 0);
     return;
   }
   const c = current.views[cursor],
@@ -540,6 +545,13 @@ function render() {
   warning.hidden = !c.cycle_alert && !c.cycle_reasons.length;
   warning.textContent = `${c.cycle_alert ? "! Scene alert" : "Scene warning"} · ${c.cycle_reasons.join(" · ") || "Persistent scene finding"} · Object attribution unavailable`;
   inspector(c);
+  trackChart(
+    $("track-chart"),
+    $("track-chart-note"),
+    current,
+    selected,
+    cursor,
+  );
   logs();
   renderComparison();
   const elapsed = performance.now() - start;
@@ -604,11 +616,6 @@ function renderComparison() {
 function clearDisplay(keepRetained = false) {
   pause();
   destroyOrbit();
-  view = "2d";
-  $("scene").hidden = false;
-  $("scene3d").hidden = true;
-  $("view2d").setAttribute("aria-pressed", "true");
-  $("view3d").setAttribute("aria-pressed", "false");
   current = null;
   comparisonCache = null;
   cursor = 0;
@@ -649,9 +656,10 @@ function clearDisplay(keepRetained = false) {
   );
   text("compare-note", "No aligned comparison selected.");
   $("object-select").replaceChildren(new Option("No object selected", ""));
-  render();
+  switchView(view);
 }
 async function reset(keepRetained = false) {
+  loading.clear();
   const operation = ++generation,
     oldJob = job,
     oldToken = token;
@@ -722,6 +730,8 @@ function installResult(data, id) {
   cursor = 0;
   selected = null;
   selectedFrame = null;
+  destroyOrbit();
+  switchView(view);
   $("empty").hidden = true;
   $("seek").max = current.views.length - 1;
   for (const id of ["play", "back", "step", "seek"]) $(id).disabled = false;
@@ -784,7 +794,7 @@ function installResult(data, id) {
         : "Unavailable",
     ],
     [
-      "Detector CPU total",
+      "Detector interval total (legacy wall)",
       finite(data.timings?.detector_cpu_seconds)
         ? number(data.timings.detector_cpu_seconds, 3) + " s"
         : "Unavailable",
@@ -832,6 +842,7 @@ async function poll(id, operation, initial) {
         state = await api(`/api/jobs/${id}`, { signal: controller.signal });
       }
       if (operation !== generation || job !== id) return;
+      loading.update(operation, state);
       const progress = state.progress || {},
         stage =
           progress.stage ||
@@ -846,12 +857,17 @@ async function poll(id, operation, initial) {
         `${state.state} · ${stage}${counts}${state.queue_position != null ? ` · queue position ${state.queue_position}` : ""}${state.cooling_seconds != null ? ` · cooling ${state.cooling_seconds} s` : ""}`,
       );
       if (state.state === "complete") {
+        loading.result(operation);
         const data = await api(`/api/jobs/${id}/result`, {
           signal: controller.signal,
         });
         if (operation === generation && job === id) {
           installResult(data, id);
           setBusy(false);
+          loading.end(
+            operation,
+            "Replay ready. Use Play replay to inspect completed cycles.",
+          );
         }
         return;
       }
@@ -899,6 +915,12 @@ async function run() {
   const resetOperation = await resetting;
   if (resetOperation !== generation) return;
   const operation = ++generation;
+  loading.begin(
+    operation,
+    "Submitting isolated replay job",
+    "The recording and requested seed are being admitted to the bounded server queue.",
+    true,
+  );
   text("progress", "Submitting isolated replay job…");
   const owner = token;
   try {
@@ -925,6 +947,11 @@ async function run() {
 }
 async function boot(recover = true) {
   const operation = ++generation;
+  loading.begin(
+    operation,
+    "Checking the replay service",
+    "Loading the recording catalog and verifying installed artifacts. No detector job is running yet.",
+  );
   pollController?.abort();
   $("reconnect").hidden = true;
   try {
@@ -968,23 +995,41 @@ async function boot(recover = true) {
     const saved = recover ? storage.read() : null;
     token = saved?.token || null;
     job = saved?.job || null;
-    if (!token) token = (await api("/api/sessions", { method: "POST" })).token;
+    if (!token) {
+      const session = await api("/api/sessions", { method: "POST" });
+      if (operation !== generation) return;
+      token = session.token;
+    }
     storage.write();
     try {
       const health = await api("/readyz");
+      if (operation !== generation) return;
       ready = health.ok === true;
       text("ready", ready ? "CPU pipeline ready" : "Service not ready");
       $("ready").classList.toggle("is-ready", ready);
     } catch (e) {
+      if (operation !== generation) return;
       ready = false;
       text("ready", "Artifacts / service not ready");
       showError(e);
     }
     if (operation !== generation) return;
     updateOptions();
+    loading.end(
+      operation,
+      ready
+        ? "Replay service ready."
+        : "Replay service needs attention; see the artifact error.",
+    );
     evaluation(false);
     if (job) {
       setBusy(true);
+      loading.begin(
+        operation,
+        "Recovering this tab’s replay",
+        "Retrieving the existing job status; no duplicate job is submitted.",
+        true,
+      );
       text("progress", "Recovering the previous job in this tab…");
       await poll(job, operation);
     } else if (ready)
@@ -1004,6 +1049,7 @@ async function boot(recover = true) {
 }
 async function evaluation(match) {
   const operation = ++evaluationGeneration;
+  evidenceWait.begin(operation);
   individual = match;
   $("matrix-results").setAttribute("aria-pressed", String(!match));
   $("filter-results").setAttribute("aria-pressed", String(match));
@@ -1037,6 +1083,8 @@ async function evaluation(match) {
       ])
         $(id).replaceChildren();
     }
+  } finally {
+    evidenceWait.end(operation);
   }
 }
 function renderEvidence() {
@@ -1234,21 +1282,13 @@ function illustrate() {
     ],
   };
   $("lesson-path").setAttribute("d", paths[lesson][phase]);
-  if (!reduce.matches && !document.hidden) {
-    $("lesson-path")
-      .getAnimations()
-      .forEach((a) => a.cancel());
-    $("lesson-path").animate([{ opacity: 0.3 }, { opacity: 1 }], {
-      duration: 400,
-    });
-  }
   const total = lesson === "T2" ? phase * 3 + 1 : 1;
   for (let i = 0; i < total; i++) {
     const e = document.createElementNS(ns, "circle");
     e.setAttribute("cx", String(220 + phase * 40 + (i % 3) * 18));
     e.setAttribute("cy", String(150 - phase * 22 + Math.floor(i / 3) * 18));
     e.setAttribute("r", "5");
-    e.setAttribute("fill", "#b94721");
+    e.setAttribute("class", "lesson-marker");
     group.append(e);
   }
 }
@@ -1351,9 +1391,9 @@ $("matrix-results").onclick = () => evaluation(false);
 $("filter-results").onclick = () => evaluation(true);
 $("evidence-status").onchange = renderEvidence;
 $("evidence-sort").onchange = renderEvidence;
-$("guide-open").onclick = () => $("guide").showModal();
-$("guide-close").onclick = () => $("guide").close();
-$("guide-start").onclick = () => $("guide").close();
+$("guide-open").onclick = () => $("guide-modal").showModal();
+$("guide-close").onclick = () => $("guide-modal").close();
+$("guide-start").onclick = () => $("guide-modal").close();
 for (const b of document.querySelectorAll("[data-stage]"))
   b.onclick = () => stage(b.dataset.stage);
 for (const b of document.querySelectorAll("[data-lesson]"))
@@ -1361,11 +1401,8 @@ for (const b of document.querySelectorAll("[data-lesson]"))
     lesson = b.dataset.lesson;
     phase = 0;
     illustrate();
+    illustrations.resetLesson();
   };
-$("lesson-step").onclick = () => {
-  phase = (phase + 1) % 4;
-  illustrate();
-};
 document.addEventListener("keydown", (e) => {
   if (
     !current ||
@@ -1398,6 +1435,14 @@ reduce.addEventListener("change", () => {
   if (reduce.matches) pause();
 });
 new ResizeObserver(() => render()).observe($("scene").parentElement);
+new IntersectionObserver((entries) => {
+  replayVisible = entries[0].isIntersecting;
+  if (!replayVisible) clearTimeout(playTimer);
+  else {
+    render();
+    schedule();
+  }
+}).observe($("scene").parentElement);
 window.addEventListener("pagehide", () => {
   pause();
   pollController?.abort();
@@ -1405,4 +1450,31 @@ window.addEventListener("pagehide", () => {
 });
 stage("frames");
 illustrate();
+let lastLessonTick = -1;
+const stageKeys = Object.keys(stages);
+const illustrations = initIllustrations(
+  (tick) => {
+    if (tick === lastLessonTick) return;
+    lastLessonTick = tick;
+    phase = tick % 4;
+    illustrate();
+    const key = stageKeys[tick % stageKeys.length];
+    stage(key);
+    $("packet").dataset.stage = String(tick % stageKeys.length);
+    text(
+      "lesson-phase",
+      `STEP ${phase + 1} / 4 · ${lesson} mechanism / no detector verdict`,
+    );
+  },
+  () => {
+    lastLessonTick = -1;
+  },
+);
+initTheme(() => {
+  orbit?.theme();
+  render();
+  illustrations.paint();
+});
+const loading = initLoading(() => $("cancel").click());
+const evidenceWait = inlineWait($("evaluation-note"));
 boot();

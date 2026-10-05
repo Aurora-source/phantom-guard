@@ -1,6 +1,8 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-import { color, finite, trail } from "./model.mjs";
+import { finite, trail } from "./model.mjs";
+import { palette } from "./theme.mjs";
+const color = (o) => palette()[o.alert ? "red" : o.flagged ? "amber" : "green"];
 export function extent(index) {
   let xmin = 0,
     xmax = 36,
@@ -39,8 +41,8 @@ export function plan(canvas, index, cursor, selected, ext) {
   const step = Math.max(3, Math.ceil((b.xmax - b.xmin) / 10 / 3) * 3);
   ctx.lineWidth = 1;
   ctx.font = "9px Consolas,monospace";
-  ctx.strokeStyle = "#283e33";
-  ctx.fillStyle = "#829d8d";
+  ctx.strokeStyle = palette().grid;
+  ctx.fillStyle = palette()["radar-text"];
   for (let x = Math.ceil(b.xmin / step) * step; x <= b.xmax; x += step) {
     const p = point(x, b.ymin),
       q = point(x, b.ymax);
@@ -60,7 +62,7 @@ export function plan(canvas, index, cursor, selected, ext) {
     ctx.fillText(String(y), 6, p.y + 3);
   }
   ctx.setLineDash([3, 5]);
-  ctx.strokeStyle = "#425e4d";
+  ctx.strokeStyle = palette().grid;
   const roi = index?.result.roi || 15;
   for (let r = roi / 3; r <= roi + 0.001; r += roi / 3) {
     ctx.beginPath();
@@ -68,7 +70,7 @@ export function plan(canvas, index, cursor, selected, ext) {
     ctx.stroke();
   }
   ctx.setLineDash([]);
-  ctx.fillStyle = "#b6cec0";
+  ctx.fillStyle = palette()["radar-text"];
   ctx.beginPath();
   ctx.arc(ox, oy, 4, 0, Math.PI * 2);
   ctx.fill();
@@ -124,7 +126,7 @@ export function plan(canvas, index, cursor, selected, ext) {
     } else ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
     ctx.fill();
     if (o.identity === selected) {
-      ctx.strokeStyle = "#f3f6e9";
+      ctx.strokeStyle = palette().selection;
       ctx.lineWidth = 1.5;
       ctx.beginPath();
       ctx.arc(p.x, p.y, 10, 0, Math.PI * 2);
@@ -158,7 +160,7 @@ export class OrbitView {
       alpha: false,
       powerPreference: "low-power",
     });
-    this.renderer.setClearColor("#101e1c");
+    this.renderer.setClearColor(palette().radar);
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(43, 1, 0.1, 4000);
     this.controls = new OrbitControls(this.camera, canvas);
@@ -200,7 +202,7 @@ export class OrbitView {
     this.dynamic.add(this.lines);
     this.selector = new THREE.Mesh(
       new THREE.TorusGeometry(0.5, 0.025, 4, 24),
-      new THREE.MeshBasicMaterial({ color: 0xf1f2de }),
+      new THREE.MeshBasicMaterial({ color: palette().selection }),
     );
     this.selector.rotation.x = Math.PI / 2;
     this.dynamic.add(this.selector);
@@ -248,7 +250,7 @@ export class OrbitView {
       size = Math.max(width, height);
     const floor = new THREE.Mesh(
       new THREE.PlaneGeometry(width, height),
-      new THREE.MeshStandardMaterial({ color: 0x192c23, roughness: 1 }),
+      new THREE.MeshStandardMaterial({ color: palette().radar, roughness: 1 }),
     );
     floor.rotation.x = -Math.PI / 2;
     floor.position.set(cx, -0.035, cz);
@@ -264,15 +266,18 @@ export class OrbitView {
         "position",
         new THREE.Float32BufferAttribute(points, 3),
       ),
-      new THREE.LineBasicMaterial({ color: 0x405849 }),
+      new THREE.LineBasicMaterial({ color: palette().grid }),
     );
     this.static.add(grid);
     const origin = new THREE.Mesh(
       new THREE.CylinderGeometry(0.45, 0.65, 0.3, 12),
-      new THREE.MeshStandardMaterial({ color: 0xb1c5af }),
+      new THREE.MeshStandardMaterial({ color: palette()["radar-text"] }),
     );
     origin.position.set(0, 0.15, 0);
     this.static.add(origin);
+    this.floor = floor;
+    this.grid = grid;
+    this.origin = origin;
     this.controls.target.set(cx, 0, cz);
     this.camera.position.set(cx - size * 0.6, size * 0.85, cz + size * 0.8);
     this.camera.far = Math.max(4000, size * 10);
@@ -291,7 +296,7 @@ export class OrbitView {
       col.set(c);
       colors.push(col.r, col.g, col.b, col.r, col.g, col.b);
     };
-    for (const o of index.views[cursor].objects) {
+    for (const o of index?.views[cursor]?.objects || []) {
       if (!finite(o.x) || !finite(o.y)) continue;
       const k = o.alert ? 2 : o.flagged ? 1 : 0,
         i = this.items[k].length;
@@ -339,6 +344,15 @@ export class OrbitView {
     this.lines.geometry = new THREE.BufferGeometry()
       .setAttribute("position", new THREE.Float32BufferAttribute(positions, 3))
       .setAttribute("color", new THREE.Float32BufferAttribute(colors, 3));
+    this.render();
+  }
+  theme() {
+    const p = palette();
+    this.renderer.setClearColor(p.radar);
+    this.floor?.material.color.set(p.radar);
+    this.grid?.material.color.set(p.grid);
+    this.origin?.material.color.set(p["radar-text"]);
+    this.selector.material.color.set(p.selection);
     this.render();
   }
   render() {

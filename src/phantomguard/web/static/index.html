@@ -8,6 +8,7 @@
       content="Explore recorded radar data, simulated CAN attacks and the evidence behind causal anomaly alerts."
     />
     <title>Phantom Guard — Radar replay lab</title>
+    <script src="/assets/theme.js"></script>
     <link rel="stylesheet" href="/style.css" />
     <script src="/app.js" defer></script>
   </head>
@@ -22,10 +23,18 @@
         ><span>PHANTOM<br /><b>GUARD</b></span></a
       >
       <nav aria-label="Main navigation">
-        <a href="#replay">01 <span>Explore</span></a
-        ><a href="#understand">02 <span>Understand</span></a
-        ><a href="#evidence">03 <span>Evidence</span></a>
+        <a href="#top">Home</a><a href="#replay">Replay Lab</a
+        ><a href="#understand">How It Works</a><a href="#guide">Guide</a
+        ><a href="#evidence">Results</a>
       </nav>
+      <label class="theme-control" for="theme"
+        >Theme
+        <select id="theme" aria-label="Color theme">
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+          <option value="system" selected>System</option>
+        </select>
+      </label>
       <span id="ready" class="health" role="status">Checking service…</span>
     </header>
     <main id="top">
@@ -40,74 +49,128 @@
           </p>
           <div class="hero-actions">
             <a class="primary link-button" href="#replay"
-              >Open replay lab <span aria-hidden="true">↗</span></a
-            ><button id="guide-open" class="text-button">
-              60-second field guide <span aria-hidden="true">→</span>
-            </button>
+              >Open Replay Lab <span aria-hidden="true">↗</span></a
+            >
+            <a class="text-button" href="#guide">Start with the guide →</a>
           </div>
           <p class="scope">
             Recorded-data prototype · CPU inference · No live sensor
           </p>
         </div>
-        <div
-          class="hero-instrument"
-          aria-label="Illustrative radar motif, not recorded measurements"
-        >
-          <svg
-            viewBox="0 0 360 240"
-            role="img"
-            aria-label="Illustrative radar field"
-          >
-            <defs>
-              <pattern
-                id="grid"
-                width="30"
-                height="30"
-                patternUnits="userSpaceOnUse"
-              >
-                <path
-                  d="M30 0H0V30"
-                  fill="none"
-                  stroke="#c7ceca"
-                  stroke-width=".5"
-                />
-              </pattern>
-            </defs>
-            <path d="M0 0H360V240H0Z" fill="url(#grid)" />
-            <g fill="none" stroke="#9faeaa">
-              <path d="M40 120 320 24M40 120 320 216" />
-              <path
-                d="M98 100a62 62 0 0 1 0 40M152 82a118 118 0 0 1 0 76M209 62a178 178 0 0 1 0 116M265 42a236 236 0 0 1 0 156"
-              />
-            </g>
-            <path
-              d="m40 120 220-52-17 20"
-              fill="none"
-              stroke="#1b6550"
-              stroke-width="2"
-            />
-            <g fill="#1b6550">
-              <circle cx="40" cy="120" r="5" />
-              <circle cx="169" cy="139" r="4" />
-              <circle cx="262" cy="68" r="4" />
-            </g>
-            <path
-              d="m197 167 20-8 13 4 21-8"
-              fill="none"
-              stroke="#d06135"
-              stroke-width="2"
-            />
-            <path d="m251 148 6 6-6 6-6-6Z" fill="#d06135" />
-            <text x="17" y="151">ORIGIN</text>
-            <text x="234" y="40">CONTINUITY?</text>
-          </svg>
+        <div class="hero-instrument" id="hero-visual">
+          <div class="illustration-heading">
+            <span class="micro">ILLUSTRATION / NOT REPLAY DATA</span>
+            <div role="group" aria-label="Illustration projection">
+              <button data-hero-view="2d" aria-pressed="true">2D</button
+              ><button data-hero-view="3d" aria-pressed="false">
+                Perspective
+              </button>
+            </div>
+          </div>
+          <canvas
+            id="hero-radar"
+            aria-label="Symbolic radar sweep with moving markers, trails and velocity arrows; perspective adds no measured elevation"
+          ></canvas>
           <div class="instrument-label">
             <span>FORMAT ≠ AUTHENTICITY</span
-            ><span>FIG. 01 / ILLUSTRATIVE</span>
+            ><button id="hero-pause" aria-pressed="true">
+              Pause illustration
+            </button>
           </div>
+          <p class="hint">
+            Six symbolic paths. Drag to turn the field; switch projection to
+            explore the same plane.
+          </p>
         </div>
       </section>
-      <dialog id="guide">
+      <section id="guide" class="guide-section" aria-labelledby="guide-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">START HERE / FOUR SMALL STEPS</p>
+            <h2 id="guide-title">From recording to reason.</h2>
+          </div>
+          <button id="guide-open">Quick reference ↗</button>
+        </div>
+        <ol class="guide-cards">
+          <li>
+            <svg viewBox="0 0 80 48" aria-hidden="true">
+              <rect x="8" y="8" width="64" height="32" rx="3" />
+              <path d="m34 17 15 7-15 7Z" /></svg
+            ><span class="micro">01 / ESTABLISH A CLEAN RUN</span>
+            <h3>Choose a recording.</h3>
+            <p>
+              Open Replay Lab, select a scene and leave attack on <b>Clean</b>.
+              Start with 50–150 cycles, then Run. Jobs may queue or cool before
+              processing. “Clean” means no injected attack; false alerts remain
+              possible.
+            </p>
+            <a href="#replay">Open the lab →</a>
+          </li>
+          <li>
+            <svg viewBox="0 0 80 48" aria-hidden="true">
+              <path d="M8 24h20m24 0h20M40 7v34" />
+              <circle cx="40" cy="24" r="11" /></svg
+            ><span class="micro">02 / CHANGE ONE VARIABLE</span>
+            <h3>Add a supported attack.</h3>
+            <p>
+              Select T1–T4, an enabled capability and a seed. A2 repairs
+              protocol structure; A3 adds plausible motion. T3 supports A3/A4
+              only. Use the same recording and seed to compare; support still
+              depends on eligible material.
+            </p>
+            <details>
+              <summary>Seeds and advanced options</summary>
+              <p>
+                Seed fixes attacker randomness. Motion and translated replay
+                options appear where supported. Cycle count limits displayed
+                detection, not the attack's full-segment planning. A failed
+                preparation is shown explicitly.
+              </p>
+            </details>
+          </li>
+          <li>
+            <svg viewBox="0 0 80 48" aria-hidden="true">
+              <path d="M10 38h60M18 38V10m5 23 13-9 13 3 14-15" />
+              <circle cx="49" cy="27" r="6" /></svg
+            ><span class="micro">03 / FOLLOW A TRACK</span>
+            <h3>Play, pause, inspect.</h3>
+            <p>
+              Use Play, Step or the timeline. Choose 2D or 3D before or after a
+              run; both show the same cycle. Select a marker or object list
+              entry to see its history and speed chart. 3D height is
+              illustrative; no measured elevation or object class exists.
+            </p>
+          </li>
+          <li>
+            <svg viewBox="0 0 80 48" aria-hidden="true">
+              <path
+                d="M12 9h56v30H12Zm10 8h8m10 0h18M22 25h8m10 0h18M22 33h8m10 0h18"
+              /></svg
+            ><span class="micro">04 / READ THE EVIDENCE</span>
+            <h3>Separate flags from alerts.</h3>
+            <p>
+              Green means <b>not flagged</b>. Amber flags have current reasons;
+              red alerts can persist after a reason stops. Inspect reasons and
+              calibrated score bounds, then Results for generated offline
+              evaluation. Clip alerts are not an attack detection rate.
+            </p>
+            <a href="#evidence">Read generated results →</a>
+          </li>
+        </ol>
+        <details class="guide-details">
+          <summary>What this prototype can and cannot establish</summary>
+          <p>
+            CAN injection is simulated on recordings, with causal detector
+            history and no labels entering inference. Seeking and themes reuse
+            completed results. The clean false-alert target was not met in the
+            supplied reports, and some eligible attacks evaded detection.
+            Coordinate units, decoder layout and tick duration remain
+            configurable assumptions. Cancel/Reset clears the displayed run and
+            requests server cleanup.
+          </p>
+        </details>
+      </section>
+      <dialog id="guide-modal">
         <button
           id="guide-close"
           class="dialog-close"
@@ -220,7 +283,7 @@
                 ><button type="button" id="reset">Reset</button>
               </div>
             </form>
-            <div id="progress" role="status" aria-live="polite">
+            <div id="progress" aria-live="off">
               Connecting to the local replay service…
             </div>
             <button id="reconnect" hidden>Reconnect / recover session</button>
@@ -258,6 +321,43 @@
               ><span>↗ Velocity / 1 s display scale</span>
             </div>
             <div class="canvas-wrap">
+              <section
+                id="loading-panel"
+                class="loading-panel"
+                aria-labelledby="loading-title"
+                hidden
+              >
+                <div class="dragon-scene" aria-hidden="true">
+                  <svg viewBox="0 0 340 105">
+                    <path
+                      class="dragon-circuit"
+                      d="M30 75H90L110 45H155L178 20H260L300 45V80H30Z"
+                    />
+                    <circle class="dragon-ring" cx="178" cy="50" r="40" />
+                    <g class="dragon">
+                      <path
+                        d="m-24 6 9-4 4-12 6 9 10-8-1 8 10-1 6 5-8 5-5-2-6 3-6-1-6 5-4-2 4-5-7-1-4 6-4-2 5-7Z"
+                      />
+                      <path class="dragon-wing" d="m-8-1-8-18 19 8-1 10Z" />
+                      <circle cx="15" cy="1" r="1.5" />
+                      <path class="dragon-tail" d="m-21 5-13-4 10-5" />
+                    </g></svg
+                  ><span>DECORATIVE CIRCUIT DRAGON / NOT SENSOR DATA</span>
+                </div>
+                <h3 id="loading-title">Preparing replay</h3>
+                <p id="loading-detail"></p>
+                <progress
+                  id="loading-meter"
+                  aria-label="Reported job progress"
+                ></progress>
+                <p id="loading-elapsed" class="micro"></p>
+                <div class="loading-actions">
+                  <button id="loading-cancel" type="button">Cancel job</button
+                  ><button id="loading-minimize" type="button">
+                    Minimize &amp; explore
+                  </button>
+                </div>
+              </section>
               <canvas
                 id="scene"
                 aria-label="Planar radar objects; select an object here or in the object list"
@@ -271,8 +371,8 @@
                 <span class="crosshair" aria-hidden="true">+</span
                 ><strong>Your evidence starts here.</strong
                 ><small
-                  >Select a recording, then run the detector.<br />Green means
-                  “not flagged,” never authenticated.</small
+                  >Choose 2D or 3D, then run a recording.<br />Green means “not
+                  flagged,” never authenticated.</small
                 >
               </div>
               <div id="cycle-warning" hidden></div>
@@ -280,13 +380,16 @@
                 >PLAN VIEW / PROVISIONAL COORDINATE UNITS</span
               >
             </div>
+            <p id="active-view" class="active-view" role="status">
+              Selected view: 2D plan · Awaiting replay
+            </p>
             <p id="view-note" class="view-note">
               x/y are recorded planar coordinates. Tick duration and distance
               scales are configurable assumptions. No measured elevation or
               object classes.
             </p>
             <div class="playback">
-              <button id="play" disabled>Play</button
+              <button id="play" disabled>Play replay</button
               ><button id="back" aria-label="Previous cycle" disabled>←</button
               ><button id="step" aria-label="Next cycle" disabled>Step →</button
               ><input
@@ -324,6 +427,14 @@
                 ><strong id="assembly">—</strong>
               </div>
             </div>
+            <section class="track-chart" aria-labelledby="track-chart-title">
+              <h3 id="track-chart-title">Selected-track speed</h3>
+              <canvas
+                id="track-chart"
+                aria-label="Reported velocity magnitude in provisional metres per second, with playback cursor"
+              ></canvas>
+              <p id="track-chart-note">Select an object after replay.</p>
+            </section>
             <div class="comparison">
               <button id="retain" disabled>
                 Retain clean run for comparison</button
@@ -418,6 +529,7 @@
       <section
         id="understand"
         class="understand-section"
+        data-section="teaching"
         aria-labelledby="understand-title"
       >
         <div class="section-heading">
@@ -432,103 +544,121 @@
             tests a different part of the story.
           </p>
         </div>
-        <div class="architecture">
-          <div class="architecture-top">
-            <span class="micro">REQUEST-TIME / CPU INFERENCE</span
-            ><span class="micro">SELECT A STAGE TO EXPLORE</span>
-          </div>
-          <div class="attacker-lane">
-            <span>Simulated attacker</span
-            ><span aria-hidden="true"
-              >↓ modifies / injects ordinary CAN frames</span
-            >
-          </div>
-          <div class="pipeline" role="group" aria-label="Detector architecture">
-            <button data-stage="frames" aria-pressed="true">
-              <span>01</span><b>Recorded<br />CAN frames</b
-              ><small>raw bytes + time</small></button
-            ><span class="arrow" aria-hidden="true">→</span
-            ><button data-stage="decode" aria-pressed="false">
-              <span>02</span><b>Common decode<br />&amp; cycle assembly</b
-              ><small>same path for all frames</small></button
-            ><span class="arrow" aria-hidden="true">→</span
-            ><button data-stage="track" aria-pressed="false">
-              <span>03</span><b>Causal<br />tracking</b
-              ><small>separate track lifetimes</small></button
-            ><span class="arrow" aria-hidden="true">→</span
-            ><button data-stage="checks" aria-pressed="false">
-              <span>04</span><b>Layered<br />checks</b
-              ><small>protocol · motion · replay · learned</small></button
-            ><span class="arrow" aria-hidden="true">→</span
-            ><button data-stage="fusion" aria-pressed="false">
-              <span>05</span><b>Fusion &amp;<br />persistence</b
-              ><small>current flag / carried alert</small></button
-            ><span class="arrow" aria-hidden="true">→</span
-            ><button data-stage="verdict" aria-pressed="false">
-              <span>06</span><b>Verdicts<br />&amp; alerts</b
-              ><small>scene ≠ exact object</small>
-            </button>
-          </div>
-          <div id="stage-detail" class="stage-detail" role="status"></div>
-          <div class="offline-lanes">
-            <div>
-              <b>OFFLINE PREPARATION</b>
-              <p>
-                Clean training recordings → baseline, trajectory library &amp;
-                learned model → clean validation calibration → frozen artifacts
-                for request-time checks.
-              </p>
+        <div id="teaching" class="teaching-area">
+          <div class="architecture">
+            <div class="architecture-top">
+              <span class="micro">REQUEST-TIME / CPU INFERENCE</span
+              ><span class="micro">SELECT A STAGE TO EXPLORE</span>
             </div>
-            <div>
-              <b>SEPARATE EVALUATOR / PRESENTATION</b>
-              <p>
-                Attacker sidecar labels + final frame identities + completed
-                verdicts → measured evaluation. Labels never enter the detector,
-                features or thresholds.
-              </p>
+            <div class="attacker-lane">
+              <span>Simulated attacker</span
+              ><span aria-hidden="true"
+                >↓ modifies / injects ordinary CAN frames</span
+              >
             </div>
-          </div>
-        </div>
-        <div class="lesson">
-          <div>
-            <p class="eyebrow">ILLUSTRATIVE / NOT A GENERATED RUN</p>
-            <h3>Four ways to alter the story.</h3>
-            <p>
-              Explore the attack mechanism. These symbolic paths teach a
-              concept; they are not recording measurements, generated attack
-              results or detector verdicts.
-            </p>
             <div
-              class="attack-tabs"
+              class="pipeline"
               role="group"
-              aria-label="Illustrated attack type"
+              aria-label="Detector architecture"
             >
-              <button data-lesson="T1" aria-pressed="true">T1 Phantom</button
-              ><button data-lesson="T2" aria-pressed="false">T2 Flood</button
-              ><button data-lesson="T3" aria-pressed="false">T3 Replay</button
-              ><button data-lesson="T4" aria-pressed="false">T4 Drift</button>
+              <button data-stage="frames" aria-pressed="true">
+                <span>01</span><b>Recorded<br />CAN frames</b
+                ><small>raw bytes + time</small></button
+              ><span class="arrow" aria-hidden="true">→</span
+              ><button data-stage="decode" aria-pressed="false">
+                <span>02</span><b>Common decode<br />&amp; cycle assembly</b
+                ><small>same path for all frames</small></button
+              ><span class="arrow" aria-hidden="true">→</span
+              ><button data-stage="track" aria-pressed="false">
+                <span>03</span><b>Causal<br />tracking</b
+                ><small>separate track lifetimes</small></button
+              ><span class="arrow" aria-hidden="true">→</span
+              ><button data-stage="checks" aria-pressed="false">
+                <span>04</span><b>Layered<br />checks</b
+                ><small>protocol · motion · replay · learned</small></button
+              ><span class="arrow" aria-hidden="true">→</span
+              ><button data-stage="fusion" aria-pressed="false">
+                <span>05</span><b>Fusion &amp;<br />persistence</b
+                ><small>current flag / carried alert</small></button
+              ><span class="arrow" aria-hidden="true">→</span
+              ><button data-stage="verdict" aria-pressed="false">
+                <span>06</span><b>Verdicts<br />&amp; alerts</b
+                ><small>scene ≠ exact object</small>
+              </button>
             </div>
-            <p id="lesson-text"></p>
-            <button id="lesson-step">Advance illustration →</button
-            ><span id="lesson-phase" class="micro"> STEP 1 / 4</span>
-          </div>
-          <div class="lesson-scene">
-            <svg
-              id="lesson-svg"
-              viewBox="0 0 480 250"
-              role="img"
-              aria-label="Symbolic attack path illustration"
+            <div
+              class="packet-strip"
+              aria-label="Illustrative packet moves through the selected processing stage"
             >
-              <path d="M30 200H460M30 40V200" class="lesson-grid" />
-              <path d="m40 182 70-28 80-18 85-30 115-36" class="lesson-base" />
-              <path id="lesson-path" d="" />
-              <g id="lesson-markers"></g>
-              <text x="32" y="229">ORDINARY PATH</text>
-              <text x="283" y="229">ORANGE = ILLUSTRATIVE MODIFICATION</text>
-            </svg>
-            <div class="lesson-evidence">
-              <span>Encoding</span><span>Continuity</span><span>Repetition</span
-              ><span>Fusion</span>
+              <span id="packet" class="packet">CAN</span>
+            </div>
+            <div id="stage-detail" class="stage-detail" role="status"></div>
+            <div class="offline-lanes">
+              <div>
+                <b>OFFLINE PREPARATION</b>
+                <p>
+                  Clean training recordings → baseline, trajectory library &amp;
+                  learned model → clean validation calibration → frozen
+                  artifacts for request-time checks.
+                </p>
+              </div>
+              <div>
+                <b>SEPARATE EVALUATOR / PRESENTATION</b>
+                <p>
+                  Attacker sidecar labels + final frame identities + completed
+                  verdicts → measured evaluation. Labels never enter the
+                  detector, features or thresholds.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="lesson">
+            <div>
+              <p class="eyebrow">ILLUSTRATIVE / NOT A GENERATED RUN</p>
+              <h3>Four ways to alter the story.</h3>
+              <p>
+                Explore the attack mechanism. These symbolic paths teach a
+                concept; they are not recording measurements, generated attack
+                results or detector verdicts.
+              </p>
+              <div
+                class="attack-tabs"
+                role="group"
+                aria-label="Illustrated attack type"
+              >
+                <button data-lesson="T1" aria-pressed="true">T1 Phantom</button
+                ><button data-lesson="T2" aria-pressed="false">T2 Flood</button
+                ><button data-lesson="T3" aria-pressed="false">T3 Replay</button
+                ><button data-lesson="T4" aria-pressed="false">T4 Drift</button>
+              </div>
+              <p id="lesson-text"></p>
+              <button id="lesson-play" aria-pressed="true">
+                Pause illustration</button
+              ><button id="lesson-replay">Replay illustration</button
+              ><button id="lesson-step">Step →</button
+              ><span id="lesson-phase" class="micro"> STEP 1 / 4</span>
+            </div>
+            <div class="lesson-scene">
+              <svg
+                id="lesson-svg"
+                viewBox="0 0 480 250"
+                role="img"
+                aria-label="Symbolic attack path illustration"
+              >
+                <path d="M30 200H460M30 40V200" class="lesson-grid" />
+                <path
+                  d="m40 182 70-28 80-18 85-30 115-36"
+                  class="lesson-base"
+                />
+                <path id="lesson-path" d="" />
+                <g id="lesson-markers"></g>
+                <text x="32" y="229">ORDINARY PATH</text>
+                <text x="283" y="229">ORANGE = ILLUSTRATIVE MODIFICATION</text>
+              </svg>
+              <div class="lesson-evidence">
+                <span>Encoding</span><span>Continuity</span
+                ><span>Repetition</span><span>Fusion</span>
+              </div>
             </div>
           </div>
         </div>
@@ -655,6 +785,25 @@
         </details>
       </section>
     </main>
+    <aside
+      id="loading-mini"
+      class="loading-mini"
+      aria-label="Current foreground operation"
+      hidden
+    >
+      <div>
+        <strong id="mini-title"></strong><small id="mini-elapsed"></small>
+      </div>
+      <button id="loading-expand">Show progress</button
+      ><button id="mini-cancel">Cancel job</button>
+    </aside>
+    <div
+      id="loading-announcement"
+      class="sr-only"
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+    ></div>
     <footer>
       <span class="brand-small">PHANTOM GUARD / P31</span>
       <p>Recorded radar · Simulated CAN injection · Causal anomaly detection</p>
