@@ -1,5 +1,17 @@
 # Aurora server deployment and validation
 
+> Current frontend deployment policy (2026-10-05): the user authorized reducing
+> server inter-job cooldown to **5 seconds**. `compose.server.yaml` and
+> `deploy/server.env.example` select 5; ignored deployment environments are
+> updated explicitly. CPU 2500/10000, one worker, queue two, 2 GiB, numerical
+> threads one and other limits remain unchanged. Development cooldown remains
+> zero. Historical measurements below used the earlier **30-second** rest and
+> are preserved; they do not establish thermal/performance results at 5 seconds.
+> Only essential readiness/browser checks accompany this frontend deployment;
+> broad benchmarks and thermal tests remain deferred until Agent 2 finishes.
+> Release identity and rollback: `docs/parallel/frontend-polish-handoff.md`.
+
+
 Executed on **2026-10-04–05 UTC**, as `lucifer@aurora-server`. Public application:
 **https://demo.rikon-karmakar.quest**. This report records server measurements;
 the delivery's Windows/WSL timings are not used as server timings.
