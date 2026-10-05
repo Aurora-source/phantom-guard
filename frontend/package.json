@@ -1,0 +1,19 @@
+{
+  "name": "phantomguard-browser",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --test tests/model.test.mjs",
+    "test:browser": "node tests/browser.mjs"
+  },
+  "dependencies": {
+    "three": "0.180.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.58.0",
+    "esbuild": "0.25.10",
+    "prettier": "3.6.2"
+  }
+}

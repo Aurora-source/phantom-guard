@@ -21,6 +21,7 @@ deployment-bundles/*
 bundle-manifest.json
 # Python
 .venv/
+.venv-frontend/
 __pycache__/
 *.egg-info/
 .pytest_cache/
