@@ -1,0 +1,304 @@
+{
+  "source": "Actual legacy Python API + explicitly synthetic browser-contract fixtures",
+  "browser": "145.0.7632.6",
+  "hardware": {
+    "cpu": "AMD Ryzen 9 8940HX with Radeon Graphics        ",
+    "logicalCPUs": 32,
+    "ramGiB": 31.215763092041016,
+    "webglRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)"
+  },
+  "checks": [
+    {
+      "name": "CSP and three packaged asset routes",
+      "detail": "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; frame-ancestors 'none'"
+    },
+    {
+      "name": "Accessible optional guide and direct replay path",
+      "detail": true
+    },
+    {
+      "name": "Catalog-supported options; T3/A0\u00e2\u20ac\u201cA2 unavailable",
+      "detail": true
+    },
+    {
+      "name": "Actual clean recording / supplied compatible artifacts",
+      "detail": {
+        "cycles": 600,
+        "processing": {
+          "p50_ms": 1.6769999965617899,
+          "p99_ms": 2.3758449978777194,
+          "max_ms": 3.18840000545606,
+          "n": 600,
+          "detector_p99_ms": 2.124549001455306,
+          "assembly_cpu_p99_ms": 0.3384350227133836
+        },
+        "timings": {
+          "artifact_loading_seconds": 0.10900000000401633,
+          "data_loading_seconds": 0.7819999999992433,
+          "attacker_planning_seconds": 0,
+          "detect_and_display_seconds": 1.4369999999980791,
+          "detector_cpu_seconds": 0.8439198999622022,
+          "assembly_cpu_seconds": 0.15561139981582528,
+          "presentation_and_metrics_seconds": 0.031000000002677552
+        }
+      }
+    },
+    {
+      "name": "Discrete step/back/scrub alignment",
+      "detail": true
+    },
+    {
+      "name": "Terminal polling stops; playback makes no HTTP calls",
+      "detail": true
+    },
+    {
+      "name": "On-demand 3D with bounded resources and view disposal",
+      "detail": true
+    },
+    {
+      "name": "Legacy comparison honestly unavailable; clean result retained",
+      "detail": true
+    },
+    {
+      "name": "Actual T1/A2 attack through ordinary frame path",
+      "detail": {
+        "cycles": 600,
+        "alerts": 315,
+        "timings": {
+          "artifact_loading_seconds": 0.0940000000045984,
+          "data_loading_seconds": 0.8119999999980791,
+          "attacker_planning_seconds": 8.906000000002678,
+          "detect_and_display_seconds": 1.4689999999973224,
+          "detector_cpu_seconds": 0.9056268000567798,
+          "assembly_cpu_seconds": 0.16541180027707014,
+          "presentation_and_metrics_seconds": 0.031000000002677552
+        }
+      }
+    },
+    {
+      "name": "Actual alert navigation selects associated discrete cycle",
+      "detail": true
+    },
+    {
+      "name": "Reload recovers completed job with isolated session token",
+      "detail": true
+    },
+    {
+      "name": "Two actual sessions isolate ownership and causal runs",
+      "detail": true
+    },
+    {
+      "name": "Actual cancellation/reset discards late status/result",
+      "detail": true
+    },
+    {
+      "name": "390\u00c3\u2014844 mobile / reduced motion, usable replay with no page overflow",
+      "detail": true
+    },
+    {
+      "name": "Three repeated actual runs/resets release results and GPU resources",
+      "detail": true
+    },
+    {
+      "name": "Synthetic: scene/object separation, persistence, bounds, warming/unavailable, empty scene, no WebGL",
+      "detail": true
+    },
+    {
+      "name": "Synthetic: missing artifacts / generated evidence",
+      "detail": true
+    },
+    {
+      "name": "Synthetic: HTTP 401 Session expired",
+      "detail": true
+    },
+    {
+      "name": "Synthetic: HTTP 429 Queue capacity",
+      "detail": true
+    },
+    {
+      "name": "Synthetic: HTTP 400 No eligible moving material",
+      "detail": true
+    },
+    {
+      "name": "Synthetic: malformed error envelope",
+      "detail": true
+    },
+    {
+      "name": "Synthetic: empty/malformed result never becomes a current run",
+      "detail": true
+    },
+    {
+      "name": "Synthetic: delayed result after reset cannot reinstall stale data",
+      "detail": true
+    },
+    {
+      "name": "Synthetic: legacy running state never invents percentages",
+      "detail": true
+    },
+    {
+      "name": "Synthetic: additive declared source alignment enables discrete comparison",
+      "detail": true
+    },
+    {
+      "name": "Synthetic: alert final frame and selected-track lifetime remain aligned",
+      "detail": true
+    },
+    {
+      "name": "Synthetic: cooling stage and visibility suspend/resume status polling",
+      "detail": true
+    }
+  ],
+  "metrics": {
+    "initial": {
+      "navigationMs": 190.39999999850988,
+      "resources": [
+        {
+          "path": "/style.css",
+          "transferBytes": 28326,
+          "durationMs": 1.9000000059604645
+        },
+        {
+          "path": "/app.js",
+          "transferBytes": 566522,
+          "durationMs": 3.1999999955296516
+        },
+        {
+          "path": "/api/catalog",
+          "transferBytes": 2191,
+          "durationMs": 1.7999999970197678
+        },
+        {
+          "path": "/api/sessions",
+          "transferBytes": 377,
+          "durationMs": 1.2999999970197678
+        },
+        {
+          "path": "/readyz",
+          "transferBytes": 3675,
+          "durationMs": 122.10000000149012
+        },
+        {
+          "path": "/api/evaluation",
+          "transferBytes": 35133,
+          "durationMs": 8
+        }
+      ],
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "overflow": false
+    },
+    "paused2d": {
+      "mode": "paused 2D",
+      "sampleMs": 1507,
+      "taskCpuMs": 2.9050000000000002,
+      "scriptCpuMs": 0,
+      "heapBytes": 18404700,
+      "renderCount": 0,
+      "renderMedianMs": null,
+      "renderP99Ms": null,
+      "gpu": null
+    },
+    "playing2d": {
+      "mode": "playing 2D",
+      "sampleMs": 1511,
+      "taskCpuMs": 195.12099999999998,
+      "scriptCpuMs": 40.057,
+      "heapBytes": 16845995,
+      "renderCount": 40,
+      "renderMedianMs": 0.8999999985098839,
+      "renderP99Ms": 1.5,
+      "gpu": null
+    },
+    "paused3d": {
+      "mode": "paused 3D",
+      "sampleMs": 1515,
+      "taskCpuMs": 0.5429999999999999,
+      "scriptCpuMs": 0,
+      "heapBytes": 13074415,
+      "renderCount": 0,
+      "renderMedianMs": null,
+      "renderP99Ms": null,
+      "gpu": {
+        "geometries": 8,
+        "textures": 0
+      }
+    },
+    "playing3d": {
+      "mode": "playing 3D",
+      "sampleMs": 1517,
+      "taskCpuMs": 355.226,
+      "scriptCpuMs": 77.47800000000001,
+      "heapBytes": 14318099,
+      "renderCount": 39,
+      "renderMedianMs": 1.8999999985098839,
+      "renderP99Ms": 2.899999998509884,
+      "gpu": {
+        "geometries": 8,
+        "textures": 0
+      }
+    },
+    "afterViewChanges": {
+      "mode": "after eight 2D/3D changes",
+      "sampleMs": 1519,
+      "taskCpuMs": 0.45399999999999996,
+      "scriptCpuMs": 0,
+      "heapBytes": 12577633,
+      "renderCount": 0,
+      "renderMedianMs": null,
+      "renderP99Ms": null,
+      "gpu": {
+        "geometries": 8,
+        "textures": 0
+      }
+    },
+    "resetCycles": [
+      {
+        "mode": "reset stress 1",
+        "sampleMs": 311,
+        "taskCpuMs": 0.625,
+        "scriptCpuMs": 0,
+        "heapBytes": 3920519,
+        "renderCount": 0,
+        "renderMedianMs": null,
+        "renderP99Ms": null
+      },
+      {
+        "mode": "reset stress 2",
+        "sampleMs": 316,
+        "taskCpuMs": 0.48700000000000004,
+        "scriptCpuMs": 0,
+        "heapBytes": 4147186,
+        "renderCount": 0,
+        "renderMedianMs": null,
+        "renderP99Ms": null
+      },
+      {
+        "mode": "reset stress 3",
+        "sampleMs": 314,
+        "taskCpuMs": 0.31699999999999995,
+        "scriptCpuMs": 0,
+        "heapBytes": 4212934,
+        "renderCount": 0,
+        "renderMedianMs": null,
+        "renderP99Ms": null
+      }
+    ],
+    "polls": 20,
+    "totalRequests": 54,
+    "afterReset": {
+      "mode": "after reset",
+      "sampleMs": 1517,
+      "taskCpuMs": 0.23500000000000001,
+      "scriptCpuMs": 0,
+      "heapBytes": 4221450,
+      "renderCount": 0,
+      "renderMedianMs": null,
+      "renderP99Ms": null
+    }
+  },
+  "errors": [],
+  "tested_frontend_sha": "5c09bb524df008b84a7b626eb13323ec742e659e",
+  "bundle_sha256": "849dbd5c12410e75fd4d1ffc43aee45a7380756639548ac7d921dd7a65f90ad3"
+}

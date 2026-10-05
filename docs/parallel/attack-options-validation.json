@@ -1,0 +1,546 @@
+{
+  "tested_frontend_sha": "5c09bb524df008b84a7b626eb13323ec742e659e",
+  "scope": "Actual local UI compatibility checks, not attack-evaluation measurements",
+  "rows": [
+    {
+      "attack": "T2",
+      "level": "A2",
+      "request": {
+        "recording": "onePersonMovingFrontAndBack.csv",
+        "attack": "T2",
+        "level": "A2",
+        "seed": 11,
+        "cycles": 150,
+        "motion": "moving",
+        "variant": "exact"
+      },
+      "provenance": {
+        "source": "recorded sensor replay",
+        "attack": "simulated CAN attack",
+        "part": "test",
+        "segment_lo": 3301,
+        "segment_hi": 4127,
+        "shown_cycles": 150,
+        "seed_rule": "browser uses the selected seed directly; matrix repetitions use SeedSequence",
+        "recording_sha256": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e",
+        "model_artifact_id": "2ad682efc017e2cf96d856772b20db898edd6c1e253947b3df013a671f067115",
+        "baseline_sha256": "b7f592bad60c25bfa4825c528cbb69d05b76239a5d2f500b755d41c933f82faf",
+        "configuration": {
+          "data": {
+            "raw_dir": "data/raw",
+            "processed_dir": "data/processed",
+            "files": [
+              "emptyRoom.csv",
+              "onePersonMovingFrontAndBack.csv",
+              "onePersonMovingSideToSide.csv",
+              "multiplePeopleChaotic.csv"
+            ]
+          },
+          "units": {
+            "tick_seconds": 0.0001
+          },
+          "protocol": {
+            "header_can_id": 1546,
+            "object_can_id": 1547,
+            "header_len": 5,
+            "object_len": 8,
+            "header_status_ok": 1,
+            "cadence_warmup_cycles": 2,
+            "count_margin": 3
+          },
+          "roi": {
+            "max_range": 15
+          },
+          "zones": {
+            "near_max_range": 4,
+            "mid_max_range": 15
+          },
+          "motion": {
+            "moving_threshold_mps": 0.3
+          },
+          "splits": {
+            "train_frac": 0.6,
+            "val_frac": 0.2
+          },
+          "baseline": {
+            "hard_quantile": 0.999,
+            "soft_quantile": 0.99,
+            "margin_ticks": 2
+          },
+          "tracks": {
+            "reassign_jump_default": 1,
+            "max_gap_cycles": 1,
+            "min_track_cycles_for_stats": 20
+          },
+          "kinematic": {
+            "window_cycles": 15,
+            "rcs_window_cycles": 15,
+            "min_moving_cycles": 10
+          },
+          "replay": {
+            "k_gram": 12,
+            "disp_quant": 0.2,
+            "vel_quant": 0.25,
+            "min_complexity": 4,
+            "history_cycles": 20000
+          },
+          "learned": {
+            "window_cycles": 10,
+            "hidden": 32,
+            "latent": 6,
+            "epochs": 30,
+            "batch_size": 512,
+            "lr": 0.001,
+            "max_train_seconds": 300,
+            "threshold_quantile": 0.999,
+            "iforest_trees": 200
+          },
+          "fusion": {
+            "m": 3,
+            "n": 5,
+            "mn_candidates": [
+              [
+                3,
+                5
+              ],
+              [
+                4,
+                6
+              ],
+              [
+                5,
+                8
+              ]
+            ],
+            "learned_alone": false
+          },
+          "attack": {
+            "seeds": [
+              11,
+              22,
+              33
+            ],
+            "instances_per_run": 6,
+            "min_gap_cycles": 60,
+            "T1": {
+              "count": [
+                1,
+                3
+              ],
+              "life": [
+                20,
+                150
+              ]
+            },
+            "T2": {
+              "count": [
+                10,
+                30
+              ],
+              "life": [
+                10,
+                60
+              ]
+            },
+            "T3": {
+              "min_len": 20,
+              "max_len": 80
+            },
+            "T4": {
+              "life": [
+                20,
+                80
+              ],
+              "drift_per_cycle": [
+                0.02,
+                0.08
+              ]
+            }
+          },
+          "eval": {
+            "runs_per_cell": 3,
+            "workers": 4
+          },
+          "latency": {
+            "p99_budget_ms": 10
+          }
+        },
+        "labels": "complete emitted-test-stream sidecar; never read for playback"
+      },
+      "summary": {
+        "alerting_cycles": 47,
+        "object_cycles": 3602,
+        "green_means": "not flagged; authenticity is not established"
+      },
+      "timings": {
+        "artifact_loading_seconds": 0.09399999999732245,
+        "data_loading_seconds": 0.8280000000013388,
+        "attacker_planning_seconds": 9.093000000000757,
+        "detect_and_display_seconds": 0.375,
+        "detector_cpu_seconds": 0.22295100001065293,
+        "assembly_cpu_seconds": 0.045518499973695725,
+        "presentation_and_metrics_seconds": 0.01599999999598367
+      }
+    },
+    {
+      "attack": "T3",
+      "level": "A3",
+      "request": {
+        "recording": "onePersonMovingFrontAndBack.csv",
+        "attack": "T3",
+        "level": "A3",
+        "seed": 11,
+        "cycles": 150,
+        "motion": "moving",
+        "variant": "exact"
+      },
+      "provenance": {
+        "source": "recorded sensor replay",
+        "attack": "simulated CAN attack",
+        "part": "test",
+        "segment_lo": 3301,
+        "segment_hi": 4127,
+        "shown_cycles": 150,
+        "seed_rule": "browser uses the selected seed directly; matrix repetitions use SeedSequence",
+        "recording_sha256": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e",
+        "model_artifact_id": "2ad682efc017e2cf96d856772b20db898edd6c1e253947b3df013a671f067115",
+        "baseline_sha256": "b7f592bad60c25bfa4825c528cbb69d05b76239a5d2f500b755d41c933f82faf",
+        "configuration": {
+          "data": {
+            "raw_dir": "data/raw",
+            "processed_dir": "data/processed",
+            "files": [
+              "emptyRoom.csv",
+              "onePersonMovingFrontAndBack.csv",
+              "onePersonMovingSideToSide.csv",
+              "multiplePeopleChaotic.csv"
+            ]
+          },
+          "units": {
+            "tick_seconds": 0.0001
+          },
+          "protocol": {
+            "header_can_id": 1546,
+            "object_can_id": 1547,
+            "header_len": 5,
+            "object_len": 8,
+            "header_status_ok": 1,
+            "cadence_warmup_cycles": 2,
+            "count_margin": 3
+          },
+          "roi": {
+            "max_range": 15
+          },
+          "zones": {
+            "near_max_range": 4,
+            "mid_max_range": 15
+          },
+          "motion": {
+            "moving_threshold_mps": 0.3
+          },
+          "splits": {
+            "train_frac": 0.6,
+            "val_frac": 0.2
+          },
+          "baseline": {
+            "hard_quantile": 0.999,
+            "soft_quantile": 0.99,
+            "margin_ticks": 2
+          },
+          "tracks": {
+            "reassign_jump_default": 1,
+            "max_gap_cycles": 1,
+            "min_track_cycles_for_stats": 20
+          },
+          "kinematic": {
+            "window_cycles": 15,
+            "rcs_window_cycles": 15,
+            "min_moving_cycles": 10
+          },
+          "replay": {
+            "k_gram": 12,
+            "disp_quant": 0.2,
+            "vel_quant": 0.25,
+            "min_complexity": 4,
+            "history_cycles": 20000
+          },
+          "learned": {
+            "window_cycles": 10,
+            "hidden": 32,
+            "latent": 6,
+            "epochs": 30,
+            "batch_size": 512,
+            "lr": 0.001,
+            "max_train_seconds": 300,
+            "threshold_quantile": 0.999,
+            "iforest_trees": 200
+          },
+          "fusion": {
+            "m": 3,
+            "n": 5,
+            "mn_candidates": [
+              [
+                3,
+                5
+              ],
+              [
+                4,
+                6
+              ],
+              [
+                5,
+                8
+              ]
+            ],
+            "learned_alone": false
+          },
+          "attack": {
+            "seeds": [
+              11,
+              22,
+              33
+            ],
+            "instances_per_run": 6,
+            "min_gap_cycles": 60,
+            "T1": {
+              "count": [
+                1,
+                3
+              ],
+              "life": [
+                20,
+                150
+              ]
+            },
+            "T2": {
+              "count": [
+                10,
+                30
+              ],
+              "life": [
+                10,
+                60
+              ]
+            },
+            "T3": {
+              "min_len": 20,
+              "max_len": 80
+            },
+            "T4": {
+              "life": [
+                20,
+                80
+              ],
+              "drift_per_cycle": [
+                0.02,
+                0.08
+              ]
+            }
+          },
+          "eval": {
+            "runs_per_cell": 3,
+            "workers": 4
+          },
+          "latency": {
+            "p99_budget_ms": 10
+          }
+        },
+        "labels": "complete emitted-test-stream sidecar; never read for playback"
+      },
+      "summary": {
+        "alerting_cycles": 12,
+        "object_cycles": 3321,
+        "green_means": "not flagged; authenticity is not established"
+      },
+      "timings": {
+        "artifact_loading_seconds": 0.0930000000007567,
+        "data_loading_seconds": 0.8289999999979045,
+        "attacker_planning_seconds": 8.843000000000757,
+        "detect_and_display_seconds": 0.3280000000013388,
+        "detector_cpu_seconds": 0.1966213000632706,
+        "assembly_cpu_seconds": 0.03969879976648372,
+        "presentation_and_metrics_seconds": 0.0319999999992433
+      }
+    },
+    {
+      "attack": "T4",
+      "level": "A3",
+      "request": {
+        "recording": "onePersonMovingFrontAndBack.csv",
+        "attack": "T4",
+        "level": "A3",
+        "seed": 11,
+        "cycles": 150,
+        "motion": "moving",
+        "variant": "exact"
+      },
+      "provenance": {
+        "source": "recorded sensor replay",
+        "attack": "simulated CAN attack",
+        "part": "test",
+        "segment_lo": 3301,
+        "segment_hi": 4127,
+        "shown_cycles": 150,
+        "seed_rule": "browser uses the selected seed directly; matrix repetitions use SeedSequence",
+        "recording_sha256": "fe4fb020719c47686dce840a80f51f6b2ee7f3d69c50cf0d872015319e9c414e",
+        "model_artifact_id": "2ad682efc017e2cf96d856772b20db898edd6c1e253947b3df013a671f067115",
+        "baseline_sha256": "b7f592bad60c25bfa4825c528cbb69d05b76239a5d2f500b755d41c933f82faf",
+        "configuration": {
+          "data": {
+            "raw_dir": "data/raw",
+            "processed_dir": "data/processed",
+            "files": [
+              "emptyRoom.csv",
+              "onePersonMovingFrontAndBack.csv",
+              "onePersonMovingSideToSide.csv",
+              "multiplePeopleChaotic.csv"
+            ]
+          },
+          "units": {
+            "tick_seconds": 0.0001
+          },
+          "protocol": {
+            "header_can_id": 1546,
+            "object_can_id": 1547,
+            "header_len": 5,
+            "object_len": 8,
+            "header_status_ok": 1,
+            "cadence_warmup_cycles": 2,
+            "count_margin": 3
+          },
+          "roi": {
+            "max_range": 15
+          },
+          "zones": {
+            "near_max_range": 4,
+            "mid_max_range": 15
+          },
+          "motion": {
+            "moving_threshold_mps": 0.3
+          },
+          "splits": {
+            "train_frac": 0.6,
+            "val_frac": 0.2
+          },
+          "baseline": {
+            "hard_quantile": 0.999,
+            "soft_quantile": 0.99,
+            "margin_ticks": 2
+          },
+          "tracks": {
+            "reassign_jump_default": 1,
+            "max_gap_cycles": 1,
+            "min_track_cycles_for_stats": 20
+          },
+          "kinematic": {
+            "window_cycles": 15,
+            "rcs_window_cycles": 15,
+            "min_moving_cycles": 10
+          },
+          "replay": {
+            "k_gram": 12,
+            "disp_quant": 0.2,
+            "vel_quant": 0.25,
+            "min_complexity": 4,
+            "history_cycles": 20000
+          },
+          "learned": {
+            "window_cycles": 10,
+            "hidden": 32,
+            "latent": 6,
+            "epochs": 30,
+            "batch_size": 512,
+            "lr": 0.001,
+            "max_train_seconds": 300,
+            "threshold_quantile": 0.999,
+            "iforest_trees": 200
+          },
+          "fusion": {
+            "m": 3,
+            "n": 5,
+            "mn_candidates": [
+              [
+                3,
+                5
+              ],
+              [
+                4,
+                6
+              ],
+              [
+                5,
+                8
+              ]
+            ],
+            "learned_alone": false
+          },
+          "attack": {
+            "seeds": [
+              11,
+              22,
+              33
+            ],
+            "instances_per_run": 6,
+            "min_gap_cycles": 60,
+            "T1": {
+              "count": [
+                1,
+                3
+              ],
+              "life": [
+                20,
+                150
+              ]
+            },
+            "T2": {
+              "count": [
+                10,
+                30
+              ],
+              "life": [
+                10,
+                60
+              ]
+            },
+            "T3": {
+              "min_len": 20,
+              "max_len": 80
+            },
+            "T4": {
+              "life": [
+                20,
+                80
+              ],
+              "drift_per_cycle": [
+                0.02,
+                0.08
+              ]
+            }
+          },
+          "eval": {
+            "runs_per_cell": 3,
+            "workers": 4
+          },
+          "latency": {
+            "p99_budget_ms": 10
+          }
+        },
+        "labels": "complete emitted-test-stream sidecar; never read for playback"
+      },
+      "summary": {
+        "alerting_cycles": 0,
+        "object_cycles": 3294,
+        "green_means": "not flagged; authenticity is not established"
+      },
+      "timings": {
+        "artifact_loading_seconds": 0.11000000000058208,
+        "data_loading_seconds": 0.8119999999980791,
+        "attacker_planning_seconds": 9.265999999995984,
+        "detect_and_display_seconds": 0.3440000000045984,
+        "detector_cpu_seconds": 0.20424889996502316,
+        "assembly_cpu_seconds": 0.0406166000830126,
+        "presentation_and_metrics_seconds": 0.014999999999417923
+      }
+    }
+  ]
+}
