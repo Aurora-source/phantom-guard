@@ -45,3 +45,9 @@ curl -fsS http://127.0.0.1:8765/readyz
 Original rollback images, dataset originals, model sets and archive remain present. The bundle checksum is 849dbd5c12410e75fd4d1ffc43aee45a7380756639548ac7d921dd7a65f90ad3; serving model ID is 2ad682efc017e2cf96d856772b20db898edd6c1e253947b3df013a671f067115, baseline SHA b7f592bad60c25bfa4825c528cbb69d05b76239a5d2f500b755d41c933f82faf. No new bundle is required for this runtime-only release. Existing false-alert/attack-evasion limitations remain unchanged and visible.
 
 Public Chromium repeat passed all five grouped checks and 94 no-store/DYNAMIC private responses, with no page errors. The first attempt caught the frontend reset/poll message race; its required Agent 3 fix is documented in interface-runtime.md. Cancellation/session ownership and replay work correctly, but the intermittent display race remains open.
+
+Fork branch published successfully with an identical checked Git tree. Upstream PR creation was blocked by GitHub integration HTTP 403 (Resource not accessible by integration); no PR exists. Exact title/body and the compare/create URL are saved in server-pr.md. Deployment remains running.
+
+Post-restart local/public readiness and fresh public Chromium clean/T1-A2 150-cycle replay/stepping passed with zero page errors. Only Phantom Guard was restarted; unrelated services/tunnel routes remain intact.
+
+Real idle cleanup also passed: a 51-byte interrupted-check status directory expired automatically at the configured 600 s TTL; the application browser output directory returned to zero files/bytes. Final idle core/package temperature was 66°C, no swap-out, with about 6.55 GiB RAM available. Numerical replay children remained single-threaded and only the intentional warm worker was retained.
