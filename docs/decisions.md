@@ -611,3 +611,19 @@ Code that sees an unknown profile/schema refuses to run it.
   The AE threshold could only be set on the same ~8 validation minutes that measure its clean cost
   (inner-CV retraining of the AE per held recording was not done), so the route is **not adopted**:
   the learned layer stays corroborating-only and no ML detection claim is made. Re-evaluate on new sessions.
+
+### Freeze and final matrix (test part)
+- Policy frozen at `e81c6b1` (allowance 0 calibration, DRIFT_EWMA included, learned layer corroborating
+  only) from validation evidence alone, before any test-part attack result existed. The relaxed
+  operating point is published as an alternative, not frozen.
+- First final-matrix attempt: every worker kept clean-control results for each full-length LOSO
+  recording it touched (unbounded memo), and two matrices in parallel exhausted 31 GB (`MemoryError`).
+  `0870ec6` bounds that memo to two intervals (results identical; detector/attacker/calibration/baselines
+  byte-identical to `e81c6b1`). A later attempt to speed things up by running the held-back-seed matrices
+  next to the legacy matrix exhausted memory again (per-worker peaks on full LOSO recordings are far above
+  the average). The remaining runs were resumed sequentially at 14 workers from content-addressed
+  checkpoints; no completed result was recomputed or changed.
+- Clean held-out result at the frozen policy (generated ledgers): time-block 2 episodes in 2.11 min
+  (0.95/min), LOSO 14 in 10.56 min (1.33/min; chaotic held out 9 in 3.10 min). Legacy on the same
+  intervals: 3 (1.42/min) and 36 (3.41/min). The <1/min target is therefore met on the time-block split
+  only narrowly and **not met in LOSO**; thresholds were not changed in response.
