@@ -247,6 +247,8 @@ def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument("--loso", action="store_true", help="also learn one baseline per leave-one-scenario-out fold")
     ap.add_argument("--skip-claims", action="store_true")
+    ap.add_argument("--profile", choices=("legacy", "v2"), default="legacy",
+                    help="v2 adds the conditional RCS/arrival/drift models and the structural-vs-tail fusion policy")
     add_path_arguments(ap)
     args = ap.parse_args(argv)
     cfg = config_from_args(args)
@@ -255,6 +257,9 @@ def main(argv=None):
     segs = time_block_segments(cfg)
     print("Learning baseline from TRAIN segments:", [(s.file, s.lo, s.hi) for s in segs["train"]])
     b, st, tf = learn(cfg, segs["train"], segs["val"])
+    if args.profile == "v2":
+        from phantomguard.stats.v2 import apply_v2
+        b = apply_v2(cfg, b, st)
     save_baseline(b, cfg=cfg)
     print("\nWrote configs/baseline.json. Thresholds (rule -> value, val exceedance):")
     for k, v in sorted(b.items()):
@@ -269,7 +274,10 @@ def main(argv=None):
         out = paths(cfg).processed
         out.mkdir(parents=True, exist_ok=True)
         for held, fold in loso_folds(cfg).items():
-            bl, _, _ = learn(cfg, fold["train"], fold["val"])
+            bl, st_fold, _ = learn(cfg, fold["train"], fold["val"])
+            if args.profile == "v2":
+                from phantomguard.stats.v2 import apply_v2
+                bl = apply_v2(cfg, bl, st_fold)
             path = out / f"baseline_loso_{Path(held).stem}.json"
             save_baseline(bl, path)
             print(f"  LOSO fold (test={held}) -> {path}")

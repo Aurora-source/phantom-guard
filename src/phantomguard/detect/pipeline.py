@@ -72,7 +72,7 @@ def load_artifacts(tag: str = "timeblock", models_dir: Path | None = None, *, cf
 
 class Detector:
     def __init__(self, cfg: dict, baseline: dict, ae: NumpyAE | None = None, library: set | None = None,
-                 layers: Iterable[str] = LAYERS, *, capture_windows: bool = False):
+                 layers: Iterable[str] = LAYERS, *, capture_windows: bool = False, capture_z: bool = False):
         self.cfg = cfg
         self.layers = tuple(layers)
         if set(self.layers) - set(LAYERS):
@@ -80,8 +80,8 @@ class Detector:
         self.capture_windows = capture_windows
         self.roi = cfg["roi"]["max_range"]
         self.thr = cfg["motion"]["moving_threshold_mps"]
-        self.protocol = ProtocolChecker(cfg, baseline)
-        self.kin = KinematicChecker(cfg, baseline)
+        self.protocol = ProtocolChecker(cfg, baseline, capture_z=capture_z)
+        self.kin = KinematicChecker(cfg, baseline, capture_z=capture_z)
         self.replay = ReplayChecker(cfg, library)
         self.learned = None
         self.layer_status = {layer: "active" for layer in LAYERS}
@@ -94,6 +94,8 @@ class Detector:
             self.layer_status["learned"] = "unavailable: model or static/moving calibration missing"
         hist = max(cfg["kinematic"]["window_cycles"], cfg["kinematic"]["rcs_window_cycles"],
                    cfg["replay"]["k_gram"] + 1, cfg["learned"]["window_cycles"] + 1)
+        if self.kin.v2:
+            hist = max(hist, max(self.kin.drift_h, default=0) + 1)
         self.tracks = TrackManager(bval(baseline, "reassign_jump"), cfg["units"]["tick_seconds"], self.thr,
                                    history=hist, max_gap_cycles=cfg["tracks"]["max_gap_cycles"])
         self.fusion = Fusion(effective_cfg(cfg, baseline), self.layers, emit_evidence=True)

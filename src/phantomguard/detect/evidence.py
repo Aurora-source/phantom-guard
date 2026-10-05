@@ -30,7 +30,7 @@ REASON_CLASS: dict[str, str] = {
     "NO_HEADER": "structural", "FRAME_LEN": "structural", "DUP_SLOT": "structural",
     "FIXED_FIELD": "exact_regularity", "RANGE_ORDER": "exact_regularity",
     "COUNT_RANGE": "empirical_tail", "CADENCE": "empirical_tail", "ARRIVAL": "empirical_tail",
-    "BURST_GAP": "empirical_tail", "SLOT_RANGE": "empirical_tail",
+    "BURST_GAP": "exact_regularity", "SLOT_RANGE": "empirical_tail",
     "RCS_GRID": "exact_regularity", "RCS_RANGE": "empirical_tail", "SPEED": "empirical_tail",
     "ACCEL": "empirical_tail", "RR_RESID": "empirical_tail", "POS_SPEED": "empirical_tail",
     "RCS_STD": "empirical_tail", "RCS_BAND": "empirical_tail", "JUMP": "empirical_tail",

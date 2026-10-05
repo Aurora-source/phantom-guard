@@ -42,6 +42,10 @@ REASONS: dict[str, tuple[str, bool]] = {
     "RCS_BAND": ("kinematic", False),
     "JUMP": ("kinematic", False),
     "COLOC": ("kinematic", False),
+    # detector profile v2 (soft by default; hardness is set by fusion.hard_codes)
+    "ARRIVAL_POS": ("protocol", False),   # late arrival relative to the frame's position in the burst
+    "RCS_ENV": ("kinematic", False),      # outside the smooth range-conditional RCS envelope
+    "DRIFT": ("kinematic", False),        # observed position change inconsistent with reported velocity
     # replay fingerprint
     "REPLAY": ("replay", False),
     # learned normal
@@ -49,6 +53,19 @@ REASONS: dict[str, tuple[str, bool]] = {
 }
 
 LAYERS = ("protocol", "kinematic", "replay", "learned")
+
+
+def rule_thresholds_of(baseline: dict) -> dict[str, float]:
+    """Calibrated exceedance offsets per soft rule (profile v2). ``null`` in JSON means the rule is inactive."""
+    entry = baseline.get("rule_thresholds")
+    values = entry["value"] if isinstance(entry, dict) and "value" in entry else (entry or {})
+    return {code: (float("inf") if value is None else float(value)) for code, value in values.items()}
+
+
+def contract_of(baseline: dict) -> dict | None:
+    """Detector profile contract stored in the baseline (profile v2+), or None for the legacy profile."""
+    c = baseline.get("detector_contract")
+    return (c["value"] if isinstance(c, dict) and "value" in c else c) if c else None
 
 
 def layer_of(code: str) -> str:

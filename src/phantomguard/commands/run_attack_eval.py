@@ -44,6 +44,17 @@ SUBSETS = {**{layer: (layer,) for layer in LAYERS}, "all": LAYERS,
            **{f"all-minus-{layer}": tuple(x for x in LAYERS if x != layer) for layer in LAYERS}}
 
 
+def variants(scoring_cfg: dict, ablate: tuple[str, ...] = ()) -> dict:
+    """name -> (layers, scoring cfg). Layer subsets as before, plus optional rule-level ablations
+    ``all-minus-<CODE>`` that ignore one reason code in fusion (evaluation only)."""
+    from phantomguard.eval.metrics import with_fusion
+
+    out = {name: (layers, scoring_cfg) for name, layers in SUBSETS.items()}
+    for code in ablate:
+        out[f"all-minus-{code}"] = (LAYERS, with_fusion(scoring_cfg, {"ignore_codes": [code]}))
+    return out
+
+
 def job_seed(seed: int, file: str) -> int:
     """Compatibility with the accepted evaluator's deterministic per-recording seed API."""
     import zlib
@@ -116,15 +127,16 @@ def detect_stream(cfg: dict, baseline: dict, tag: str, source, *, with_iforest: 
 _CONTROL_CACHE: dict = {}
 
 
-def control_for(cfg: dict, baseline: dict, context: dict, segment: Segment, scoring_cfg: dict) -> dict:
+def control_for(cfg: dict, baseline: dict, context: dict, segment: Segment, scoring_cfg: dict,
+                ablate: tuple[str, ...] = ()) -> dict:
     """Clean control of the same recording interval with the same frozen artifacts, per layer subset."""
-    key = (context["tag"], segment.file, segment.lo, segment.hi, json.dumps(scoring_cfg["fusion"], sort_keys=True))
+    key = (context["tag"], segment.file, segment.lo, segment.hi, json.dumps(scoring_cfg["fusion"], sort_keys=True), ablate)
     if key not in _CONTROL_CACHE:
         source = ReplaySource(raw_path(cfg, segment.file), (segment.lo, segment.hi))
         cycles = detect_stream(cfg, baseline, context["tag"], source, with_iforest=False)
         lineage = replay_lineage(source)
-        _CONTROL_CACHE[key] = {name: control_alerts(cycles, lineage, scoring_cfg, layers)
-                               for name, layers in SUBSETS.items()}
+        _CONTROL_CACHE[key] = {name: control_alerts(cycles, lineage, vcfg, layers)
+                               for name, (layers, vcfg) in variants(scoring_cfg, ablate).items()}
     return _CONTROL_CACHE[key]
 
 
@@ -233,7 +245,8 @@ def _run_attack(payload):
         lifecycle = json.loads(lifecycle_path.read_text(encoding="utf-8")) if lifecycle_path.exists() else None
         lineage_path = labels_path.with_suffix(".lineage.csv")
         lineage = read_lineage(lineage_path) if lineage_path.is_file() else None
-        control = control_for(cfg, baseline, context, segment, scoring_cfg) if lineage is not None else None
+        ablate = tuple(job.get("ablate_codes", ()))
+        control = control_for(cfg, baseline, context, segment, scoring_cfg, ablate) if lineage is not None else None
         if any(label.is_attack and (label.attack_type != job["attack_type"] or label.level != job["level"])
                for label in labels):
             raise ValueError("sidecar metadata differs from requested attack cell")
@@ -242,12 +255,12 @@ def _run_attack(payload):
                   "p99_budget_ms": cfg["latency"]["p99_budget_ms"],
                   "measurement_workers": context.get("measurement_workers", 1)}
         timing["latency_budget_met"] = timing["p99_ms"] < timing["p99_budget_ms"]
-        for name, layers in SUBSETS.items():
-            metrics, instances = attack_metrics(cycles, labels, scoring_cfg, layers,
+        for name, (layers, vcfg) in variants(scoring_cfg, ablate).items():
+            metrics, instances = attack_metrics(cycles, labels, vcfg, layers,
                                                  copy_records=False, score_cache=score_cache)
             loc = None
             if lineage is not None:
-                loc = localization_metrics(cycles, labels, lineage, control[name], scoring_cfg, layers)
+                loc = localization_metrics(cycles, labels, lineage, control[name], vcfg, layers)
                 metrics.update(loc.row)
             if lifecycle is not None:
                 planned = lifecycle["planned_instances"]
@@ -302,6 +315,8 @@ def main(argv=None) -> int:
     parser.add_argument("--files", help="comma-separated recording file names to run (default all)")
     parser.add_argument("--seeds", help="comma-separated configured attack seeds (default attack.seeds)")
     parser.add_argument("--runs-per-cell", type=int, help="repetitions per cell (default eval.runs_per_cell)")
+    parser.add_argument("--ablate-codes", help="comma-separated reason codes; adds an 'all-minus-CODE' row set per code "
+                                              "(evaluation-only rule ablation, e.g. COLOC,RCS_BAND)")
     add_path_arguments(parser)
     args = parser.parse_args(argv)
     cfg = config_from_args(args)
@@ -356,6 +371,7 @@ def main(argv=None) -> int:
     types, levels = pick(args.types, ATTACK_TYPES), pick(args.levels, LEVEL_NAMES)
     seeds = [int(x) for x in pick(args.seeds, None)] if args.seeds else None
     files = set(pick(args.files, None) or [])
+    ablate_codes = tuple(pick(args.ablate_codes, None) or ())
     manifest["filters"] = {"types": types, "levels": levels, "files": sorted(files) or None, "seeds": seeds,
                            "runs_per_cell": args.runs_per_cell}
     for bad, allowed, label in ((types, ATTACK_TYPES, "types"), (levels, LEVEL_NAMES, "levels")):
@@ -368,6 +384,8 @@ def main(argv=None) -> int:
             if not args.preflight:
                 clean_payloads.append((cfg, context, segment))
             for job in attack_jobs(cfg, context, segment, types, levels, seeds, args.runs_per_cell):
+                if ablate_codes:
+                    job["ablate_codes"] = list(ablate_codes)
                 if args.smoke and not (segment.file == 'multiplePeopleChaotic.csv' and job['motion_case'] == 'moving'
                     and job['configured_seed'] == cfg['attack']['seeds'][0] and job['run'] == 0
                     and (job['attack_type'],job['level']) in {('T1','A2'),('T2','A2'),('T3','A3'),('T4','A3')}

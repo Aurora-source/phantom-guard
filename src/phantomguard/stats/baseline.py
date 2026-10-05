@@ -29,6 +29,7 @@ class SegmentStats:
     counter_steps: list = field(default_factory=list)
     offsets: list = field(default_factory=list)  # every object arrival offset
     first_offsets: list = field(default_factory=list)
+    arrival_k: list = field(default_factory=list)  # (arrival position k within the cycle, offset in ticks)
     burst_gaps: list = field(default_factory=list)  # consecutive object frames inside a cycle
     objs_per_cycle: list = field(default_factory=list)
     order_viol: list = field(default_factory=list)  # prev_range - range for every adjacent pair
@@ -96,6 +97,7 @@ def collect_segment(cfg: dict, seg: Segment) -> SegmentStats:
         for i, ob in enumerate(objs):
             o = ob.obj
             st.offsets.append(ob.offset)
+            st.arrival_k.append((i, ob.offset))
             st.slots_all.append(o.slot)
             st.rcs_all.append(o.rcs)
             if o.range <= roi:

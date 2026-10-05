@@ -21,6 +21,11 @@ class TrackPoint:
     rng: float
     vr: float  # reported radial velocity
     frame_index: int
+    # Running integrals over the track's own past (observed dt), so window sums are O(1) differences:
+    # civx/civy = sum_{j<i} v_j dt_j, cspd = sum_{j<i} |v_j|. Used by the drift evidence (profile v2).
+    civx: float = 0.0
+    civy: float = 0.0
+    cspd: float = 0.0
 
 
 @dataclass
@@ -81,8 +86,13 @@ class TrackManager:
                     tr = self._new(slot, cycle.index, False)
                 new_active[slot] = tr
             t = (t_cycle if t_cycle is not None else ob.t) * self.tick_seconds
+            civx = civy = cspd = 0.0
+            if tr.points:
+                q = tr.points[-1]
+                civx, civy = q.civx + q.vx * (t - q.t_s), q.civy + q.vy * (t - q.t_s)
+                cspd = q.cspd + math.hypot(q.vx, q.vy)
             tr.points.append(TrackPoint(cycle.index, t, o.x, o.y, o.vx, o.vy, o.rcs, o.range, o.radial_velocity,
-                                        ob.frame_index))
+                                        ob.frame_index, civx, civy, cspd))
             if len(tr.points) > self.history:
                 tr.points.popleft()
             tr.total_points += 1

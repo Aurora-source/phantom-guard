@@ -14,8 +14,12 @@ def effective_cfg(cfg: dict[str, Any], baseline: dict[str, Any]) -> dict[str, An
     ``scripts/calibrate.py`` chooses M/N on clean validation data and stores it as ``fusion_mn``;
     without that entry the defaults in configs/default.yaml apply.
     """
+    out = cfg
     mn = baseline.get("fusion_mn")
-    if not mn:
-        return cfg
-    m, n = mn["value"]
-    return {**cfg, "fusion": {**cfg["fusion"], "m": int(m), "n": int(n)}}
+    if mn:
+        m, n = mn["value"]
+        out = {**out, "fusion": {**out["fusion"], "m": int(m), "n": int(n)}}
+    policy = baseline.get("fusion_policy")  # detector profile v2: hard codes, cycle persistence, learned route
+    if policy:
+        out = {**out, "fusion": {**out["fusion"], **policy["value"]}}
+    return out

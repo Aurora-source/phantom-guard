@@ -4,13 +4,19 @@ from __future__ import annotations
 
 from phantomguard.config import bval
 from phantomguard.cycles import Cycle
-from phantomguard.detect.common import ObjVerdict
+from phantomguard.detect.common import ObjVerdict, contract_of, rule_thresholds_of
 from phantomguard.detect.evidence import make_evidence, support_record
 
 
 class ProtocolChecker:
-    def __init__(self, cfg: dict, baseline: dict):
+    def __init__(self, cfg: dict, baseline: dict, *, capture_z: bool = False):
         g = lambda k: bval(baseline, k)
+        self.capture_z = capture_z
+        contract = contract_of(baseline)
+        self.v2 = contract is not None
+        self.off = set(contract.get("off", ())) if contract else set()
+        self.c = rule_thresholds_of(baseline)
+        self.arrival_pos = bval(baseline, "arrival_pos") if self.v2 and "arrival_pos" in baseline else None
         self.warmup = cfg["protocol"]["cadence_warmup_cycles"]
         self.cadence = (g("cadence_lo"), g("cadence_hi"))
         self.counter_step = g("counter_step")
@@ -101,9 +107,25 @@ class ProtocolChecker:
             v = by_frame[ob.frame_index]
             o = ob.obj
             fi = ob.frame_index
-            if ob.offset is not None and not self.arrival[0] <= ob.offset <= self.arrival[1]:
-                v.note("ARRIVAL", frames=[fi], cycles=span, observed=ob.offset, lo=self.arrival[0], hi=self.arrival[1],
-                       suspect_frames=[fi])
+            if ob.offset is not None:
+                z = max(ob.offset - self.arrival[1], self.arrival[0] - ob.offset)
+                if self.capture_z:
+                    v.scores["z:ARRIVAL"] = float(z)
+                if "ARRIVAL" not in self.off and z > self.c.get("ARRIVAL", 0.0):
+                    v.note("ARRIVAL", frames=[fi], cycles=span, observed=ob.offset, lo=self.arrival[0], hi=self.arrival[1],
+                           suspect_frames=[fi])
+                ap = self.arrival_pos
+                if ap is not None and "ARRIVAL_POS" not in self.off:
+                    expected = ap["a"] + ap["b"] * ob.position
+                    zp = ob.offset - expected - ap["base_bound"]      # ticks later than the burst position predicts
+                    if self.capture_z:
+                        v.scores["z:ARRIVAL_POS"] = float(zp)
+                    if zp > self.c.get("ARRIVAL_POS", 0.0):
+                        v.note("ARRIVAL_POS", frames=[fi], cycles=span, observed=ob.offset, expected=expected,
+                               hi=expected + ap["base_bound"] + self.c.get("ARRIVAL_POS", 0.0), normalized=zp,
+                               suspect_frames=[fi],
+                               support=support_record(ap["n"], "supported", quantisation_floor=ap["quantisation_floor_ticks"]),
+                               note=f"arrived later than burst position {ob.position} predicts (late arrivals only)")
             if i == 0:
                 if ob.offset is not None and ob.offset > self.first_arrival_hi:
                     v.note("BURST_GAP", frames=[fi], cycles=span, observed=ob.offset, hi=self.first_arrival_hi,
@@ -128,7 +150,9 @@ class ProtocolChecker:
                     verdict.note("DUP_SLOT", frames=both, cycles=span, observed=slot, suspect_frames=both,
                                  suspect_basis="duplicate_slot_both")
             seen[slot] = v
-            if slot > self.slot_max:
+            if self.capture_z:
+                v.scores["z:SLOT_RANGE"] = float(slot - self.slot_max)
+            if slot > self.slot_max + self.c.get("SLOT_RANGE", 0.0):
                 v.note("SLOT_RANGE", frames=[fi], cycles=span, observed=slot, hi=self.slot_max, suspect_frames=[fi],
                        note="slot above the largest slot seen in clean training")
             if o is not None and (o.dyn_prop not in self.ok_dyn or o.reserved not in self.ok_res):
