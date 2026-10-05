@@ -252,11 +252,14 @@ def apply_v2(cfg: dict, base: dict, st) -> dict:
     base.update(learn_v2(cfg, st, base))
     base["detector_contract"] = {
         "value": {"profile": "v2", "schema": V2_SCHEMA, "off": list(V2_OFF),
-                  "new_codes": ["ARRIVAL_POS", "RCS_ENV", "DRIFT"]},
+                  "new_codes": ["ARRIVAL_POS", "RCS_ENV", "DRIFT", "DRIFT_STATIC"],
+                  "rescored_codes": {"REPLAY": "flags when the run of consecutive matching windows exceeds the "
+                                               "calibrated threshold (legacy and uncalibrated: every hit)"}},
         "rule": "structural and exact-regularity rules stay hard; empirical tails and new conditional models are soft "
                 "evidence whose exceedance thresholds are calibrated from out-of-recording clean episodes",
         "split": "train"}
-    # Uncalibrated defaults: RCS_ENV flags one grid step beyond the envelope; DRIFT is off until calibrated.
+    # Uncalibrated defaults: RCS_ENV flags one grid step beyond the envelope; DRIFT/DRIFT_STATIC are off and
+    # REPLAY flags every hit (legacy behaviour) until calibrate --profile v2 runs.
     base["rule_thresholds"] = {"value": {"RCS_ENV": 1.0}, "rule": "default until calibrate --profile v2 runs",
                                "split": "train", "calibrated": False}
     base["fusion_policy"] = {"value": {"hard_codes": hard_codes_v2(), "cycle_m": 2, "cycle_n": 4,

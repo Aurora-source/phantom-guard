@@ -176,7 +176,7 @@ class KinematicChecker:
         """Position change over several horizons vs the integral of reported velocity (see stats/v2.py)."""
         pts = tr.points
         b = pts[-1]
-        best = None
+        best: dict = {}                     # regime -> (z, h, er, et, a, m): the strongest horizon per regime
         for h in self.drift_h:
             if len(pts) <= h:
                 continue
@@ -198,20 +198,21 @@ class KinematicChecker:
             er = (dx * ux + dy * uy) - m["B_radial"] * (ix * ux + iy * uy)
             et = (-dx * uy + dy * ux) - m["B_tangential"] * (-ix * uy + iy * ux)
             z = math.sqrt((er / m["scale_radial"]) ** 2 + (et / m["scale_tangential"]) ** 2)
-            if best is None or z > best[0]:
-                best = (z, h, er, et, a, m)
-        if best is None:
+            if regime not in best or z > best[regime][0]:
+                best[regime] = (z, h, er, et, a, m)
+        if not best:
             return
-        z, h, er, et, a, m = best
         v.score_status["drift"] = "scored"
-        self._z(v, "DRIFT", z)
-        if z > self._thr("DRIFT", 1e9):
-            v.note("DRIFT", frames=[a.frame_index, b.frame_index], cycles=(a.cycle_index, b.cycle_index),
-                   observed=math.hypot(er, et), expected=0.0, normalized=z, suspect_frames=[v.frame_index],
-                   suspect_track=tr.track_id,
-                   support=support_record(m["n"], "supported", horizon=h, radial_residual=er,
-                                          tangential_residual=et, quantisation_floor=self.drift["floor"]),
-                   note=f"position change over {h} cycles differs from the integrated reported velocity")
+        for regime, (z, h, er, et, a, m) in best.items():
+            code = "DRIFT" if regime == "moving" else "DRIFT_STATIC"
+            self._z(v, code, z)
+            if z > self._thr(code, 1e9):
+                v.note(code, frames=[a.frame_index, b.frame_index], cycles=(a.cycle_index, b.cycle_index),
+                       observed=math.hypot(er, et), expected=0.0, normalized=z, suspect_frames=[v.frame_index],
+                       suspect_track=tr.track_id,
+                       support=support_record(m["n"], "supported", horizon=h, regime=regime, radial_residual=er,
+                                              tangential_residual=et, quantisation_floor=self.drift["floor"]),
+                       note=f"position change over {h} cycles differs from the integrated reported velocity ({regime} regime)")
 
     def check_colocation(self, items: list[tuple], verdict_frames: bool = True) -> None:
         """items: (x, y, track_age, verdict) for in-ROI objects; flags the younger of a too-close pair."""

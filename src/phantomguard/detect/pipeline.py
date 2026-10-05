@@ -13,7 +13,7 @@ from typing import Iterable, Iterator
 from phantomguard.config import REPO_ROOT, bval, effective_cfg, paths, load_config
 from phantomguard.cycles import Cycle, CycleAssembler
 from phantomguard.detect.autoencoder import LearnedChecker, NumpyAE
-from phantomguard.detect.common import LAYERS, CycleResult, FrameRecord, ObjVerdict
+from phantomguard.detect.common import LAYERS, CycleResult, FrameRecord, ObjVerdict, rule_thresholds_of
 from phantomguard.detect.fusion import Fusion
 from phantomguard.detect.kinematic import KinematicChecker
 from phantomguard.detect.protocol import ProtocolChecker
@@ -83,6 +83,8 @@ class Detector:
         self.protocol = ProtocolChecker(cfg, baseline, capture_z=capture_z)
         self.kin = KinematicChecker(cfg, baseline, capture_z=capture_z)
         self.replay = ReplayChecker(cfg, library)
+        self.capture_z = capture_z
+        self.replay_min_run = rule_thresholds_of(baseline).get("REPLAY", 0.0)   # legacy: every hit flags
         self.learned = None
         self.layer_status = {layer: "active" for layer in LAYERS}
         if library is None:
@@ -102,7 +104,7 @@ class Detector:
         # Every layer runs so reasons and scores are always reported; fusion uses only enabled layers.
 
     def process_cycle(self, cycle: Cycle) -> CycleResult:
-        t0 = time.perf_counter()
+        t0, c0 = time.perf_counter(), time.thread_time()
         verdicts = []
         for ob in cycle.objects:
             o = ob.obj
@@ -128,10 +130,15 @@ class Detector:
             coloc.append((o.x, o.y, tr.total_points, v))
             hit, src = self.replay.check(tr, cycle.index)
             if hit:
+                v.scores["replay_run"] = float(self.replay.run)
+                if self.capture_z:
+                    v.scores["z:REPLAY"] = float(self.replay.run)
+            if hit and self.replay.run > self.replay_min_run:
                 win = list(tr.points)[-(self.replay.k + 1):]
                 v.note("REPLAY", frames=[p.frame_index for p in win], cycles=(win[0].cycle_index, win[-1].cycle_index),
                        suspect_frames=[v.frame_index], suspect_track=tr.track_id,
-                       note=f"trajectory fingerprint also seen in {src.replace('_', ' ')}")
+                       note=f"trajectory fingerprint also seen in {src.replace('_', ' ')}; "
+                            f"{self.replay.run} consecutive matching windows")
                 v.scores["replay_src"] = {"library": 1.0, "earlier_stream": 2.0, "concurrent": 3.0}[src]
             if self.learned is not None:
                 w, moving, status = self.learned.window_outcome(tr.points)
@@ -176,6 +183,7 @@ class Detector:
         self.fusion.apply(res, active_track_ids={tr.track_id for tr in self.tracks.active.values()})
         res.latency_ms = (time.perf_counter() - t0) * 1000.0
         res.detector_cpu_ms = res.latency_ms
+        res.detector_thread_cpu_ms = (time.thread_time() - c0) * 1000.0
         return res
 
     def run(self, frames: Iterable[Frame]) -> Iterator[CycleResult]:

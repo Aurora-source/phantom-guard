@@ -195,6 +195,13 @@ def calibrate_v2(cfg, train, val, baseline_path: Path, tag: str, workers: int, m
         ev, mins = episodes_for([rethreshold(cycles, thresholds, active)], fus_cfg, V2_LAYERS)
         per_file.append({"held_out": held, "events": ev, "minutes": round(mins, 3)})
     lo, hi = poisson_ci(final_events, minutes)
+    from phantomguard.eval.localize import alert_episodes
+    from phantomguard.eval.metrics import apply_layers
+    detail = []
+    for (held, _, _), cycles in zip(runs, pruned):
+        fused = apply_layers(rethreshold(cycles, thresholds, active), fus_cfg, V2_LAYERS)
+        detail += [{"held_out": held, "cycle": ep["start_cycle"], "kind": ep["kind"], "reasons": dict(ep["reasons"])}
+                   for ep in alert_episodes(fused)]
     base["rule_thresholds"] = {
         "value": {c: (None if not np.isfinite(t) else float(t)) for c, t in thresholds.items()},
         "rule": "per rule: least sensitive grid value at which the rule alone adds <= 0 alert episodes on clean recordings "
@@ -203,7 +210,7 @@ def calibrate_v2(cfg, train, val, baseline_path: Path, tag: str, workers: int, m
         "split": "cv_out_of_recording", "calibrated": True, "fusion_mn": [m, n],
         "cv": {"episodes": final_events, "minutes": round(minutes, 3), "per_minute": final_events / minutes if minutes else None,
                "poisson_ci95_per_minute": [lo, hi], "reference_events_without_tunable_rules": ref["reference_events"],
-               "per_recording": per_file,
+               "per_recording": per_file, "episodes_detail": detail,
                "caveat": "recordings are consecutive segments of one session; episodes are clustered; no IID or "
                          "distribution-free guarantee"},
         "table": [{"code": c.code, "unit": TUNABLE[c.code]["unit"], "threshold": None if not np.isfinite(c.threshold) else c.threshold,

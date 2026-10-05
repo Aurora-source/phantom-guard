@@ -202,6 +202,36 @@ def run_attack(payload):
     return result
 
 
+def attacked_stream(cfg: dict, context: dict, segment: Segment, job: dict, baseline: dict, labels_path: Path,
+                    provider=None):
+    """(attacked frames, replay provenance scope, underlying clean ReplaySource) of one job.
+    Labels/lineage/lifecycle sidecars are written next to ``labels_path``."""
+    source = ReplaySource(raw_path(cfg, segment.file), (segment.lo, segment.hi))
+    unseen = []
+    provenance_scope = "not_applicable"
+    if job["attack_type"] == "T3":
+        provenance_scope = job["replay_provenance"]
+        if job["replay_provenance"] == "unseen":
+            # Time-block recordings all contributed training portions. The owner
+            # permits unseen *portions* of another file; do not call them unseen files.
+            candidates = time_block_segments(cfg)["test"]
+            unseen = [s for s in candidates if s.file != segment.file]
+            provenance_scope = "held_out_segments_of_seen_recordings"
+    if context["split"] == "loso":
+        # Held recording stays unseen even when evaluating validation tails of
+        # the other three files. Never substitute the validation victim as unseen.
+        unseen = loso_folds(cfg)[context["fold"]]["test"]
+        if job["attack_type"] == "T3" and job["replay_provenance"] == "unseen":
+            provenance_scope = "wholly_unseen_recording"
+    attacked = attack_source(source, cfg, baseline, attack_type=job["attack_type"], level=job["level"],
+                             seed=job["effective_seed"], run_index=job["run"], train_segments=context["train"],
+                             replay_provenance=job["replay_provenance"] if job["attack_type"] == "T3" else "training",
+                             unseen_segments=unseen, labels_path=labels_path, motion_case=job["motion_case"],
+                             replay_variant=job["replay_variant"] if job["attack_type"] == "T3" else "exact",
+                             provider=provider)
+    return attacked, provenance_scope, source
+
+
 def _run_attack(payload):
     cfg, context, segment, job, provider, label_dir = payload
     reason = support_reason(job["attack_type"], job["level"], job["motion_case"])
@@ -210,32 +240,10 @@ def _run_attack(payload):
     try:
         baseline = load_baseline(context["baseline_path"])
         scoring_cfg = effective_cfg(cfg, baseline)
-        source = ReplaySource(raw_path(cfg, segment.file), (segment.lo, segment.hi))
         from hashlib import sha256
         digest = sha256(json.dumps(job, sort_keys=True).encode()).hexdigest()[:20]
         labels_path = Path(label_dir) / f"{digest}_labels.csv"
-        unseen = []
-        provenance_scope = "not_applicable"
-        if job["attack_type"] == "T3":
-            provenance_scope = job["replay_provenance"]
-            if job["replay_provenance"] == "unseen":
-                # Time-block recordings all contributed training portions. The owner
-                # permits unseen *portions* of another file; do not call them unseen files.
-                candidates = time_block_segments(cfg)["test"]
-                unseen = [s for s in candidates if s.file != segment.file]
-                provenance_scope = "held_out_segments_of_seen_recordings"
-        if context["split"] == "loso":
-            # Held recording stays unseen even when evaluating validation tails of
-            # the other three files. Never substitute the validation victim as unseen.
-            unseen = loso_folds(cfg)[context["fold"]]["test"]
-            if job["attack_type"] == "T3" and job["replay_provenance"] == "unseen":
-                provenance_scope = "wholly_unseen_recording"
-        attacked = attack_source(source, cfg, baseline, attack_type=job["attack_type"], level=job["level"],
-                                 seed=job["effective_seed"], run_index=job["run"], train_segments=context["train"],
-                                 replay_provenance=job["replay_provenance"] if job["attack_type"] == "T3" else "training",
-                                 unseen_segments=unseen, labels_path=labels_path, motion_case=job["motion_case"],
-                                 replay_variant=job["replay_variant"] if job["attack_type"] == "T3" else "exact",
-                                 provider=provider)
+        attacked, provenance_scope, source = attacked_stream(cfg, context, segment, job, baseline, labels_path, provider)
         cycles = detect_stream(cfg, baseline, context["tag"], attacked)
         if not labels_path.is_file():
             raise ValueError(f"attacker did not write sidecar {labels_path}")
@@ -439,6 +447,14 @@ def main(argv=None) -> int:
         blockers.append("Some attack runs failed integration or label validation; see per-run reasons.")
     manifest["blockers"] = list(dict.fromkeys(blockers))
     summary = write_report(args.output_dir, manifest, runs, instances, clean, exclusions)
+    from phantomguard.eval.coverage import coverage_matrix
+    coverage = coverage_matrix(runs)
+    if coverage:
+        cov_path = Path(args.output_dir) / "coverage_matrix.csv"
+        with cov_path.open("w", newline="", encoding="utf-8") as stream:
+            writer = csv.DictWriter(stream, fieldnames=list(coverage[0]))
+            writer.writeheader()
+            writer.writerows(coverage)
     print(f"Wrote {summary}; attack statuses={dict(Counter(r['status'] for r in runs))}")
     return 2 if blockers or failures else 0
 

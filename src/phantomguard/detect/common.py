@@ -45,7 +45,8 @@ REASONS: dict[str, tuple[str, bool]] = {
     # detector profile v2 (soft by default; hardness is set by fusion.hard_codes)
     "ARRIVAL_POS": ("protocol", False),   # late arrival relative to the frame's position in the burst
     "RCS_ENV": ("kinematic", False),      # outside the smooth range-conditional RCS envelope
-    "DRIFT": ("kinematic", False),        # observed position change inconsistent with reported velocity
+    "DRIFT": ("kinematic", False),        # position change inconsistent with reported velocity (moving regime)
+    "DRIFT_STATIC": ("kinematic", False),  # the same for windows whose mean reported speed is below the moving threshold
     # replay fingerprint
     "REPLAY": ("replay", False),
     # learned normal
@@ -133,3 +134,6 @@ class CycleResult:
     assembly_cpu_ms: float = 0.0
     detector_cpu_ms: float = 0.0
     cycle_evidence: list[dict] = field(default_factory=list)
+    # Thread CPU time of process_cycle (time.thread_time). Its resolution is platform dependent (about
+    # 15.6 ms on Windows, ns on Linux); per-cycle percentiles are only meaningful where it is fine.
+    detector_thread_cpu_ms: float = 0.0

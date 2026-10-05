@@ -6,6 +6,11 @@ Two families: translation-invariant (dx, dy, vx, vy) as in CLAUDE.md, and rotati
 A window matches if the same fingerprint occurred in the training library, earlier in this stream,
 or in another live track. Windows with fewer than ``min_complexity`` distinct symbols are not
 fingerprinted, because real tracks that hold their values repeat trivially.
+
+Each track also keeps the length of its current run of consecutively matched windows (``run``).
+Two real tracks can share a short stretch of similar motion by chance; a copied segment keeps
+matching window after window. Profile v2 flags REPLAY only when the run exceeds a threshold
+calibrated on out-of-recording clean data (legacy: threshold 0, i.e. every hit).
 """
 
 from __future__ import annotations
@@ -56,6 +61,18 @@ class ReplayChecker:
         self.library = frozenset(library or ())
         self.seen: dict[tuple, deque] = {}  # fp -> (track_id, cycle_index) occurrences
         self._order: deque = deque()
+        self.runs: dict[int, tuple[int, int]] = {}   # track id -> (last matched cycle, consecutive matches)
+        self.run = 0
+
+    def _run_length(self, tid: int, cycle_index: int, hit: bool) -> int:
+        if not hit:
+            return 0
+        last, n = self.runs.get(tid, (None, 0))
+        n = n + 1 if last == cycle_index - 1 else 1
+        self.runs[tid] = (cycle_index, n)
+        if len(self.runs) > 4096:                       # bounded memory on long streams
+            self.runs = {t: v for t, v in self.runs.items() if cycle_index - v[0] <= 1}
+        return n
 
     def check(self, tr: Track, cycle_index: int) -> tuple[bool, str | None]:
         # Expire before matching: a forgotten source cannot trigger one final stale hit.
@@ -66,6 +83,7 @@ class ReplayChecker:
                 occurrences.popleft()
             if not occurrences:
                 del self.seen[old_fp]
+        self.run = 0
         pts = tr.points
         if len(pts) < self.k + 1:
             return False, None
@@ -85,6 +103,7 @@ class ReplayChecker:
                     break
             self.seen.setdefault(fp, deque()).append((tr.track_id, cycle_index))
             self._order.append((cycle_index, fp, tr.track_id))
+        self.run = self._run_length(tr.track_id, cycle_index, hit is not None)
         return hit is not None, hit
 
 
