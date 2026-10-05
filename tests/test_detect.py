@@ -57,7 +57,8 @@ def test_well_formed_synthetic_stream_has_no_protocol_reasons():
     (lambda fr: fr[:-1], "COUNT_MISMATCH", "cycle"),  # header says 3, 2 arrive
     (lambda fr: fr + [Frame(CAN_ID_OBJECT, encode_object(1, 12.0, 0.0, 0, 0, 16.0), fr[-1].timestamp_ticks + 2)],
      "DUP_SLOT", "obj"),
-    (lambda fr: fr[:-1] + [Frame(CAN_ID_OBJECT, fr[-1].data, fr[0].timestamp_ticks + 200)], "ARRIVAL", "obj"),
+    (lambda fr: fr[:-1] + [Frame(CAN_ID_OBJECT, fr[-1].data, fr[0].timestamp_ticks + 200)],
+     ("ARRIVAL", "ARRIVAL_POS"), "obj"),   # legacy window rule / profile v2 burst-position rule
     (lambda fr: fr[:-1] + [Frame(CAN_ID_OBJECT, fr[-1].data, fr[-2].timestamp_ticks + 40)], "BURST_GAP", "obj"),
     (lambda fr: fr[:2] + [Frame(CAN_ID_OBJECT, encode_object(9, 1.0, 0.0, 0, 0, 20.0), fr[2].timestamp_ticks)] + fr[3:],
      "RANGE_ORDER", "obj"),
@@ -74,7 +75,8 @@ def test_protocol_violation_is_caught(mutate, expect, level):
         fr = cycle_frames(i, clean_scene())
         frames += mutate(fr) if i == 8 else fr
     obj, cyc = reasons(run(frames))
-    assert expect in (cyc if level == "cycle" else obj)
+    found = cyc if level == "cycle" else obj
+    assert (set(expect) & found) if isinstance(expect, tuple) else expect in found
 
 
 def test_counter_and_cadence_violations():

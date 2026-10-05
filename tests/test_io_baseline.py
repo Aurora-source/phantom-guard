@@ -109,7 +109,10 @@ def test_baseline_json_records_rule_for_every_threshold():
             continue
         assert "rule" in v and "value" in v, k
         # thresholds come from train, calibration from validation; never from test (hard rule 5)
-        assert v["split"] in ("train", "val"), (k, v["split"])
+        # profile v2: rule thresholds from out-of-recording CV over train+validation recordings (still never test)
+        assert v["split"] in ("train", "val", "cv_out_of_recording"), (k, v["split"])
+        if v["split"] == "cv_out_of_recording":
+            assert k in ("rule_thresholds", "fusion_mn"), k
         if v["split"] == "val":
             assert k.startswith(("ae_threshold", "iforest_threshold", "soft_quantile", "fusion_mn")), k
     # every threshold that can be checked on held-out clean data has a val exceedance recorded
