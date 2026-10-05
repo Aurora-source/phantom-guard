@@ -109,7 +109,24 @@ Other additive fields:
 * Calibrated per-rule thresholds live in the baseline under `rule_thresholds.value` (`null` = rule inactive),
   with the out-of-recording CV table, curves and episode detail under `rule_thresholds.cv` / `.table`.
 
+### Prepared attacker-pool exports (offline helper; adoption by the runtime is Agent 1's call)
+
+`phantomguard.attack.prepared`: `export(cfg, segments, recording_sha256, dir)` writes
+`pools-<key>.npz` once (exclusive create, never overwritten); `load(path, expected_key, max_bytes=256 MiB)`
+returns the same `Pools` object `attack.pools.build_pools` builds (verified array-identical in tests).
+Key = SHA-256 of schema `phantomguard.pools/1`, recording SHA-256s, segment bounds and the
+ROI/motion/tracks/protocol/tick configuration. Loading is pickle-free, size-bounded, schema/key/shape/finite
+checked, and raises `PreparedError` with a reason. Pools come from clean recordings only.
+
+### Other versioned outputs
+
+| file | schema id |
+|---|---|
+| intake manifest | `phantomguard.intake/1` |
+| coverage matrix rows | `phantomguard.coverage/1` |
+| latency benchmark | `phantomguard.latency/1` |
+| baseline detector contract | `detector_contract.value = {profile: "v2", schema: 1}` |
+
 ## 5. Still to come (do not depend on it yet)
 
-* Artifact schema 2 identifiers, bundle manifest additions, and the bounded prepared-data loading contract.
 * `docs/parallel/detector-handoff.md`: tested commit, bundle path/checksum, restore commands, results.
