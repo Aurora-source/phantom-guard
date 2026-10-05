@@ -118,3 +118,14 @@ rtk proxy env PHANTOMGUARD_SERVER_ENV=/home/lucifer/projects/Hacksprint-2026/pha
 The local builder used its pinned base/dependencies and no learned-artifact commands.
 A subsequent build from documentation-only delivery HEAD has the same serving inputs;
 the deployed image/revision above is retained precisely for reproducibility.
+
+## Git delivery
+
+Branch pushed: https://github.com/Aurora-source/phantom-guard/tree/codex/frontend-polish .
+Upstream PR creation was attempted once after validation and rejected with HTTP
+403, `Resource not accessible by integration`. No upstream PR is claimed and no
+merge/force-push was performed. Prepared exact title/body:
+[frontend-polish-pr.md](frontend-polish-pr.md).
+Create/compare URL:
+https://github.com/Krishna-Gunjan/phantom-guard/compare/main...Aurora-source:phantom-guard:codex/frontend-polish?expand=1 .
+The running validated release is unaffected by this GitHub permission blocker.
