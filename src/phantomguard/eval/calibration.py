@@ -36,6 +36,8 @@ TUNABLE: dict[str, dict] = {
                "grid": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 8.0]},
     "DRIFT": {"unit": "scaled residual (z) of the position/velocity consistency model, moving regime",
               "grid": [4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 12.0, 16.0, 24.0, 40.0]},
+    "DRIFT_EWMA": {"unit": "normalised EWMA (lambda from config) of the per-step residual, moving steps",
+                   "grid": [4.0, 5.0, 6.0, 7.0, 8.0, 10.0, 12.0, 16.0, 24.0]},
     "DRIFT_STATIC": {"unit": "the same z for windows below the moving speed (heavy-tailed: creeping far-field objects)",
                      "grid": [8.0, 12.0, 16.0, 24.0, 32.0, 40.0, 80.0]},
 }

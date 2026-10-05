@@ -170,7 +170,8 @@ def cv_run(job):
     return held, prune_quiet_tracks(cycles, floor), len(cycles)
 
 
-def calibrate_v2(cfg, train, val, baseline_path: Path, tag: str, workers: int, m: int = 4, n: int = 6) -> None:
+def calibrate_v2(cfg, train, val, baseline_path: Path, tag: str, workers: int, m: int = 4, n: int = 6,
+                 allowance: int = 0) -> None:
     from phantomguard.eval.calibration import TUNABLE, choose_rule_thresholds, episodes_for, poisson_ci, rethreshold
 
     base = load_baseline(baseline_path)
@@ -187,7 +188,7 @@ def calibrate_v2(cfg, train, val, baseline_path: Path, tag: str, workers: int, m
     fus_cfg = effective_cfg({**cfg, "fusion": {**cfg["fusion"], "m": m, "n": n}}, base)
     codes = list(TUNABLE)
     print(f"[{tag}] out-of-recording CV over {[r[0][:12] for r in runs]} ({sum(r[2] for r in runs)} cycles)")
-    thresholds, choices, ref = choose_rule_thresholds(pruned, fus_cfg, V2_LAYERS, codes, allowance=0)
+    thresholds, choices, ref = choose_rule_thresholds(pruned, fus_cfg, V2_LAYERS, codes, allowance=allowance)
     active = {c for c, t in thresholds.items() if np.isfinite(t)}
     final_events, minutes = episodes_for([rethreshold(r, thresholds, active) for r in pruned], fus_cfg, V2_LAYERS)
     per_file = []
@@ -204,7 +205,7 @@ def calibrate_v2(cfg, train, val, baseline_path: Path, tag: str, workers: int, m
                    for ep in alert_episodes(fused)]
     base["rule_thresholds"] = {
         "value": {c: (None if not np.isfinite(t) else float(t)) for c, t in thresholds.items()},
-        "rule": "per rule: least sensitive grid value at which the rule alone adds <= 0 alert episodes on clean recordings "
+        "rule": f"per rule: most sensitive grid value at which the rule alone adds <= {allowance} alert episodes on clean recordings "
                 "scored by a model fitted without them (inner leave-one-recording-out CV over train+validation recordings); "
                 "null = no grid value met the allowance (rule inactive)",
         "split": "cv_out_of_recording", "calibrated": True, "fusion_mn": [m, n],
@@ -227,17 +228,21 @@ def main(argv=None):
     ap.add_argument("--loso", action="store_true")
     ap.add_argument("--profile", choices=("legacy", "v2"), default="legacy")
     ap.add_argument("--workers", type=int, default=max(1, (os.cpu_count() or 2) // 4))
+    ap.add_argument("--allowance", type=int, default=0,
+                    help="v2: clean CV episodes each rule may add (0 = most conservative; clean data only)")
     add_path_arguments(ap)
     args = ap.parse_args(argv)
     cfg = config_from_args(args)
     tb = time_block_segments(cfg)
     if args.profile == "v2":
-        calibrate_v2(cfg, tb["train"], tb["val"], paths(cfg).baseline, "timeblock", args.workers)
+        calibrate_v2(cfg, tb["train"], tb["val"], paths(cfg).baseline, "timeblock", args.workers,
+                      allowance=args.allowance)
         if args.loso:
             pdir = paths(cfg).processed
             for held, fold in loso_folds(cfg).items():
                 stem = Path(held).stem
-                calibrate_v2(cfg, fold["train"], fold["val"], pdir / f"baseline_loso_{stem}.json", f"loso_{stem}", args.workers)
+                calibrate_v2(cfg, fold["train"], fold["val"], pdir / f"baseline_loso_{stem}.json", f"loso_{stem}", args.workers,
+                             allowance=args.allowance)
         return
     calibrate(cfg, tb["train"], tb["val"], paths(cfg).baseline, "timeblock")
     if args.loso:

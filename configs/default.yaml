@@ -67,6 +67,8 @@ tracks:
   min_track_cycles_for_stats: 20
 
 kinematic:
+  # Profile v2 DRIFT_EWMA smoothing (1/32: memory matching the longest drift horizon, 32 cycles).
+  drift_ewma_lambda: 0.03125
   window_cycles: 15         # cycles used for range-rate vs reported radial velocity
   rcs_window_cycles: 15
   min_moving_cycles: 10     # a track counts as moving if it has this many moving cycles

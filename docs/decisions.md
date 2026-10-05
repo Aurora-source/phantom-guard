@@ -583,3 +583,31 @@ Code that sees an unknown profile/schema refuses to run it.
   group reserved (hash and header only) until the policy is frozen. The four existing recordings are
   `development`: all were inspected. 30-60 min of clean recording per new session is recommended
   (docs/data-intake.md); no recording is synthesised.
+
+### Development comparisons (validation part, seed 11; generated under runs/, summarised in the final report)
+- Legacy vs v2 on identical attacker streams: v2 had 0 clean episodes in 8.4 validation minutes (legacy 5);
+  no instance lost at A0-A2; collateral alert frames on real objects in T2 A3/A4 fell from ~3,200-4,000 to
+  ~160-220; T1 A3/A4 identification fell 11/10 instances. 39 of the 75 instances v2 lost had been
+  caught by legacy `RCS_BAND`, the rule behind most legacy clean false alarms, so this is an operating-point
+  trade, not a lost capability. A relaxed v2 (each rule may add 1 clean CV episode; clean data only) is
+  evaluated on the same streams to compare at a similar clean budget.
+- COLOC dependence is an attacker artefact: static phantoms are placed at recorded positions of real
+  in-ROI objects (`sample_pos_roi`), and static clutter persists, so many phantoms sit on a live
+  reflector. Without COLOC, v2 T1 A3 identification drops from 108 to 12 instances (legacy 119 to 65). The
+  attacker is unchanged (shared benchmark); `all-minus-COLOC` rows are published as the estimate for an
+  attacker that avoids occupied positions.
+- T4 (constant-direction offset of 0.02-0.08 per cycle on a real moving track, real velocity kept):
+  at zero clean exceedance the windowed DRIFT z separates 39/135 validation instances, a vector EWMA of
+  the per-step residual (lambda 1/32) another, partly different 39; together 51 (37.8%). The rest are not
+  separable from clean position/velocity disagreement with these statistics at this clean budget and are
+  reported as indistinguishable. `DRIFT_EWMA` was added with lambda fixed at 1/32 (memory matching the
+  longest drift horizon); lambda was examined on validation attacks, so only the untouched test part can
+  confirm the gain. Its threshold is calibrated on clean data like every rule.
+- Fitted drift gain B is 0.46-0.61 radially and 0.79-0.81 tangentially for moving tracks: positions and
+  reported velocities do not share one metre/second scale, consistent with the unverified-units note.
+- Learned layer (same clean budget, thresholds from clean validation windows): window AE with an
+  independent 4-of-6 route adds 13 of 2,243 identified instances (T4 A3/A4 +4 each, T3 +2 each, T4 A2 +1),
+  a fitted simple residual adds 4, a causal ridge predictor and every joint (monotone) route add 0.
+  The AE threshold could only be set on the same ~8 validation minutes that measure its clean cost
+  (inner-CV retraining of the AE per held recording was not done), so the route is **not adopted**:
+  the learned layer stays corroborating-only and no ML detection claim is made. Re-evaluate on new sessions.

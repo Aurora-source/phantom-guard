@@ -252,7 +252,7 @@ def apply_v2(cfg: dict, base: dict, st) -> dict:
     base.update(learn_v2(cfg, st, base))
     base["detector_contract"] = {
         "value": {"profile": "v2", "schema": V2_SCHEMA, "off": list(V2_OFF),
-                  "new_codes": ["ARRIVAL_POS", "RCS_ENV", "DRIFT", "DRIFT_STATIC"],
+                  "new_codes": ["ARRIVAL_POS", "RCS_ENV", "DRIFT", "DRIFT_STATIC", "DRIFT_EWMA"],
                   "rescored_codes": {"REPLAY": "flags when the run of consecutive matching windows exceeds the "
                                                "calibrated threshold (legacy and uncalibrated: every hit)"}},
         "rule": "structural and exact-regularity rules stay hard; empirical tails and new conditional models are soft "

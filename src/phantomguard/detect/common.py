@@ -47,6 +47,7 @@ REASONS: dict[str, tuple[str, bool]] = {
     "RCS_ENV": ("kinematic", False),      # outside the smooth range-conditional RCS envelope
     "DRIFT": ("kinematic", False),        # position change inconsistent with reported velocity (moving regime)
     "DRIFT_STATIC": ("kinematic", False),  # the same for windows whose mean reported speed is below the moving threshold
+    "DRIFT_EWMA": ("kinematic", False),    # EWMA of the per-step position/velocity residual (moving steps)
     # replay fingerprint
     "REPLAY": ("replay", False),
     # learned normal

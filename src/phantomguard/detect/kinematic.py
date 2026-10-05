@@ -61,6 +61,7 @@ class KinematicChecker:
             self.std_env = g("rcs_std_envelope")
             self.drift = g("drift_model")
             self.drift_h = [h for h in self.drift["horizons"]]
+            self.ewma_lam = float(cfg["kinematic"].get("drift_ewma_lambda", 1 / 32))
 
     # ---- helpers
     def _thr(self, code: str, default: float = 0.0) -> float:
@@ -174,6 +175,42 @@ class KinematicChecker:
                                                          range_bin=[edges[i], edges[i + 1]]))
         if self.v2 and "DRIFT" not in self.off:
             self._drift(o, tr, v)
+        if self.v2 and "DRIFT_EWMA" not in self.off:
+            self._drift_ewma(tr, v)
+
+    def _drift_ewma(self, tr: Track, v: ObjVerdict) -> None:
+        """Vector EWMA of the per-step residual dp - B v dt (line-of-sight frame, 8-cycle moving model scaled
+        to one step), normalised by its stationary std. A slow constant-direction offset accumulates while
+        quantisation and velocity noise average out. Scored on moving steps; reset across gaps / ROI exits."""
+        m = self.drift["models"].get("8:moving")
+        pts = tr.points
+        if not m or m.get("status") != "supported" or len(pts) < 2:
+            return
+        a, b = pts[-2], pts[-1]
+        if b.cycle_index - a.cycle_index != 1 or a.rng > self.roi:
+            tr.aux.pop("ewma", None)
+            return
+        dt = b.t_s - a.t_s
+        r0 = a.rng or 1.0
+        ux, uy = a.x / r0, a.y / r0
+        dx, dy, ivx, ivy = b.x - a.x, b.y - a.y, a.vx * dt, a.vy * dt
+        root8 = math.sqrt(8.0)
+        er = ((dx * ux + dy * uy) - m["B_radial"] * (ivx * ux + ivy * uy)) / (m["scale_radial"] / root8)
+        et = ((-dx * uy + dy * ux) - m["B_tangential"] * (-ivx * uy + ivy * ux)) / (m["scale_tangential"] / root8)
+        lam = self.ewma_lam
+        sr, st = tr.aux.get("ewma", (0.0, 0.0))
+        sr, st = (1 - lam) * sr + lam * er, (1 - lam) * st + lam * et
+        tr.aux["ewma"] = (sr, st)
+        if math.hypot(a.vx, a.vy) < self.moving_threshold or math.hypot(b.vx, b.vy) < self.moving_threshold:
+            return
+        z = math.hypot(sr, st) / math.sqrt(lam / (2 - lam))
+        self._z(v, "DRIFT_EWMA", z)
+        if z > self._thr("DRIFT_EWMA", 1e9):
+            v.note("DRIFT_EWMA", frames=[p.frame_index for p in list(pts)[-min(len(pts), 8):]],
+                   cycles=(pts[0].cycle_index, b.cycle_index), observed=z, normalized=z,
+                   suspect_frames=[v.frame_index], suspect_track=tr.track_id,
+                   support=support_record(m["n"], "supported", ewma_lambda=lam, radial=sr, tangential=st),
+                   note="persistent position offset relative to reported velocity (exponentially weighted)")
 
     def _drift(self, o, tr: Track, v: ObjVerdict) -> None:
         """Position change over several horizons vs the integral of reported velocity (see stats/v2.py)."""

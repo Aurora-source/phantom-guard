@@ -42,6 +42,7 @@ class Track:
     assoc: str = "born"
     predecessor: int | None = None   # track this one replaced after a reset (evidence lineage only)
     gate_distance: float | None = None
+    aux: dict = field(default_factory=dict)   # per-layer causal state (e.g. drift EWMA); never a feature
 
     @property
     def last(self) -> TrackPoint:
